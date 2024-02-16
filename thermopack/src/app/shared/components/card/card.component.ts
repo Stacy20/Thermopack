@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'shared-card',
@@ -8,5 +8,15 @@ import { Component } from '@angular/core';
   styleUrl: './card.component.css'
 })
 export class CardComponent {
+  @Input()
+  public title:string='';
+
+  @Input()
+  public src:string='';
+
+  @Input()
+  public text:string='';
+
+  
 
 }

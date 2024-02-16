@@ -19,3 +19,10 @@ a:active {
 a{
   color: #000000;
 }
+.centrar-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 250px; /* Ancho del contenedor */
+  height: 250px; /* Alto del contenedor */
+}
