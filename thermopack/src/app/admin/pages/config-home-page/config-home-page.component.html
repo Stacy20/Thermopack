@@ -1,10 +1,112 @@
 <body>
   <div class="container">
-    <div class="row">
-      <admin-navbar></admin-navbar>
+    <admin-navbar></admin-navbar>
+
+    <div class="container">
+
+      <!-- Parte 1: Página de Inicio -->
+      <div class="row">
+        <div class="col-md-12 mt-4">
+          <h2>Página de Inicio</h2>
+          <hr>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-end">Eslogan</p>
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-end">Descripción de la empresa</p>
+            </div>
+            <div class="col-md-6">
+              <textarea class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-end">Misión de la empresa</p>
+            </div>
+            <div class="col-md-6">
+              <textarea class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-end">Visión de la empresa</p>
+            </div>
+            <div class="col-md-6">
+              <textarea class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <p class="text-end">Logo de la empresa</p>
+            </div>
+            <div class="col-md-6">
+              <input type="file" class="form-control-file">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parte 2: Imágenes de Inicio. -->
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <h2>Imágenes</h2>
+          <hr>
+          <h4>Misión y Visión</h4>
+          <p>Seleccione una imagen para cambiarla.</p>
+          <admin-config-gallery></admin-config-gallery>
+
+          <h4 class="mt-4">Presentación</h4>
+          <p>Seleccione una imagen para cambiarla o borrarla.</p>
+          <admin-config-gallery></admin-config-gallery>
+        </div>
+      </div>
+
+      <!-- Parte 3: Texto de las páginas se PyS -->
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <h2>Páginas de Productos y Servicios</h2>
+          <hr>
+          <div class="row mb-3">
+            <div class="col-md-3 col-2">
+              <p class="text-end">Título de Productos</p>
+            </div>
+            <div class="col-md-6 col-10">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3 col-2">
+              <p class="text-end">Párrafo de Productos</p>
+            </div>
+            <div class="col-md-6 col-10">
+              <textarea class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3 col-2">
+              <p class="text-end">Título de Servicios</p>
+            </div>
+            <div class="col-md-6 col-10">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3 col-2">
+              <p class="text-end">Párrafo de Servicios</p>
+            </div>
+            <div class="col-md-6 col-10">
+              <textarea class="form-control"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="row">
-      <p>Hola</p>
-    </div>
+
   </div>
 </body>
