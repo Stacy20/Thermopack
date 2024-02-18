@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
+import { NavbarComponent } from "../../components/navbar/navbar.component";
 
 @Component({
-  selector: 'app-config-home-page',
-  standalone: true,
-  imports: [],
-  templateUrl: './config-home-page.component.html',
-  styles: ``
+    selector: 'admin-config-home-page',
+    standalone: true,
+    templateUrl: './config-home-page.component.html',
+    styles: ``,
+    imports: [NavbarComponent]
 })
 export class ConfigHomePageComponent {
 
