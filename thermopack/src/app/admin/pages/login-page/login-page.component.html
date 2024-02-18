@@ -6,6 +6,7 @@
       </div>
       <div class="col-md-4 bg-white p-4 d-flex flex-column justify-content-center vh-100">
         <h2 class="text-center mb-4 fs-1">¡Bienvenido!</h2>
+
         <form class="mt-4">
           <div class="mb-3">
             <label for="inputEmail" class="form-label">Correo Electrónico</label>
@@ -15,11 +16,11 @@
             <label for="inputPassword" class="form-label">Contraseña</label>
             <input type="password" class="form-control" id="inputPassword" placeholder="Contraseña">
           </div>
-          <button type="submit" class="w-100 btn btn-primary-thermopack btn-lg btn-block">Ingresar</button>
+          <button type="submit" class="mt-4 w-100 btn btn-primary-thermopack btn-lg btn-block" (click)="submitUserLogin()">Ingresar</button>
         </form>
+
         <p class="text-center mt-3"><a href="#" class="link-secondary link-offset-2-hover link-underline-opacity-0 link-underline-opacity-75-hover">Olvidé mi contraseña</a></p>
       </div>
-
     </div>
   </div>
 </body>
