@@ -10,5 +10,5 @@ import { CardComponent } from "../card/card.component";
 })
 export class ListCardComponent {
 
-  public data: string[] = ['1','2','3'];
+  public data: string[] = ['1','2','3','4'];
 }
