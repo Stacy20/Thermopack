@@ -1,0 +1,34 @@
+.mybackground {
+  background-color: rgba(28, 83, 168, 0.83); /* Utiliza rgba() para especificar el color con un canal alfa */
+  border-radius: 10px;
+}
+.centrar-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 35%; /* Ancho del contenedor */
+  height: 400px; /* Alto del contenedor */
+  overflow: hidden; /* Para recortar las imágenes que excedan el contenedor */
+
+}
+
+.centrar-img img {
+  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
+  height: auto; /* La altura se ajusta automáticamente para mantener la proporción */
+
+}
+
+.myboder{
+  border-radius: 50px;
+}
+.dots-container {
+  position: relative;
+  background-image: radial-gradient(circle at 100% 0, #00BFFF 10%, transparent 10%);
+  background-size: 11px 11px; /* Tamaño de cada dot */
+}
+
+.container {
+  position: relative;
+  z-index: 1; /* Para asegurarse de que las imágenes estén por encima de los dots */
+}
+

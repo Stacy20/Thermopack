@@ -27,26 +27,13 @@
     </div>
     <div class="container mybackground col-12 ms-2 ">
       <div class="col-8">
-        <div class="mt-4 d-flex">
-          <input
-          class="form-control me-2 mt-4"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-          #searchInput
-          (keyup.enter)="search(searchInput.value)"
-        >
-        <button
-          class="btn mt-4 "style="background-color: #1c53a8; color:#ffff"
-          (click)="search(searchInput.value)"
-        >
-          Search
-        </button>
-        </div>
-
+        <shared-search></shared-search>
       </div>
       <div class="row justify-content-center align-items-center">
         <shared-list-card></shared-list-card>
+      </div>
+      <div class="mt-5 ">
+        <shared-pagination></shared-pagination>
       </div>
     </div>
 
