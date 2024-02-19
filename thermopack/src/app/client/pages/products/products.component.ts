@@ -6,7 +6,7 @@ import { SearchComponent } from "../../../shared/components/search/search.compon
 import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
 
 @Component({
-    selector: 'page-products',
+    selector: 'client-page-products',
     standalone: true,
     templateUrl: './products.component.html',
     styleUrl: './products.component.css',
