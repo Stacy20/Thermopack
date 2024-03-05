@@ -1,0 +1,21 @@
+.mybackground{
+  background-color: #EDFAFF;
+  border-radius: 10px;
+}
+p.h5 {
+  font-size: 1.25rem; /* Tamaño de texto similar al de h5 */
+  font-weight: normal; /* Quita la negrita */
+  line-height: 1.5; /* Altura de línea similar al de h5 */
+}
+.my-custom-button {
+  padding: 10px 20px;
+  background-color: #00BFFF;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px; /* Modifica este valor según lo redondeado que desees los bordes */
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+

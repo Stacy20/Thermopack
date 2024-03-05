@@ -22,7 +22,7 @@
   border-radius: 50px;
 }
 .dots-container {
-  position: relative;
+  /* position: relative; */
   background-image: radial-gradient(circle at 100% 0, #00BFFF 10%, transparent 10%);
   background-size: 11px 11px; /* Tamaño de cada dot */
 }

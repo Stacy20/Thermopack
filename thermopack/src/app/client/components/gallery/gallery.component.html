@@ -1,0 +1,15 @@
+
+<div class="card">
+  <p-galleria [value]="images" [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+      <ng-template pTemplate="item" let-item>
+        <div class="centrar-img2">
+          <img [src]="item.itemImageSrc" />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="thumbnail" let-item>
+          <div class="grid grid-nogutter justify-content-center centrar-img ">
+              <img [src]="item.thumbnailImageSrc" />
+          </div>
+      </ng-template>
+  </p-galleria>
+</div>
