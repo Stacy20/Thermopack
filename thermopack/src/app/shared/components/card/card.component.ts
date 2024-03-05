@@ -17,6 +17,7 @@ export class CardComponent {
   @Input()
   public text:string='';
 
-
+  @Input()
+  public type!:number;
 
 }

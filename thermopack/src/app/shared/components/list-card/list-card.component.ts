@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CardComponent } from "../card/card.component";
 
 @Component({
@@ -11,4 +11,7 @@ import { CardComponent } from "../card/card.component";
 export class ListCardComponent {
 
   public data: string[] = ['1','2','3','4'];
+
+  @Input()
+  public type!: number;
 }

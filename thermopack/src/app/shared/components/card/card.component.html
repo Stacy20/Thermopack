@@ -8,9 +8,18 @@
   <div class="card-body">
     <h5 class="card-title">Card title</h5>
     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <div >
-      <a [routerLink]="['/detalles']"  style="display: flex; justify-content: right;">Ver más</a>
-    </div>
+    @if (type==0) {
+      <div >
+        <a [routerLink]="['/detalles']"  style="display: flex; justify-content: right;">Ver más</a>
+      </div>
+    }
+    @else {
+      <div class="d-flex  justify-content-between">
+        <button class="btn mt-4 "style="background-color: #37C132; color:#ffff"> Editar</button>
+        <button class="btn mt-4 "style="background-color: #CE0303; color:#ffff"> Eliminar</button>
+      </div>
+    }
+
   </div>
 </div>
 
