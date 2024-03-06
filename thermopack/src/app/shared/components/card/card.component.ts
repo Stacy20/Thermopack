@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'shared-card',
   standalone: true,
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './card.component.html',
   styleUrl: './card.component.css'
 })
@@ -17,6 +17,7 @@ export class CardComponent {
   @Input()
   public text:string='';
 
-  
+  @Input()
+  public type!:number;
 
 }

@@ -10,6 +10,11 @@ import { ConfigHomePageComponent } from './admin/pages/config-home-page/config-h
 import { EditProductPageComponent } from './admin/pages/edit-product-page/edit-product-page.component';
 import { EditServicePageComponent } from './admin/pages/edit-service-page/edit-service-page.component';
 import { NotFoundPageComponent } from './shared/pages/not-found-page/not-found-page.component';
+import { ProductsComponent } from './client/pages/products/products.component';
+import { HomeComponent } from './client/pages/home/home.component';
+import { ContactUsComponent } from './client/pages/contact-us/contact-us.component';
+import { DetailPageComponent } from './client/pages/detail-page/detail-page.component';
+import { PageServicesComponent } from './client/pages/page-services/page-services.component';
 
 export const routes: Routes = [
   {
@@ -18,8 +23,27 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'home',
-    component: HomePageComponent
+    path: 'productos',
+    component: ProductsComponent
+  },
+  {
+    path: 'inicio',
+    component: HomeComponent
+  },
+  {
+    path: 'contactenos',
+    component: ContactUsComponent
+  },
+  {
+    path: 'servicios',
+    component: PageServicesComponent
+  },
+  {
+    path: 'detalles',
+    component: DetailPageComponent
+  },{
+    path:'**',
+    redirectTo:'inicio'
   },
   {
     path: 'admin',
@@ -56,5 +80,4 @@ export const routes: Routes = [
     path: '**',
     component: NotFoundPageComponent
   }
-
-];
+]

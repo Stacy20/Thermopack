@@ -1,0 +1,8 @@
+<p-galleria [value]="images" [autoPlay]="true" [circular]="true"[showItemNavigators]="true" [showThumbnails]="false" [showIndicators]="true"
+ [showIndicatorsOnItem]="true" [responsiveOptions]="responsiveOptions">
+  <ng-template pTemplate="item" let-item>
+    <div class="centrar-img">
+      <img [src]="item.itemImageSrc" />
+    </div>
+  </ng-template>
+</p-galleria>
