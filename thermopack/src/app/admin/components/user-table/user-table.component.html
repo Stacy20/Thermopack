@@ -1,4 +1,4 @@
-<table class="table mx-auto w-75" id="users-table">
+<table class="table mx-auto mx-5" id="users-table">
   <thead>
     <tr>
       <th>Correo</th>
@@ -16,32 +16,52 @@
       <td contentEditable #txtUserEmail>Agregar un correo</td>
       <td contentEditable #txtUserPswrd></td>
       <td>
-        <span class="badge py-2 px-3 w-100">
-          <input type="checkbox" #txtPrivEditText id="checkbox1" #chkPrivEditText>
-          <label class="form-check-label ms-2" for="checkbox1">{{ false | yesNoPipe: 'es' }}</label>
+        <span class="badge py-2 px-3 w-100"
+          [ngClass]="{'text-bg-success': checkedPrivilages[EnumPrivileges.EditText],
+                      'text-bg-danger': !checkedPrivilages[EnumPrivileges.EditText]}">
+          <input type="checkbox" #txtPrivEditText id="chkPrivEditText"
+            (change)="checkChange($event, EnumPrivileges.EditText)" #chkPrivEditText>
+          <label class="form-check-label ms-2" for="chkPrivEditText">
+            {{ checkedPrivilages[EnumPrivileges.EditText] | yesNoPipe: 'es' }}
+          </label>
         </span>
       </td>
       <td>
-        <span class="badge py-2 px-3 w-100">
-          <input type="checkbox" #txtPrivAddItems id="checkbox2" #chkPrivAddItems>
-          <label class="form-check-label ms-2" for="checkbox2">{{ false | yesNoPipe: 'es' }}</label>
+        <span class="badge py-2 px-3 w-100"
+          [ngClass]="{'text-bg-success': checkedPrivilages[EnumPrivileges.AddItems],
+                      'text-bg-danger': !checkedPrivilages[EnumPrivileges.AddItems]}">
+          <input type="checkbox" #txtPrivAddItems id="checkbox2"
+            (change)="checkChange($event, EnumPrivileges.AddItems)" #chkPrivAddItems>
+          <label class="form-check-label ms-2" for="checkbox2">
+            {{ checkedPrivilages[EnumPrivileges.AddItems] | yesNoPipe: 'es' }}
+          </label>
         </span>
       </td>
       <td>
-        <span class="badge py-2 px-3 w-100">
-          <input type="checkbox" #txtPrivEditItems id="checkbox3" #chkPrivEditItems>
-          <label class="form-check-label ms-2" for="checkbox3">{{ false | yesNoPipe: 'es' }}</label>
+        <span class="badge py-2 px-3 w-100"
+          [ngClass]="{'text-bg-success': checkedPrivilages[EnumPrivileges.EditItems],
+                      'text-bg-danger': !checkedPrivilages[EnumPrivileges.EditItems]}">
+          <input type="checkbox" #txtPrivEditItems id="checkbox3"
+            (change)="checkChange($event, EnumPrivileges.EditItems)" #chkPrivEditItems>
+          <label class="form-check-label ms-2" for="checkbox3">
+            {{ checkedPrivilages[EnumPrivileges.EditItems] | yesNoPipe: 'es' }}
+          </label>
         </span>
       </td>
       <td>
-        <span class="badge py-2 px-3 w-100">
-          <input type="checkbox" #txtPrivDelItems id="checkbox4" #chkPrivDelItems>
-          <label class="form-check-label ms-2" for="checkbox4">{{ false | yesNoPipe: 'es' }}</label>
+        <span class="badge py-2 px-3 w-100"
+          [ngClass]="{'text-bg-success': checkedPrivilages[EnumPrivileges.DelItems],
+                      'text-bg-danger': !checkedPrivilages[EnumPrivileges.DelItems]}">
+          <input type="checkbox" #txtPrivDelItems id="checkbox4"
+            (change)="checkChange($event, EnumPrivileges.DelItems)" #chkPrivDelItems>
+          <label class="form-check-label ms-2" for="checkbox4">
+            {{ checkedPrivilages[EnumPrivileges.DelItems] | yesNoPipe: 'es' }}
+          </label>
         </span>
       </td>
 
       <td class="w-25">
-        <button class="btn btn-info text-light mx-auto" (click)="selectedUser = null; isEditing = false">
+        <button class="btn btn-info text-light mx-auto" (click)="selectedUser = null; isEditing = false; addUser($event)">
           <img src="assets/icons/remove_person_icon.svg" alt="Eliminar" class="me-1">
           Agregar</button>
       </td>
@@ -87,7 +107,10 @@
         }
 
         @if (user === selectedUser && user.editable) {
-        <button class="btn btn-secondary" (click)="user.editable = false; isEditing = false">
+        <button class="btn btn-info text-light me-2 mx-auto" (click)="user.editable = false; isEditing = false">
+          <img src="assets/icons/check_circle_icon.svg" alt="Eliminar" class="me-1">
+          Guardar</button>
+        <button class="btn btn-secondary mx-auto" (click)="user.editable = false; isEditing = false">
           <img src="assets/icons/cancel_close_icon.svg" alt="Eliminar" class="me-1">
           Cancelar</button>
         }

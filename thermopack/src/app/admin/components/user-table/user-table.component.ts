@@ -22,6 +22,13 @@ interface User {
   privDelItems: boolean;
 }
 
+enum Privileges {
+  EditText,
+  AddItems,
+  EditItems,
+  DelItems
+}
+
 @Component({
     selector: 'admin-user-table',
     standalone: true,
@@ -39,26 +46,28 @@ export class UserTableComponent {
   ];
 
   public selectedUser : UsersTableRow | null = null;
-
   public isEditing : boolean = false
 
   @ViewChild('txtUserEmail')
-  public txtUserEmail !: ElementRef<HTMLInputElement>;
+  private txtUserEmail !: ElementRef<HTMLInputElement>;
 
   @ViewChild('txtUserPswrd')
-  public txtUserPswrd !: ElementRef<HTMLInputElement>;
+  private txtUserPswrd !: ElementRef<HTMLInputElement>;
 
   @ViewChild('chkPrivEditText')
-  public chkPrivEditText !: ElementRef<HTMLInputElement>;
+  private chkPrivEditText !: ElementRef<HTMLInputElement>;
 
   @ViewChild('chkPrivAddItems')
-  public chkPrivAddItems !: ElementRef<HTMLInputElement>;
+  private chkPrivAddItems !: ElementRef<HTMLInputElement>;
 
   @ViewChild('chkPrivEditItems')
-  public chkPrivEditItems !: ElementRef<HTMLInputElement>;
+  private chkPrivEditItems !: ElementRef<HTMLInputElement>;
 
   @ViewChild('chkPrivDelItems')
-  public chkPrivDelItems !: ElementRef<HTMLInputElement>;
+  private chkPrivDelItems !: ElementRef<HTMLInputElement>;
+
+  public checkedPrivilages : boolean[] = [false, false, false, false];
+  public EnumPrivileges = Privileges;
 
   @HostListener('document:click', ['$event'])
   handleDocumentClick(event: MouseEvent) {
@@ -67,5 +76,21 @@ export class UserTableComponent {
     if (!(table?.contains(target) || this.isEditing)) {
       this.selectedUser = null;
     }
+  }
+
+  checkChange(event: Event, privilege : Privileges){
+    this.checkedPrivilages[privilege] = (<HTMLInputElement>event.target).checked
+  }
+
+  addUser(event: Event) : void{
+    let newUser : User = {
+      userEmail: this.txtUserEmail.nativeElement.textContent!,
+      userPswrd: this.txtUserPswrd.nativeElement.textContent!,
+      privEditText: this.chkPrivEditText.nativeElement.checked,
+      privAddItems: this.chkPrivAddItems.nativeElement.checked,
+      privEditItems: this.chkPrivEditItems.nativeElement.checked,
+      privDelItems: this.chkPrivDelItems.nativeElement.checked
+    }
+    console.log(newUser);
   }
 }
