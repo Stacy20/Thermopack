@@ -3,7 +3,7 @@ import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { UnderConstructionComponent } from "../../../shared/components/under-construction/under-construction.component";
 
 @Component({
-    selector: 'app-admin-service-page',
+    selector: 'admin-admin-service-page',
     standalone: true,
     templateUrl: './admin-service-page.component.html',
     styles: ``,

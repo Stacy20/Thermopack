@@ -15,11 +15,12 @@ import { HomeComponent } from './client/pages/home/home.component';
 import { ContactUsComponent } from './client/pages/contact-us/contact-us.component';
 import { DetailPageComponent } from './client/pages/detail-page/detail-page.component';
 import { PageServicesComponent } from './client/pages/page-services/page-services.component';
+import { UsersPageComponent } from './admin/pages/users-page/users-page.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'inicio',
     pathMatch: 'full'
   },
   {
@@ -41,9 +42,6 @@ export const routes: Routes = [
   {
     path: 'detalles',
     component: DetailPageComponent
-  },{
-    path:'**',
-    redirectTo:'inicio'
   },
   {
     path: 'admin',
@@ -73,6 +71,10 @@ export const routes: Routes = [
           { path: 'add', component: AddServicePageComponent },
           { path: 'edit/:id', component: EditServicePageComponent }
         ]
+      },
+      {
+        path: 'users',
+        component: UsersPageComponent
       }
     ]
   },

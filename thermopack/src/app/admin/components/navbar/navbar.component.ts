@@ -8,5 +8,6 @@ import { RouterModule } from '@angular/router';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-
+  hasPrivileges : boolean = true; //TODO Este atributo indica si el usuario actual puede crear usuarios y dar permisos
+  //No debería ser un Input, porque cualquiera llega y le pone true en el navegador, así que de seguro viene de un servicio
 }

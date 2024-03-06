@@ -5,7 +5,7 @@ import { ListCardComponent } from "../../../shared/components/list-card/list-car
 import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
 
 @Component({
-    selector: 'pages-admin-products',
+    selector: 'admin-admin-products',
     standalone: true,
     templateUrl: './admin-products.component.html',
     styleUrl: './admin-products.component.css',

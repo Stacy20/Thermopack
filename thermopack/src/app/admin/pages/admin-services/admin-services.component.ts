@@ -3,7 +3,7 @@ import { ListCardComponent } from "../../../shared/components/list-card/list-car
 import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
 
 @Component({
-    selector: 'pages-admin-services',
+    selector: 'admin-admin-services',
     standalone: true,
     templateUrl: './admin-services.component.html',
     styleUrl: './admin-services.component.css',

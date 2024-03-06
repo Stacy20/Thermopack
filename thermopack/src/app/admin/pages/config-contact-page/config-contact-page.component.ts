@@ -3,7 +3,7 @@ import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { ConfigGalleryComponent } from "../../components/config-gallery/config-gallery.component";
 
 @Component({
-    selector: 'app-config-contact-page',
+    selector: 'admin-config-contact-page',
     standalone: true,
     templateUrl: './config-contact-page.component.html',
     styles: `

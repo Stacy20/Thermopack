@@ -1,0 +1,98 @@
+<table class="table mx-auto w-75" id="users-table">
+  <thead>
+    <tr>
+      <th>Correo</th>
+      <th>Contraseña</th>
+      <th>Editar texto</th>
+      <th>Agregar items</th>
+      <th>Editar items</th>
+      <th>Eliminar items</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!--? En realidad, no hace falta mostrar la contraseña para que no ande viajando tanto por las APIs-->
+    <tr class="align-middle">
+      <td contentEditable #txtUserEmail>Agregar un correo</td>
+      <td contentEditable #txtUserPswrd></td>
+      <td>
+        <span class="badge py-2 px-3 w-100">
+          <input type="checkbox" #txtPrivEditText id="checkbox1" #chkPrivEditText>
+          <label class="form-check-label ms-2" for="checkbox1">{{ false | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+      <td>
+        <span class="badge py-2 px-3 w-100">
+          <input type="checkbox" #txtPrivAddItems id="checkbox2" #chkPrivAddItems>
+          <label class="form-check-label ms-2" for="checkbox2">{{ false | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+      <td>
+        <span class="badge py-2 px-3 w-100">
+          <input type="checkbox" #txtPrivEditItems id="checkbox3" #chkPrivEditItems>
+          <label class="form-check-label ms-2" for="checkbox3">{{ false | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+      <td>
+        <span class="badge py-2 px-3 w-100">
+          <input type="checkbox" #txtPrivDelItems id="checkbox4" #chkPrivDelItems>
+          <label class="form-check-label ms-2" for="checkbox4">{{ false | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+
+      <td class="w-25">
+        <button class="btn btn-info text-light mx-auto" (click)="selectedUser = null; isEditing = false">
+          <img src="assets/icons/remove_person_icon.svg" alt="Eliminar" class="me-1">
+          Agregar</button>
+      </td>
+    </tr>
+
+    @for (user of users; track $index) {
+    <tr class="align-middle" [class.table-primary]="user === selectedUser" (click)="selectedUser = user">
+      <td [contentEditable]="user.editable">{{ user.userEmail }}</td>
+      <td [contentEditable]="user.editable" style="font: password;">{{ user.userPswrd }}</td>
+      <td>
+        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privEditText, 'text-bg-danger': !user.privEditText}">
+          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privEditText" id="checkbox1">
+          <label class="form-check-label ms-2" for="checkbox1">{{ user.privEditText | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+      <td>
+        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privAddItems, 'text-bg-danger': !user.privAddItems}">
+          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privAddItems" id="checkbox2">
+          <label class="form-check-label ms-2" for="checkbox2">{{ user.privAddItems | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+      <td>
+        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privEditItems, 'text-bg-danger': !user.privEditItems}">
+          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privEditItems" id="checkbox3">
+          <label class="form-check-label ms-2" for="checkbox3">{{ user.privEditItems | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+      <td>
+        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privDelItems, 'text-bg-danger': !user.privDelItems}">
+          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privDelItems" id="checkbox4">
+          <label class="form-check-label ms-2" for="checkbox4">{{ user.privDelItems | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+
+      <td class="w-25">
+        @if (user === selectedUser && !user.editable) {
+        <button class="btn btn-primary me-2 mx-auto" (click)="user.editable = true; isEditing = true">
+          <img src="assets/icons/edit_note_icon.svg" alt="Editar" class="me-1">
+          Editar</button>
+        <button class="btn btn-danger mx-auto" (click)="selectedUser = null; isEditing = false">
+          <img src="assets/icons/remove_person_icon.svg" alt="Eliminar" class="me-1">
+          Eliminar</button>
+        }
+
+        @if (user === selectedUser && user.editable) {
+        <button class="btn btn-secondary" (click)="user.editable = false; isEditing = false">
+          <img src="assets/icons/cancel_close_icon.svg" alt="Eliminar" class="me-1">
+          Cancelar</button>
+        }
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>
