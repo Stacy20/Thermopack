@@ -31,12 +31,24 @@ router.post('/', async (req, res) => {
 
 // Modifica un privilegio por su nombre
 router.put('/:name', async (req, res) => {
+    const { name } = req.params;
+    const privilegeWithName = await PrivilegesModel.find({ name }).lean().exec();
+    if (privilegeWithName.length === 0) {
+        res.status(404).json({ message: `No records with ${name} name` });
+        return;
+    }
     await PrivilegesModel.updateOne({ name: req.params.name }, { $set: { name: req.body.name } });
     res.status(202).json({ message: 'Successfully modified' });
 });
 
 // Elimina un privilegio por su nombre
 router.delete('/:name', async (req, res) => {
+    const { name } = req.params;
+    const privilegeWithName = await PrivilegesModel.find({ name }).lean().exec();
+    if (privilegeWithName.length === 0) {
+        res.status(404).json({ message: `No records with ${name} name` });
+        return;
+    }
     await PrivilegesModel.deleteOne({ name: req.params.name });
     res.status(202).json({ message: 'Successfully deleted' });
 });

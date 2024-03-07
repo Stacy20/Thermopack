@@ -34,6 +34,13 @@ router.post('/', async (req, res) => {
 
 // Modifica un servicio por su nombre
 router.put('/:name', async (req, res) => {
+    const { name } = req.params;
+    const serviceWithName = await ServicesModel.find({ name }).lean().exec();
+
+    if (serviceWithName.length === 0) {
+        res.status(404).json({ message: `No records with ${name} name` });
+        return;
+    } 
     await ServicesModel.updateOne({ name: req.params.name }, { $set: {
       name: req.body.name,
       description: req.body.description,
@@ -45,6 +52,13 @@ router.put('/:name', async (req, res) => {
 
 // Elimina un servicio por su nombre
 router.delete('/:name', async (req, res) => {
+    const { name } = req.params;
+    const serviceWithName = await ServicesModel.find({ name }).lean().exec();
+
+    if (serviceWithName.length === 0) {
+        res.status(404).json({ message: `No records with ${name} name` });
+        return;
+    } 
     await ServicesModel.deleteOne({ name: req.params.name });
     res.status(202).json({ message: 'Successfully deleted' });
 });

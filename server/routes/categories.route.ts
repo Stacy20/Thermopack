@@ -31,12 +31,24 @@ router.post('/', async (req, res) => {
 
 // Modifica una categoría por su nombre
 router.put('/:name', async (req, res) => {
+    const { name } = req.params;
+    const categoryWithName = await CategoryModel.find({ name }).lean().exec();
+    if (categoryWithName.length === 0) {
+        res.status(404).json({ message: `No records with ${name} name` });
+        return;
+    }
     await CategoryModel.updateOne({ name: req.params.name }, { $set: { name: req.body.name } });
     res.status(202).json({ message: 'Successfully modified' });
 });
 
 // Elimina una categoría por su nombre
 router.delete('/:name', async (req, res) => {
+    const { name } = req.params;
+    const categoryWithName = await CategoryModel.find({ name }).lean().exec();
+    if (categoryWithName.length === 0) {
+        res.status(404).json({ message: `No records with ${name} name` });
+        return;
+    }
     await CategoryModel.deleteOne({ name: req.params.name });
     res.status(202).json({ message: 'Successfully deleted' });
 });

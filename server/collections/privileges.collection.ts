@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const privilegesSchema = new mongoose.Schema({
-    id: { type: String },
     name: { type: String },
 });
 

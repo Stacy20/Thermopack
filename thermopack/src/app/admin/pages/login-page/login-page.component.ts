@@ -17,7 +17,7 @@ import { Data } from '../../../interfaces/data.interface';
   styles: ``
 })
 export class LoginPageComponent {
-  public brands: Brands[] = [];
+  public brand!: Data;
   constructor(
     private service: MainService
   ) {}
@@ -29,9 +29,9 @@ export class LoginPageComponent {
 
   getAllBrands(): void {
     console.log("hello")
-    this.service.getAllBrands().subscribe((brands) => {
-      this.brands = brands;
-      console.log('this.brands' , this.brands )
+    this.service.getData().subscribe((brand) => {
+      this.brand = brand;
+      console.log('this.brand' , this.brand )
     });
   }
 }

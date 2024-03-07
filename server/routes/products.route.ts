@@ -38,6 +38,12 @@ router.post('/', async (req, res) => {
 
 // Modifica un producto por su nombre
 router.put('/:name', async (req, res) => {
+    const { name } = req.params;
+    const productWithName = await ProductsModel.find({ name }).lean().exec();
+    if (productWithName.length === 0) {
+        res.status(404).json({ message: `No records with ${name} name` });
+        return;
+    }
   await ProductsModel.updateOne({ name: req.params.name }, { $set: {
       name: req.body.name,
       description: req.body.description,
@@ -53,6 +59,12 @@ router.put('/:name', async (req, res) => {
 
 // Elimina un producto por su nombre
 router.delete('/:name', async (req, res) => {
+    const { name } = req.params;
+    const productWithName = await ProductsModel.find({ name }).lean().exec();
+    if (productWithName.length === 0) {
+        res.status(404).json({ message: `No records with ${name} name` });
+        return;
+    }
     await ProductsModel.deleteOne({ name: req.params.name });
     res.status(202).json({ message: 'Successfully deleted' });
 });

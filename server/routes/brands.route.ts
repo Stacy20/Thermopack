@@ -31,12 +31,24 @@ router.post('/', async (req, res) => {
 
 // Modifica una marca por su nombre
 router.put('/:name', async (req, res) => {
+  const { name } = req.params;
+  const brandWithName = await BrandModel.find({ name }).lean().exec();
+  if (brandWithName.length === 0) {
+      res.status(404).json({ message: `No records with ${name} name` });
+      return;
+  }
   await BrandModel.updateOne({ name: req.params.name }, { $set: { name: req.body.name } });
   res.status(202).json({ message: 'Successfully modified' });
 });
 
 // Elimina una marca por su nombre
 router.delete('/:name', async (req, res) => {
+  const { name } = req.params;
+  const brandWithName = await BrandModel.find({ name }).lean().exec();
+  if (brandWithName.length === 0) {
+      res.status(404).json({ message: `No records with ${name} name` });
+      return;
+  }
   await BrandModel.deleteOne({ name: req.params.name });
   res.status(202).json({ message: 'Successfully deleted' });
 });
