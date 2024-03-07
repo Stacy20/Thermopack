@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import express from 'express';
+const cors = require('cors');
 
 
 // Routes
@@ -11,8 +12,10 @@ const port = 3000;
 
 app.use(express.json()); // <- Esta linea permite que se accese el body
 
-app.use('/brands', BrandsRouter);
-app.use('/users', UsersRouter);
+app.use(cors());
+
+app.use('/server/brands', BrandsRouter);
+app.use('/server/users', UsersRouter);
 
 // const authenticationMiddleware = (req: Request, result: Response, next: () => any) => {
 //     if (req.headers.authorization === 'Basic andres:obando') {
