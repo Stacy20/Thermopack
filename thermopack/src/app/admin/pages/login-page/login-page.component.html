@@ -1,18 +1,26 @@
-<!-- <div class="bg-primary">
-  <p class="m-4 pt-4">login-page works!</p>
-  <button class="ms-4 mb-4 btn btn-success">Click Me</button>
-  <span class="badge bg-secondary">La Pinta</span>
-</div>
+<body style="background: linear-gradient(to top, #97bfe7, #d6e7f8)">
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="row">
+      <div class="col-md-8 d-flex flex-column justify-content-center vh-100">
+        <img src="../../../../assets/images/ThermoPack_logo_no-bg.png" class="img-fluid" alt="Imagen de Bienvenida">
+      </div>
+      <div class="col-md-4 bg-white p-4 d-flex flex-column justify-content-center vh-100">
+        <h2 class="text-center mb-4 fs-1">¡Bienvenido!</h2>
 
-<div class="bg-secondary">
-  <p class="m-4 pt-4">login-page works!</p>
-  <button class="ms-4 mb-4 btn btn-primary">Click Me</button>
-  <span class="badge bg-success">La Niña</span>
-</div>
+        <form class="mt-4">
+          <div class="mb-3">
+            <label for="inputEmail" class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" id="inputEmail" placeholder="Correo Electrónico">
+          </div>
+          <div class="mb-3">
+            <label for="inputPassword" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="inputPassword" placeholder="Contraseña">
+          </div>
+          <button type="submit" class="mt-4 w-100 btn btn-primary-thermopack btn-lg btn-block" (click)="submitUserLogin()">Ingresar</button>
+        </form>
 
-<div class="bg-success">
-  <p class="m-4 pt-4">login-page works!</p>
-  <button class="ms-4 mb-4 btn btn-secondary">Click Me</button>
-  <span class="badge bg-primary">La Sta. María</span>
-</div>
- -->
+        <p class="text-center mt-3"><a href="#" class="link-secondary link-offset-2-hover link-underline-opacity-0 link-underline-opacity-75-hover">Olvidé mi contraseña</a></p>
+      </div>
+    </div>
+  </div>
+</body>

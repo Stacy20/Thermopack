@@ -1,0 +1,61 @@
+<body>
+  <div class="container">
+    <admin-navbar></admin-navbar>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 mt-4">
+          <h2>Agregar Servicio</h2>
+          <hr>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-responsive">Nombre</p>
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-responsive">Descripción</p>
+            </div>
+            <div class="col-md-6">
+              <textarea class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-responsive">Precio</p>
+            </div>
+            <div class="col-md-6">
+              <textarea class="form-control"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-md-3">
+            <p class="text-responsive">Imágenes</p>
+          </div>
+          <div class="col-md-6">
+            <div class="input-group mb-3">
+              <input type="file" class="form-control" id="inputFile">
+              <button class="btn btn-info text-light">Agregar</button>
+            </div>
+          </div>
+          <div class="offset-3 col-md-6">
+            <div class="input-group mb-3">
+              <p>Seleccione una imagen para cambiarla o eliminarla.</p>
+              <admin-config-gallery></admin-config-gallery>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="offset-3 col-md-6">
+            <button class="btn btn-success me-4">Agregar</button>
+            <button class="btn btn-danger">Limpiar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

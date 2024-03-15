@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 @Component({
   selector: 'shared-card',
   standalone: true,
@@ -22,5 +22,16 @@ export class CardComponent {
 
   @Input()
   public type!:number;
+
+  constructor(private router: Router) {}
+
+  public gotoEdit(){
+    if(this.type === 1){
+      this.router.navigate(['/admin/products/edit/AnyID']);
+    }
+    if(this.type === 2){
+      this.router.navigate(['/admin/services/edit/AnyID']);
+    }
+  }
 
 }
