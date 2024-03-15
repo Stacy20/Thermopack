@@ -8,8 +8,9 @@ import { Component, Input } from '@angular/core';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
+  //TODO: Debe contener Nombre y link a donde va redirigir
   @Input()
-  public Categories: string[]=['Insecticidas', 'Repelentes','Aromatizantes']
+  public Categories: string[]=[];
 
   // searchTag(tag: string): void{
   //   this.spotiService.organizeHistory(tag);

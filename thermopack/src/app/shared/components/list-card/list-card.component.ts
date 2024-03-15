@@ -10,6 +10,7 @@ import { CardComponent } from "../card/card.component";
 })
 export class ListCardComponent {
 
+  @Input()
   public data: string[] = ['1','2','3','4'];
 
   @Input()

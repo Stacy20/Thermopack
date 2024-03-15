@@ -71,3 +71,18 @@
   bottom: 50px;
 }
 
+.btn-facebook {
+  background: #3b5999;
+}
+
+.btn-youtube {
+  background: #fb0000;
+}
+
+.btn-whatsapp {
+  background: #25D366;
+}
+
+.btn-instagram {
+  background: #e4405f;
+}

@@ -1,8 +1,7 @@
 <div class=" container justify-content-center align-items-center ">
-  <h1>Nuestros servicios</h1>
+  <h1>{{title}}</h1>
   <div class="me-5">
-    Cotice con nosotros los servicios que le ofrecemos a usted y su empresa. <br>
-    Esto es un texto general, la descripción de cada servicio puede ir en la página individual de cada uno.
+    {{description}}
   </div>
 
 </div>
@@ -10,7 +9,7 @@
 
   <div class="container justify-content-center align-items-center" >
       <div class=" justify-content-center align-items-center">
-        <shared-list-card></shared-list-card>
+        <shared-list-card [data]="services"  [type]="0"></shared-list-card>
       </div>
       <div class="mt-5 ">
         <shared-pagination></shared-pagination>

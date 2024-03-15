@@ -6,11 +6,11 @@
         <div class="col-12 m-4 d-flex ">
           <div class="row mb-5 ">
             <div class="col-6 col-lg-5 col-md-4 col-sm-10 p-0 d-flex justify-content-center align-items-center ">
-              <img src="assets/LogoThermoPack.jpg" alt="logoSpoti" height="200px" width="240px" class="rounded-circle mt-1 centered-image">
+              <img [src]=srcLogo alt="logoThermopack" height="200px" width="240px" class="rounded-circle mt-1 centered-image">
             </div>
             <div class="col-6 col-sm-10 col-lg-7 col-md-10 mt-3">
               <h1 class="text-light">Contáctenos</h1>
-              <p  class="h4 mt-5 me-3 mb-3 text-light">Envíenos sus consultas a través de cualquiera de nuestros medios y le atenderemos con todo gusto a la mayor brevedad posible.</p>
+              <p  class="h4 mt-5 me-3 mb-3 text-light">{{description}}</p>
             </div>
           </div>
         </div>
@@ -30,7 +30,9 @@
               <li>221343563</li>
             </ul>
             <li class="m-2 h5">Correos electrónico</li>
-            <li class="m-2 h5">Whatsapp</li>
+            <a [href]="whatsappLink" target="_blank">
+              <li class="m-2 h5" >Whatsapp</li>
+            </a>
             <li class="m-2 h5">Facebook</li>
           </ul>
         </div>

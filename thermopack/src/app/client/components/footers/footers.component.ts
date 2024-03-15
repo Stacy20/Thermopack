@@ -8,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './footers.component.css'
 })
 export class FootersComponent {
-
+  // todo: Se seben conseguir los links de las redes sociales
 }

@@ -9,13 +9,16 @@ import { RouterModule } from '@angular/router';
 })
 export class CardComponent {
   @Input()
-  public title:string='';
+  public title:string='Card title';
 
   @Input()
-  public src:string='';
+  public id:string='Card title';
 
   @Input()
-  public text:string='';
+  public src:string='https://d2o812a6k13pkp.cloudfront.net/fit-in/1080x1080/Productos/40410564_0120220801162411.jpg';
+
+  @Input()
+  public text:string='Some quick example text to build on the card title and make up the bulk of the cards content.';
 
   @Input()
   public type!:number;
