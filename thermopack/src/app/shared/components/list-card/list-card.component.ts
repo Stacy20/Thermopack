@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CardComponent } from "../card/card.component";
+import { Services } from '../../../interfaces/services.interface';
+import { Products } from '../../../interfaces/products.interface';
 
 @Component({
     selector: 'shared-list-card',
@@ -11,7 +13,9 @@ import { CardComponent } from "../card/card.component";
 export class ListCardComponent {
 
   @Input()
-  public data: string[] = ['1','2','3','4'];
+  public services: Services[] = [];
+  @Input()
+  public products: Products[] = [];
 
   @Input()
   public type!: number;

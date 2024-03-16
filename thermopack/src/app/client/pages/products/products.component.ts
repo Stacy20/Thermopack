@@ -19,5 +19,5 @@ export class ProductsComponent {
   public categories: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
   public brands: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
   public types: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
-  public products: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
+  public products: Products[]=['Insecticidas', 'Repelentes','Aromatizantes'];
 }

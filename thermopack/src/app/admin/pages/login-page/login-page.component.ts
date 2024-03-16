@@ -17,7 +17,6 @@ import { Router } from '@angular/router';
   templateUrl: './login-page.component.html'
 })
 export class LoginPageComponent {
-  public brand!: Data;
   constructor(
     private router: Router,
     private service: MainService
