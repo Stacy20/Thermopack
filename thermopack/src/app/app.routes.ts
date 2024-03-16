@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginPageComponent } from './admin/pages/login-page/login-page.component';
-import { HomePageComponent } from './client/pages/home/home-page.component';
 import { AddProductPageComponent } from './admin/pages/add-product-page/add-product-page.component';
 import { AddServicePageComponent } from './admin/pages/add-service-page/add-service-page.component';
 import { AdminProductPageComponent } from './admin/pages/admin-product-page/admin-product-page.component';
@@ -47,10 +46,6 @@ export const routes: Routes = [
       {
         path: 'detalles',
         component: DetailPageComponent
-      },
-      {
-        path: '**',
-        redirectTo: 'inicio'
       }
     ]
   },

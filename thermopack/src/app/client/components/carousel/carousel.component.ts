@@ -1,10 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { GalleriaModule } from 'primeng/galleria';
 import { GalleryModule, GalleryItem, ImageItem } from 'ng-gallery';
 @Component({
   selector: 'client-components-carousel',
   standalone: true,
-  imports: [GalleriaModule, GalleryModule],
+  imports: [GalleryModule],
   templateUrl: './carousel.component.html',
   styleUrl: './carousel.component.css'
 })
