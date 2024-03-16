@@ -50,13 +50,13 @@
         <div class="col-md-6">
           <div class="input-group mb-3">
             <input type="file" class="form-control" id="inputFile">
-            <button class="btn btn-info text-light">Agregar</button>
+            <button class="btn btn-info text-light" (click)="addImage()">Agregar</button>
           </div>
         </div>
         <div class="offset-3 col-md-6">
+          <p>Seleccione una imagen para eliminarla.</p>
           <div class="input-group mb-3">
-            <p>Seleccione una imagen para cambiarla o eliminarla.</p>
-            <admin-config-gallery></admin-config-gallery>
+            <admin-gallery-list></admin-gallery-list>
           </div>
         </div>
       </div>
