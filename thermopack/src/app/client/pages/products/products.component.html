@@ -1,0 +1,44 @@
+
+<div class="container">
+  <div class="ms-5 me-5">
+    <h1>{{title}}</h1>
+    <div class="me-5">
+    {{description}}
+    </div>
+
+  </div>
+  <div class="row mt-4 ms-4" >
+    <div class="col-6 col-sm-5 col-md-4 col-lg-3">
+      <shared-sidebar [Categories]="categories"></shared-sidebar>
+    </div>
+    <div class="col-9 col-sm-12 col-md-12 col-lg-9 " >
+      <div class="mb-3 col-11 ms-3">
+        <div class="row shadow p-2 bg-body rounded">
+          <div class="col-6 d-flex align-items-center">
+            <span class="me-4">Marca:</span>
+            <shared-select class="col-7" [list]="brands"></shared-select>
+          </div>
+          <div class="col-6 d-flex align-items-center">
+            <span class="me-4">Tipo:</span>
+            <shared-select class="col-7" [list]="types"></shared-select>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="container mybackground col-12 ms-2 ">
+        <div class="col-8">
+          <shared-search></shared-search>
+        </div>
+        <div class="row justify-content-center align-items-center">
+          <shared-list-card [type]="0" [data]="products"></shared-list-card>
+        </div>
+        <div class="mt-5 ">
+          <shared-pagination></shared-pagination>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<client-component-footers></client-component-footers>

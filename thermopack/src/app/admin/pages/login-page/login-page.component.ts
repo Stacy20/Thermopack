@@ -8,30 +8,24 @@ import { Services } from '../../../interfaces/services.interface';
 import { Products } from '../../../interfaces/products.interface';
 import { Privileges } from '../../../interfaces/privileges.interface';
 import { Data } from '../../../interfaces/data.interface';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login-page',
+  selector: 'admin-login-page',
   standalone: true,
   imports: [],
-  templateUrl: './login-page.component.html',
-  styles: ``
+  templateUrl: './login-page.component.html'
 })
 export class LoginPageComponent {
   public brand!: Data;
   constructor(
+    private router: Router,
     private service: MainService
   ) {}
 
-  test() {
-    console.log('Button clicked!');
-    this.getAllBrands();
-  }
+  submitUserLogin(): void {
+    //?Aquí se consume la API para la verificación y acreditación del usuario.
 
-  getAllBrands(): void {
-    console.log("hello")
-    this.service.getData().subscribe((brand) => {
-      this.brand = brand;
-      console.log('this.brand' , this.brand )
-    });
+    this.router.navigate(['/admin/config']);
   }
 }

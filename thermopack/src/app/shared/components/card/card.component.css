@@ -1,0 +1,28 @@
+.spacer {
+  flex: 1 1 auto;
+}
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  text-decoration: underline;
+}
+a{
+  color: #000000;
+}
+.centrar-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 250px; /* Ancho del contenedor */
+  height: 250px; /* Alto del contenedor */
+}

@@ -1,0 +1,19 @@
+<div class=" container justify-content-center align-items-center ">
+  <h1>{{title}}</h1>
+  <div class="me-5">
+    {{description}}
+  </div>
+
+</div>
+
+
+  <div class="container justify-content-center align-items-center" >
+      <div class=" justify-content-center align-items-center">
+        <shared-list-card [data]="services"  [type]="0"></shared-list-card>
+      </div>
+      <div class="mt-5 ">
+        <shared-pagination></shared-pagination>
+      </div>
+  </div>
+
+  <client-component-footers></client-component-footers>
