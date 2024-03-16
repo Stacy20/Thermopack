@@ -6,6 +6,7 @@ import { SearchComponent } from "../../../shared/components/search/search.compon
 import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
 import { RouterModule } from '@angular/router';
 import { FootersComponent } from "../../components/footers/footers.component";
+import { Products } from '../../../interfaces/products.interface';
 @Component({
     selector: 'client-page-products',
     standalone: true,
@@ -19,5 +20,5 @@ export class ProductsComponent {
   public categories: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
   public brands: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
   public types: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
-  public products: Products[]=['Insecticidas', 'Repelentes','Aromatizantes'];
+  public products: Products[]=[];
 }
