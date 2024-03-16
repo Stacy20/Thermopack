@@ -320,11 +320,11 @@ export class MainService{
 
   // data
 
-  getData(): Observable<Data> {
+  getData(): Observable<Data[]> {
     const url = `${this.connectionUrl}data`;
-    return this.http.get<Data>(url)
+    return this.http.get<Data[]>(url)
       .pipe(
-        catchError(() => of({} as Data))
+        catchError(() => of([]))
       );
   }
 
