@@ -16,6 +16,7 @@ import { ContactUsComponent } from './client/pages/contact-us/contact-us.compone
 import { DetailPageComponent } from './client/pages/detail-page/detail-page.component';
 import { PageServicesComponent } from './client/pages/page-services/page-services.component';
 import { UsersPageComponent } from './admin/pages/users-page/users-page.component';
+import { ClientComponent } from './client/pages/client/client.component';
 
 export const routes: Routes = [
   {
@@ -24,25 +25,36 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'productos',
-    component: ProductsComponent
+    path:"",
+    component:ClientComponent,
+    children:[
+      {
+        path: 'productos',
+        component: ProductsComponent
+      },
+      {
+        path: 'inicio',
+        component: HomeComponent
+      },
+      {
+        path: 'contactenos',
+        component: ContactUsComponent
+      },
+      {
+        path: 'servicios',
+        component: PageServicesComponent
+      },
+      {
+        path: 'detalles',
+        component: DetailPageComponent
+      },
+      {
+        path: '**',
+        redirectTo: 'inicio'
+      }
+    ]
   },
-  {
-    path: 'inicio',
-    component: HomeComponent
-  },
-  {
-    path: 'contactenos',
-    component: ContactUsComponent
-  },
-  {
-    path: 'servicios',
-    component: PageServicesComponent
-  },
-  {
-    path: 'detalles',
-    component: DetailPageComponent
-  },
+
   {
     path: 'admin',
     children: [

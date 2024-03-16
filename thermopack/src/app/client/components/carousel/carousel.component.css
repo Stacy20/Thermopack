@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   width: 100%; /* Ancho del contenedor */
-  height: 750px; /* Alto del contenedor */
+  height: 850px; /* Alto del contenedor */
   overflow: hidden; /* Para recortar las imágenes que excedan el contenedor */
 }
 
