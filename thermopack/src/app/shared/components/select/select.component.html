@@ -5,10 +5,17 @@
   <option value="3">Three</option>
 </select> -->
 
-<select class="form-select" aria-label="Default select example" (change)="onSelectChange($event)" [(ngModel)]="value"  >
+<select class="form-select" aria-label="Default select example" (change)="onSelectChange($event)" [(ngModel)]="option.name"  >
 
-    @for (option of list; track $index) {
-      <option value={{$index}}>{{option}}</option>
+  @if (value===1) {
+    @for (option of listTypes; track $index) {
+      <option value={{option.name}}>{{option.name}}</option>
 
     }
+  }@else {
+    @for (option of listBrands; track $index) {
+      <option value={{option.name}}>{{option.name}}</option>
+
+    }
+  }
 </select>

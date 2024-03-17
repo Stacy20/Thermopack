@@ -16,11 +16,11 @@
         <div class="row shadow p-2 bg-body rounded">
           <div class="col-6 d-flex align-items-center">
             <span class="me-4">Marca:</span>
-            <shared-select class="col-7" [list]="brands"></shared-select>
+            <shared-select class="col-7" [listBrands]="brands" [value]="0"></shared-select>
           </div>
           <div class="col-6 d-flex align-items-center">
             <span class="me-4">Tipo:</span>
-            <shared-select class="col-7" [list]="types"></shared-select>
+            <shared-select class="col-7" [listTypes]="types" [value]="1"></shared-select>
           </div>
         </div>
 
@@ -31,14 +31,15 @@
           <shared-search></shared-search>
         </div>
         <div class="row justify-content-center align-items-center">
-          <shared-list-card [type]="0" [products]="products"></shared-list-card>
+          <shared-list-card [type]="1" [products]="products" [permissions]="0"></shared-list-card>
         </div>
         <div class="mt-5 ">
-          <shared-pagination></shared-pagination>
+          <shared-pagination [type]="'1'"></shared-pagination>
         </div>
       </div>
 
     </div>
   </div>
 </div>
+<button (click)="crearProducts()" class="btn"> Crear Type</button>
 <client-component-footers></client-component-footers>

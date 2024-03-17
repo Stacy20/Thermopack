@@ -8,7 +8,7 @@
   <div class="card-body">
     <h5 class="card-title">{{title}}</h5>
     <p class="card-text">{{text}}</p>
-    @if (type==0) {
+    @if (permissions==0) {
       <div >
         <!-- todo aqui debemos enviar el type, para que cuando llegue a la página de detalle sepa que informacion es la que se esta mostrando  -->
         <a [routerLink]="['/detalles']"  style="display: flex; justify-content: right;">Ver más</a>

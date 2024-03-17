@@ -51,20 +51,23 @@ export class HomeComponent {
 
   getData(): void {
     this.service.getData().subscribe((data) => {
-      this.data = data;
+      this.data = data[0];
       console.log('this.data' , this.data )
-      this.srcLogo = data.slogan;
-      this.slogan = data.slogan;
-      this.companyDescription = data.slogan;
-      // this.images = data.mainImages;
-      this.titleMission = data.slogan;
-      this.descriptionMission = data.slogan;
-      // this.srcMission1 = data.presentationImages[0];
-      // this.srcMission2 = data.presentationImages[0];
-      this.titleVision = data.slogan;
-      this.descriptionVision = data.slogan;
-      // this.srcVision1 = data.visionImages[0];
-      // this.srcVision2 = data.visionImages[0];
+      // this.srcLogo = this.data.slogan;
+      this.srcLogo = 'assets/LogoThermoPack.jpg'
+      this.slogan = this.data.slogan;
+      this.companyDescription = this.data.slogan;
+      // this.images = this.data.mainImages;
+      // this.titleMission = this.data.slogan;
+      this.descriptionMission = this.data.mision;
+      // this.srcMission1 = this.data.presentationImages[0];
+      // this.srcMission2 = this.data.presentationImages[0];
+      // this.titleVision = this.data.slogan;
+      this.descriptionVision = this.data.vision;
+      // this.srcVision1 = this.data.visionImages[0];
+      // this.srcVision2 = this.data.visionImages[0];
+      this.srcMission1 = this.srcMission2 = this.srcVision1 = this.srcVision2 = 'https://hips.hearstapps.com/hmg-prod/images/types-of-flowers-for-garden-black-eyed-susans-1674848363.jpeg'
+
     });
   }
 }
