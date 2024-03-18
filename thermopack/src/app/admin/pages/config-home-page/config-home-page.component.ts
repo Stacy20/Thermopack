@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { ConfigGalleryComponent } from "../../components/config-gallery/config-gallery.component";
+import { FormsModule } from '@angular/forms';
+import { MainService } from '../../../services/service';
+import { Data } from '../../../interfaces/data.interface';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'admin-config-home-page',
@@ -37,8 +41,54 @@ import { ConfigGalleryComponent } from "../../components/config-gallery/config-g
       background-color: #0196ad;
     }
     `,
-    imports: [NavbarComponent, ConfigGalleryComponent]
+    imports: [NavbarComponent, ConfigGalleryComponent, FormsModule]
 })
 export class ConfigHomePageComponent {
+  constructor(
+    private service: MainService,
+    private _sanitizer: DomSanitizer,
+  ) {}
 
+  ngOnInit() {
+    this.getData();
+  }
+  public data!: Data;
+  public eslogan: string = '';
+  public description: string = '';
+  public mision: string = '';
+  public vision: string = '';
+  public logo: string = '';
+
+
+  save() {
+    console.log(this.logo)
+    this.service.updateMainPage(this.eslogan, this.description, this.mision, this.vision, this.logo).subscribe((data) => {
+      // console.log(data)
+    });
+  }
+
+  deleteInputs() {
+    this.eslogan = this.description = this.mision = this.vision = this.logo = '';
+  }
+  handleFileInput(event: any) {
+    const file: File = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.logo = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+
+  getData(): void {
+    this.service.getData().subscribe((data) => {
+      this.data = data[0];
+      this.eslogan = this.data.slogan;
+      this.description = this.data.description;
+      this.mision = this.data.mision;
+      this.vision = this.data.vision;
+      this.logo = this.data.logo;
+      console.log(this.logo, typeof (this.logo))
+    });
+  }
 }

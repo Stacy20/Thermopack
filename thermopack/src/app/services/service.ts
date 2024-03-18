@@ -342,4 +342,13 @@ export class MainService{
       );
   }
 
+  updateMainPage(slogan: string, description: string, mision: string, vision: string,
+                  logo: string): Observable<Data> {
+    const url = `${this.connectionUrl}data`;
+    return this.http.put<Data>(url, { slogan, description, mision, vision, logo})
+    .pipe(
+    catchError(() => of({} as Data))
+    );
+  }
+
 }

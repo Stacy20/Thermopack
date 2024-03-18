@@ -13,7 +13,7 @@
               <p class="text-responsive">Eslogan</p>
             </div>
             <div class="col-md-6">
-              <input type="text" class="form-control">
+              <input type="text" class="form-control" [(ngModel)]="eslogan">
             </div>
           </div>
           <div class="row mb-3">
@@ -21,23 +21,23 @@
               <p class="text-responsive">Descripción de la empresa</p>
             </div>
             <div class="col-md-6">
-              <textarea class="form-control"></textarea>
+              <textarea class="form-control" [(ngModel)]="description"></textarea>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-3">
-              <p class="text-responsive">Misión de la empresa</p>
+              <p class="text-responsive" >Misión de la empresa</p>
             </div>
             <div class="col-md-6">
-              <textarea class="form-control"></textarea>
+              <textarea class="form-control" [(ngModel)]="mision"></textarea>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-3">
-              <p class="text-responsive">Visión de la empresa</p>
+              <p class="text-responsive" >Visión de la empresa</p>
             </div>
             <div class="col-md-6">
-              <textarea class="form-control"></textarea>
+              <textarea class="form-control" [(ngModel)]="vision"></textarea>
             </div>
           </div>
           <div class="row mb-4">
@@ -46,15 +46,19 @@
             </div>
             <div class="col-md-6">
               <div class="input-group mb-3">
-                <input type="file" class="form-control" id="inputFile">
+                <input type="file" class="form-control" id="inputFile" (change)="handleFileInput($event)">
                 <label class="input-group-text" for="inputFile">Seleccionar archivo</label>
+
               </div>
+              <span>
+                <img [src]="logo" alt="Logo">
+              </span>
             </div>
           </div>
           <div class="row mb-4">
             <div class="offset-3 col-md-6">
-              <button class="btn btn-success me-4">Guardar</button>
-              <button class="btn btn-danger">Cancelar</button>
+              <button class="btn btn-success me-4" (click)="save()">Guardar</button>
+              <button class="btn btn-danger" (click)="deleteInputs()">Cancelar</button>
             </div>
           </div>
         </div>
