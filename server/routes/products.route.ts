@@ -3,11 +3,11 @@ import ProductsModel from '../collections/products.collection';
 
 const router = Router();
 
-// Obtiene todos los productos
-router.get('/', async (req, res) => {
-    const allProducts = await ProductsModel.find({}).lean().exec();
-    res.status(200).json(allProducts);
-});
+// // Obtiene todos los productos
+// router.get('/', async (req, res) => {
+//     const allProducts = await ProductsModel.find({}).lean().exec();
+//     res.status(200).json(allProducts);
+// });
 
 // Obtiene un producto por su nombre
 router.get('/:name', async (req, res) => {
@@ -19,6 +19,28 @@ router.get('/:name', async (req, res) => {
     } else {
         res.status(200).json(productWithName[0]);
     }
+});
+
+router.get('/', async (req, res) => {
+    const { limit, offset, brandId , categoryId, typeId, name } = req.query;
+
+    // Definir un tipo para el objeto de filtro
+    interface Filter {
+        brandId ?: string;
+        categoryId?: string;
+        typeId?: string;
+        name?: { $regex: string, $options: string };
+    }
+
+    // Crear un objeto de filtro basado en los parámetros recibidos
+    const filter: Filter = {};
+    if (brandId ) filter.brandId  = brandId  as string;
+    if (categoryId) filter.categoryId = categoryId as string;
+    if (typeId) filter.typeId = typeId as string;
+    if (name) filter.name = { $regex: name as string, $options: 'i' };
+
+    const products = await ProductsModel.find(filter).skip(parseInt(offset as string)).limit(parseInt(limit as string)).lean().exec();
+    res.status(200).json(products);
 });
 
 // Crea un nuevo producto

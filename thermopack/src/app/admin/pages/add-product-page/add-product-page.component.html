@@ -12,7 +12,7 @@
               <p class="text-responsive">Nombre</p>
             </div>
             <div class="col-md-6">
-              <input type="text" class="form-control">
+              <input type="text" class="form-control" [(ngModel)]="name">
             </div>
           </div>
           <div class="row mb-3">
@@ -20,7 +20,7 @@
               <p class="text-responsive">Descripción</p>
             </div>
             <div class="col-md-6">
-              <textarea class="form-control"></textarea>
+              <textarea class="form-control" [(ngModel)]="decription"></textarea>
             </div>
           </div>
           <div class="row mb-3">
@@ -28,7 +28,7 @@
               <p class="text-responsive">Precio</p>
             </div>
             <div class="col-md-6">
-              <textarea class="form-control"></textarea>
+              <textarea class="form-control" [(ngModel)]="price"></textarea>
             </div>
           </div>
           <div class="row mb-3">
@@ -66,7 +66,7 @@
           </div>
           <div class="row mb-4">
             <div class="offset-3 col-md-6">
-              <button class="btn btn-success me-4">Agregar</button>
+              <button class="btn btn-success me-4" (click)="save()">Agregar</button>
               <button class="btn btn-danger">Limpiar</button>
             </div>
           </div>
