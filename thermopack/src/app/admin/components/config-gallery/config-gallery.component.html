@@ -1,16 +1,29 @@
 <div class="container">
   <div class="row">
     <div class="col-md-3 my-2">
-      <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 1">
+      <label for="image1">
+        <input type="file" id="image1" (change)="onFileSelected($event, 'image1')" style="display: none;">
+        <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 1" style="cursor: pointer;">
+      </label>
     </div>
     <div class="col-md-3 my-2">
-      <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 2">
+      <label for="image2">
+        <input type="file" id="image2" (change)="onFileSelected($event, 'image2')" style="display: none;">
+        <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 2" style="cursor: pointer;">
+      </label>
     </div>
     <div class="col-md-3 my-2">
-      <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 3">
+      <label for="image3">
+        <input type="file" id="image3" (change)="onFileSelected($event, 'image3')" style="display: none;">
+        <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 3" style="cursor: pointer;">
+      </label>
     </div>
     <div class="col-md-3 my-2">
-      <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 4">
+      <label for="image4">
+        <input type="file" id="image4" (change)="onFileSelected($event, 'image4')" style="display: none;">
+        <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 4" style="cursor: pointer;">
+      </label>
     </div>
   </div>
 </div>
+

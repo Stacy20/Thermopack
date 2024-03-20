@@ -1,0 +1,7 @@
+<div class="image-list">
+    <div>
+        @for(image of images; track $index){
+            <img [src]="image" alt="Image" (click)="removeImage($index)">
+        }
+    </div>
+</div>
