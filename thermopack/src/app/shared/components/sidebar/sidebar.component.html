@@ -5,8 +5,8 @@
       <!-- <button (click)="searchTag(tag)" class="list-group-item list-group-item-action">
         {{tag.split('/').pop() | titlecase}}
       </button> -->
-      <button class="list-group-item list-group-item-action text-primary ps-0">
-       {{category}}
+      <button class="list-group-item list-group-item-action text-primary ps-0" (click)="getProductsByCategoryId(category.id)">
+       {{category.name}}
       </button>
     }
     <!-- @for (cattegory of getTags(); track $index) {

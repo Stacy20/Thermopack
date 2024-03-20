@@ -47,7 +47,16 @@ router.get('/:name', async (req, res) => {
         res.status(200).json(productWithName[0]);
     }
 });
-
+router.get('/category/:categoryId', async (req, res) => {
+    const { categoryId } = req.params;
+    try {
+        const products = await ProductsModel.find({ categoryId }).lean().exec();
+        res.status(200).json(products);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
 // Crea un nuevo producto
 router.post('/', async (req, res) => {
   await ProductsModel.create({

@@ -59,10 +59,8 @@ export class PaginationComponent {
     if (this.type=="0") {
        totalPages = Math.ceil(this.totalServices / this.limitService);
     }else{
-      console.log(this.totalProducts, 'hola', this.totalProducts / this.limitProducts, this.totalProducts, this.limitProducts )
        totalPages = Math.ceil(this.totalProducts / this.limitProducts);
     }
-console.log(totalPages,'soy total')
     let startPage = 1;
     const paginationItems: number[] = [];
 

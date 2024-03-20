@@ -391,7 +391,17 @@ getServices(): void {
         catchError(() => of({} as Products))
       );
   }
-
+  getProductsByCategoryId(categoryId: string):void{
+    const url = `${this.connectionUrl}products/category/${categoryId}`;
+    this.http.get<Products[]>(url)
+      .pipe(
+        catchError(() => of([])),
+        tap((response) => {
+          // Actualizar los atributos del servicio con la respuesta del servidor
+          this.products = response;
+        })
+      );
+  }
   createProduct(name: string, description: string,
                 brandId: string, typeId: string , price: number, categoryId: string,
                 subcategoryId: string , images: string[]): Observable<Products> {

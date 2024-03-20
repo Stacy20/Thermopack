@@ -11,6 +11,7 @@ import { Types } from '../../../interfaces/types.interface';
 import { MainService } from '../../../services/service';
 import { Data } from '../../../interfaces/data.interface';
 import { Brands } from '../../../interfaces/brands.interface';
+import { Categories } from '../../../interfaces/categories.interface';
 @Component({
     selector: 'client-page-products',
     standalone: true,
@@ -21,7 +22,7 @@ import { Brands } from '../../../interfaces/brands.interface';
 export class ProductsComponent {
   public title:string='Nuestros productos';
   public description:string=' ';
-  public categories: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
+  public categories: Categories[]=[];
   public brands: Brands[]=[];
   public types: Types[]=[];
   public products: Products[]=[];
@@ -35,6 +36,7 @@ export class ProductsComponent {
     this.getData();
     this.getAllTypes();
     this.getAllBrands();
+    this.getAllCategories();
     this.service.products$.subscribe(response => {
       // Actualizar los datos del componente con los datos del servicio
       this.products = response.products;
@@ -53,7 +55,6 @@ export class ProductsComponent {
   getData(): void {
       this.service.getData().subscribe((data) => {
       this.data = data[0];
-      console.log('this.data' , this.data )
       this.title=this.data.productsTitle;
       this.description=this.data.productsParagraph;
     });
@@ -61,7 +62,6 @@ export class ProductsComponent {
   getAllTypes(): void {
     this.service.getAllTypes().subscribe((types) => {
     this.types = types;
-    console.log('this.types' , this.types )
     // this.title=this.data.productsTitle;
     // this.description=this.data.productsParagraph;
   });
@@ -70,7 +70,13 @@ export class ProductsComponent {
   getAllBrands(): void {
     this.service.getAllBrands().subscribe((brands) => {
     this.brands = brands;
-    console.log('this.brands' , this.brands )
+    // this.title=this.data.productsTitle;
+    // this.description=this.data.productsParagraph;
+  });
+  }
+  getAllCategories(): void {
+    this.service.getAllCategories().subscribe((categories) => {
+    this.categories = categories;
     // this.title=this.data.productsTitle;
     // this.description=this.data.productsParagraph;
   });
