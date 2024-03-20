@@ -16,6 +16,7 @@ import { DetailPageComponent } from './client/pages/detail-page/detail-page.comp
 import { PageServicesComponent } from './client/pages/page-services/page-services.component';
 import { UsersPageComponent } from './admin/pages/users-page/users-page.component';
 import { ClientComponent } from './client/pages/client/client.component';
+import { AdminPageComponent } from './admin/pages/admin-page/admin-page.component';
 
 export const routes: Routes = [
   {
@@ -51,10 +52,15 @@ export const routes: Routes = [
   },
 
   {
+    path: 'login',
+    component: LoginPageComponent
+  },
+
+  {
     path: 'admin',
+    component: AdminPageComponent,
     children: [
-      { path: '', redirectTo: 'login', pathMatch: 'full' },
-      { path: 'login', component: LoginPageComponent },
+      { path: '', redirectTo: 'config', pathMatch: 'full' },
       {
         path: 'config',
         children: [

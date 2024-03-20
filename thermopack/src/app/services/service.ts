@@ -402,6 +402,17 @@ getServices(): void {
         })
       );
   }
+
+  filterProducts(limit: number, offset: number, brandId ?: string, categoryId?: string, typeId?: string, name?: string): Observable<Products[]> {
+    let url = `${this.connectionUrl}products?limit=${limit}&offset=${offset}`;
+    if (brandId) url += `&brandId=${brandId}`;
+    if (categoryId) url += `&categoryId=${categoryId}`;
+    if (typeId) url += `&typeId=${typeId}`;
+    if (name) url += `&name=${name}`;
+
+    return this.http.get<Products[]>(url);
+  }
+
   createProduct(name: string, description: string,
                 brandId: string, typeId: string , price: number, categoryId: string,
                 subcategoryId: string , images: string[]): Observable<Products> {
@@ -454,6 +465,15 @@ getServices(): void {
       .pipe(
         catchError(() => of({} as Data))
       );
+  }
+
+  updateMainPage(slogan: string, description: string, mision: string, vision: string,
+                  logo: string): Observable<Data> {
+    const url = `${this.connectionUrl}data`;
+    return this.http.put<Data>(url, { slogan, description, mision, vision, logo})
+    .pipe(
+    catchError(() => of({} as Data))
+    );
   }
 
 }

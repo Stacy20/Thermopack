@@ -20,6 +20,11 @@ import { Categories } from '../../../interfaces/categories.interface';
     imports: [SelectComponent, ListCardComponent, SidebarComponent, SearchComponent, PaginationComponent, RouterModule, FootersComponent]
 })
 export class ProductsComponent {
+  constructor(
+    private service: MainService,
+
+  ) {}
+
   public title:string='Nuestros productos';
   public description:string=' ';
   public categories: Categories[]=[];
@@ -28,11 +33,10 @@ export class ProductsComponent {
   public products: Products[]=[];
   public data!: Data;
   public totalProducts:number=0;
-  constructor(
-    private service:MainService,
-  ){}
+
 
   ngOnInit(): void {
+    this.loadProducts();
     this.getData();
     this.getAllTypes();
     this.getAllBrands();
@@ -82,73 +86,58 @@ export class ProductsComponent {
   });
   }
 
+  loadProducts() {
+    const limit = 10;
+    const offset = 0;
+    const brandId  = '65e93703875568b1b101d396'; // Puedes pasar estos valores como necesites
+    const categorie = '65f65dfaa75f2ad5cb62e9e1';
+    const type = '65f6549ca75f2ad5cb62e931';
+    const name = 'Pro';
+
+    // limit y offset obligatorio
+    this.service.filterProducts(limit, offset)
+        .subscribe(products => {
+          this.products = products;
+          console.log(1)
+          console.log(products)
+        });
 
 
-  crearProducts(): void {
-    // name: string, description: string,
-    //               brandId: string, typeId: string , price: number, categoryId: string,
-    //               subcategoryId: string , images: string[]
-    const name = "Product 9";
-    const description = "Descripción del servicio";
-    const brandId='65e93703875568b1b101d396'
-    const typeId='65f65506a75f2ad5cb62e944'
-    const price = 99.99;
-    const categoryId='65f65dfaa75f2ad5cb62e9e5'
-    const subcategoryId='';
-    const serviceImages = ["imagen1.jpg", "imagen2.jpg"];
-    this.service.createProduct(name,description,brandId,typeId,price,categoryId,subcategoryId,serviceImages)
-      .subscribe(
-        (result) => {
-          console.log("Servicio creado exitosamente:", result);
-          // Aquí puedes manejar cualquier lógica adicional después de crear el servicio
-        },
-        (error) => {
-          console.error("Error al crear el servicio:", error);
-          // Aquí puedes manejar cualquier error que ocurra durante la creación del servicio
-        }
-      );
+    this.service.filterProducts(limit, offset, brandId )
+      .subscribe(products => {
+        this.products = products;
+        console.log(2)
+        console.log(products)
+      });
+
+    this.service.filterProducts(limit, offset, undefined, categorie )
+      .subscribe(products => {
+        this.products = products;
+        console.log(3)
+        console.log(products)
+      });
+
+      this.service.filterProducts(limit, offset, undefined, undefined, type )
+      .subscribe(products => {
+        this.products = products;
+        console.log(4)
+        console.log(products)
+      });
+
+      this.service.filterProducts(limit, offset, undefined, undefined, undefined, name )
+      .subscribe(products => {
+        this.products = products;
+        console.log(5)
+        console.log(products)
+      });
+
+      this.service.filterProducts(limit, offset, undefined, undefined, undefined, 'Ra' )
+      .subscribe(products => {
+        this.products = products;
+        console.log(5)
+        console.log(products)
+      });
   }
 
-  crearCategory(): void {
-    const serviceName = "Categoria 1";
-    this.service.createCategory(serviceName)
-      .subscribe(
-        (result) => {
-          console.log("Servicio creado exitosamente:", result);
-          // Aquí puedes manejar cualquier lógica adicional después de crear el servicio
-        },
-        (error) => {
-          console.error("Error al crear el servicio:", error);
-          // Aquí puedes manejar cualquier error que ocurra durante la creación del servicio
-        }
-      );
-  }
-// crearType(): void {
-//   const serviceName = "Tipo 1";
-//   this.service.createType(serviceName)
-//     .subscribe(
-//       (result) => {
-//         console.log("Servicio creado exitosamente:", result);
-//         // Aquí puedes manejar cualquier lógica adicional después de crear el servicio
-//       },
-//       (error) => {
-//         console.error("Error al crear el servicio:", error);
-//         // Aquí puedes manejar cualquier error que ocurra durante la creación del servicio
-//       }
-//     );
-// }
-// crearBrands(): void {
-//   const serviceName = "Marca 2";
-//   this.service.createBrand(serviceName)
-//     .subscribe(
-//       (result) => {
-//         console.log("Servicio creado exitosamente:", result);
-//         // Aquí puedes manejar cualquier lógica adicional después de crear el servicio
-//       },
-//       (error) => {
-//         console.error("Error al crear el servicio:", error);
-//         // Aquí puedes manejar cualquier error que ocurra durante la creación del servicio
-//       }
-//     );
-// }
 }
+
