@@ -375,6 +375,15 @@ export class MainService{
     .pipe(
     catchError(() => of({} as Data))
     );
-    }
+  }
+
+  updateProductsServices(productsTitle: string, productsParagraph: string, servicesTitle: string,
+    servicesParagraph: string): Observable<Data> {
+    const url = `${this.connectionUrl}data`;
+    return this.http.put<Data>(url, {productsTitle, productsParagraph, servicesTitle, servicesParagraph})
+    .pipe(
+    catchError(() => of({} as Data))
+    );
+  }
 
 }

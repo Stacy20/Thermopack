@@ -60,6 +60,11 @@ export class ConfigHomePageComponent {
   public logo: string = '';
   public visionImages: string[] = ['','','',''];
   public presentationImages: string[] = ['','','',''];
+  public productosTitle: string = '';
+  public productosText: string = '';
+  public servicesTitle: string = '';
+  public servicesText: string = '';
+
 
 
   deleteInputs() {
@@ -85,6 +90,10 @@ export class ConfigHomePageComponent {
       this.logo = this.data.logo;
       this.visionImages = this.data.visionImages;
       this.presentationImages = this.data.presentationImages;
+      this.productosTitle = this.data.productsTitle;
+      this.productosText = this.data.productsParagraph;
+      this.servicesTitle = this.data.servicesTitle;
+      this.servicesText = this.data.servicesParagraph;
     });
   }
 
@@ -102,9 +111,14 @@ export class ConfigHomePageComponent {
 
   savePresentationImages() {
     this.service.updatePresentationImages(this.presentationImages).subscribe((data) => {
-      console.log(data)
+      // console.log(data)
     });
   }
 
+  saveProductsServices() {
+    this.service.updateProductsServices(this.productosTitle, this.productosText, this.servicesTitle, this.servicesText).subscribe((data) => {
+      console.log(data)
+    });
+  }
 
 }
