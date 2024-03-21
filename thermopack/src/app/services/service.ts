@@ -361,4 +361,20 @@ export class MainService{
     );
   }
 
+  updateMisionImages(visionImages: string[]): Observable<Data> {
+    const url = `${this.connectionUrl}data`;
+    return this.http.put<Data>(url, { visionImages })
+    .pipe(
+    catchError(() => of({} as Data))
+    );
+    }
+
+  updatePresentationImages(presentationImages: string[]): Observable<Data> {
+    const url = `${this.connectionUrl}data`;
+    return this.http.put<Data>(url, { presentationImages })
+    .pipe(
+    catchError(() => of({} as Data))
+    );
+    }
+
 }

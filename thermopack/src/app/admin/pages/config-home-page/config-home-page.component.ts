@@ -58,18 +58,14 @@ export class ConfigHomePageComponent {
   public mision: string = '';
   public vision: string = '';
   public logo: string = '';
+  public visionImages: string[] = ['','','',''];
+  public presentationImages: string[] = ['','','',''];
 
-
-  save() {
-    console.log(this.logo)
-    this.service.updateMainPage(this.eslogan, this.description, this.mision, this.vision, this.logo).subscribe((data) => {
-      // console.log(data)
-    });
-  }
 
   deleteInputs() {
     this.eslogan = this.description = this.mision = this.vision = this.logo = '';
   }
+
   handleFileInput(event: any) {
     const file: File = event.target.files[0];
     const reader = new FileReader();
@@ -79,7 +75,6 @@ export class ConfigHomePageComponent {
     reader.readAsDataURL(file);
   }
 
-
   getData(): void {
     this.service.getData().subscribe((data) => {
       this.data = data[0];
@@ -88,7 +83,28 @@ export class ConfigHomePageComponent {
       this.mision = this.data.mision;
       this.vision = this.data.vision;
       this.logo = this.data.logo;
-      console.log(this.logo, typeof (this.logo))
+      this.visionImages = this.data.visionImages;
+      this.presentationImages = this.data.presentationImages;
     });
   }
+
+  save() {
+    this.service.updateMainPage(this.eslogan, this.description, this.mision, this.vision, this.logo).subscribe((data) => {
+      // console.log(data)
+    });
+  }
+
+  saveVisionImages() {
+    this.service.updateMisionImages(this.visionImages).subscribe((data) => {
+      // console.log(data)
+    });
+  }
+
+  savePresentationImages() {
+    this.service.updatePresentationImages(this.presentationImages).subscribe((data) => {
+      console.log(data)
+    });
+  }
+
+
 }

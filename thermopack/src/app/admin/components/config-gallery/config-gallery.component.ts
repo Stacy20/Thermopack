@@ -1,26 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MainService } from '../../../services/service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'admin-config-gallery',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './config-gallery.component.html',
   styles: ``
 })
 export class ConfigGalleryComponent {
+  @Input() images: string[] = ['', '', '', ''];
+  @Input() identifier: string = '';
 
-  onFileSelected(event: any, imgId: string): void {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const imgElement = document.getElementById(imgId) as HTMLImageElement;
-        if (imgElement) {
-          imgElement.src = reader.result as string;
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+  handleFileInput(event: any, index:number) {
+    const file: File = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.images[index] = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  deleteImage(index: number) {
+    this.images[index] = '';
   }
 
 }

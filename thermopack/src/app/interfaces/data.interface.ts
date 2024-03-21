@@ -5,8 +5,8 @@ export interface Data {
   mision: string;
   vision: string;
   logo: string;
-  visionImages: String[];
-  presentationImages: String[];
+  visionImages: string[];
+  presentationImages: string[];
   productsTitle: string;
   productsParagraph: string;
   servicesTitle: string;

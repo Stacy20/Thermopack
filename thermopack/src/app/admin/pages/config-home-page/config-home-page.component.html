@@ -78,21 +78,19 @@
         <hr />
         <h4>Misión y Visión</h4>
         <p>Seleccione una imagen para cambiarla.</p>
-        <admin-config-gallery></admin-config-gallery>
+        <admin-config-gallery [identifier]="'1'" [images]="this.visionImages"></admin-config-gallery>
         <div class="row my-4">
           <div class="col-md-6">
-            <button class="btn btn-success me-4">Guardar</button>
-            <button class="btn btn-danger">Cancelar</button>
+            <button class="btn btn-success me-4" (click)="saveVisionImages()">Guardar</button>
           </div>
         </div>
 
         <h4 class="mt-4">Presentación</h4>
         <p>Seleccione una imagen para cambiarla o borrarla.</p>
-        <admin-config-gallery></admin-config-gallery>
+        <admin-config-gallery [identifier]="'2'" [images]="this.presentationImages"></admin-config-gallery>
         <div class="row my-4">
           <div class="col-md-6">
-            <button class="btn btn-success me-4">Guardar</button>
-            <button class="btn btn-danger">Cancelar</button>
+            <button class="btn btn-success me-4" (click)="savePresentationImages()">Guardar</button>
           </div>
         </div>
       </div>

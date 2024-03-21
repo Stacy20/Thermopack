@@ -1,28 +1,40 @@
 <div class="container">
   <div class="row">
     <div class="col-md-3 my-2">
-      <label for="image1">
-        <input type="file" id="image1" (change)="onFileSelected($event, 'image1')" style="display: none;">
-        <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 1" style="cursor: pointer;">
+      <label for="image1 + {{this.identifier}}">
+        <input type="file" id="image1 + {{this.identifier}}" (change)="handleFileInput($event, 0)" style="display: none;">
+        <img [src]="this.images[0] !== '' ? this.images[0] : 'https://via.placeholder.com/200'" alt="Imagen 1" class="img-fluid" style="cursor: pointer; max-width: 200px; max-height: 200px; width: auto; height: auto;">
       </label>
+      <button *ngIf="this.images[0] !== ''" class="btn btn-link delete-button" (click)="deleteImage(0)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
     </div>
     <div class="col-md-3 my-2">
-      <label for="image2">
-        <input type="file" id="image2" (change)="onFileSelected($event, 'image2')" style="display: none;">
-        <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 2" style="cursor: pointer;">
+      <label for="image2 + {{this.identifier}}">
+        <input type="file" id="image2 + {{this.identifier}}" (change)="handleFileInput($event, 1)" style="display: none;">
+        <img [src]="this.images[1] !== '' ? this.images[1] : 'https://via.placeholder.com/200'" alt="Imagen 2" class="img-fluid" style="cursor: pointer; max-width: 200px; max-height: 200px; width: auto; height: auto;"/>
       </label>
+      <button *ngIf="this.images[1] !== ''" class="btn btn-link delete-button" (click)="deleteImage(1)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
     </div>
     <div class="col-md-3 my-2">
-      <label for="image3">
-        <input type="file" id="image3" (change)="onFileSelected($event, 'image3')" style="display: none;">
-        <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 3" style="cursor: pointer;">
+      <label for="image3 + {{this.identifier}}">
+        <input type="file" id="image3 + {{this.identifier}}" (change)="handleFileInput($event, 2)" style="display: none;">
+        <img [src]="this.images[2] !== '' ? this.images[2] : 'https://via.placeholder.com/200'" alt="Imagen 3" class="img-fluid" style="cursor: pointer; max-width: 200px; max-height: 200px; width: auto; height: auto;"/>
       </label>
+      <button *ngIf="this.images[2] !== ''" class="btn btn-link delete-button" (click)="deleteImage(2)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
     </div>
     <div class="col-md-3 my-2">
-      <label for="image4">
-        <input type="file" id="image4" (change)="onFileSelected($event, 'image4')" style="display: none;">
-        <img src="https://via.placeholder.com/200" class="img-fluid" alt="Imagen 4" style="cursor: pointer;">
+      <label for="image4 + {{this.identifier}}">
+        <input type="file" id="image4 + {{this.identifier}}" (change)="handleFileInput($event, 3)" style="display: none;">
+        <img [src]="this.images[3] !== '' ? this.images[3] : 'https://via.placeholder.com/200'" alt="Imagen 4" class="img-fluid" style="cursor: pointer; max-width: 200px; max-height: 200px; width: auto; height: auto;"/>
       </label>
+      <button *ngIf="this.images[3] !== ''" class="btn btn-link delete-button" (click)="deleteImage(3)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
     </div>
   </div>
 </div>
