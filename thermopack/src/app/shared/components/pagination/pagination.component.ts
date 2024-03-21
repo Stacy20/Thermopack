@@ -17,6 +17,7 @@ export class PaginationComponent {
   constructor(
     private service:MainService,
   ){}
+
   OnNextPage():void{
     this.service.nextPage(this.type);
     // this.updateCurrentPage(1);
@@ -75,7 +76,6 @@ export class PaginationComponent {
     for (let i = 0; i < 3 && startPage <= totalPages; i++, startPage++) {
       paginationItems.push(startPage);
     }
-
     return paginationItems;
   }
 

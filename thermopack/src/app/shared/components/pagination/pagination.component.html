@@ -13,13 +13,12 @@
         </li>
       }
     }
-
     @for (pageNumber of generatePagination(); track $index) {
       <li class="page-item"  [class.active]="pageNumber === currentPage">
         <a class="page-link" (click)="updateCurrentPage(pageNumber - currentPage)">{{ pageNumber }}</a>
       </li>
     }
-    
+
     @if (this.type=="0") {
       @if (totalServices>limitService) {
         <li class="page-item">
@@ -28,6 +27,7 @@
       }
     }@else {
       @if (totalProducts>limitProducts) {
+
         <li class="page-item">
           <a class="page-link" (click)="updateCurrentPage(1)">Next</a>
         </li>

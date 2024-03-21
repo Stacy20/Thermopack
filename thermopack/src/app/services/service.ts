@@ -15,6 +15,8 @@ import { Data } from '../interfaces/data.interface';
 })
 export class MainService{
   private connectionUrl: string = 'http://localhost:3000/server/';
+  private termSelect:string='';
+
 
   //** Varibles de services IMPORTANES para paginacion */
   public services: Services[]=[];
@@ -40,7 +42,7 @@ export class MainService{
     this.getServices();
     }else{
       this._offsetProducts=this._offsetProducts+this._limitProducts;
-      this.getProducts();
+      this.filterProducts(this._limitProducts,this._offsetProducts);
     }
  }
 
@@ -379,6 +381,7 @@ getServices(): void {
           console.log(this.products)
           this.totalProducts = response.totalCount;
           // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
+          console.log(this.totalProducts, 'si buenas')
           this.productsSubject.next(response);
         })
       )
@@ -403,14 +406,35 @@ getServices(): void {
       );
   }
 
-  filterProducts(limit: number, offset: number, brandId ?: string, categoryId?: string, typeId?: string, name?: string): Observable<Products[]> {
+  // filterProducts(limit: number, offset: number, brandId ?: string, categoryId?: string, typeId?: string, name?: string): Observable<Products[]> {
+  //   let url = `${this.connectionUrl}products?limit=${limit}&offset=${offset}`;
+  //   if (brandId) url += `&brandId=${brandId}`;
+  //   if (categoryId) url += `&categoryId=${categoryId}`;
+  //   if (typeId) url += `&typeId=${typeId}`;
+  //   if (name) url += `&name=${name}`;
+
+  //   return this.http.get<Products[]>(url);
+  // }
+  filterProducts(limit: number, offset: number, brandId ?: string, categoryId?: string, typeId?: string, name?: string): void {
     let url = `${this.connectionUrl}products?limit=${limit}&offset=${offset}`;
     if (brandId) url += `&brandId=${brandId}`;
     if (categoryId) url += `&categoryId=${categoryId}`;
     if (typeId) url += `&typeId=${typeId}`;
     if (name) url += `&name=${name}`;
 
-    return this.http.get<Products[]>(url);
+    this.http.get<{ products: Products[], totalCount: number }>(url)
+    .pipe(
+      catchError(() => of({ products: [], totalCount: 0 })),
+      tap((response) => {
+        // Actualizar los atributos del servicio con la respuesta del servidor
+        this.products = response.products;
+        this.totalProducts = response.totalCount;
+        console.log(this.products, 'seleccione desde categorias', categoryId)
+        // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
+        this.productsSubject.next(response);
+      })
+    )
+    .subscribe();;
   }
 
   createProduct(name: string, description: string,

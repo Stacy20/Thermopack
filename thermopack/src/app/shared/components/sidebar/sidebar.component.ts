@@ -15,12 +15,20 @@ export class SidebarComponent {
     ){}
 
   @Input()
-  public Categories: Categories[]=[];
+  public categories: Categories[]=[];
 
 
-  public getProductsByCategoryId(id:string) {
-    console.log('voy a ir a llamar')
-    this.service.getProductsByCategoryId(id)
+  public getProductsByCategoryId(index:number) {
+
+    console.log('voy a ir a llamar', index, this.categories[index]._id, this.categories[index] )
+    this.service.filterProducts(this.limitProducts, this.offsetProducts, undefined, this.categories[index]._id )
+  }
+
+  get offsetProducts():number{
+    return this.service.offsetProducts;
+  }
+  get limitProducts():number{
+    return this.service.limitProducts;
   }
   // searchTag(tag: string): void{
   //   this.spotiService.organizeHistory(tag);
