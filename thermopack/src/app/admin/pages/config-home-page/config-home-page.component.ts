@@ -117,7 +117,7 @@ export class ConfigHomePageComponent {
 
   saveProductsServices() {
     this.service.updateProductsServices(this.productosTitle, this.productosText, this.servicesTitle, this.servicesText).subscribe((data) => {
-      console.log(data)
+      // console.log(data)
     });
   }
 
