@@ -3,17 +3,15 @@
   <div class="me-5">
     {{description}}
   </div>
-
 </div>
-
-
   <div class="container justify-content-center align-items-center" >
       <div class=" justify-content-center align-items-center">
-        <shared-list-card [services]="services"  [type]="0"></shared-list-card>
+        <shared-list-card [services]="services"  [type]="0" [permissions]="0"></shared-list-card>
       </div>
       <div class="mt-5 ">
-        <shared-pagination></shared-pagination>
+        <shared-pagination [type]="'0'"></shared-pagination>
       </div>
   </div>
-
+  <!-- <button (click)="crearServicio()" class="btn"> Crear servicio</button> -->
   <client-component-footers></client-component-footers>
+

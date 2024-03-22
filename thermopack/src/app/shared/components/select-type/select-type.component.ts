@@ -1,27 +1,20 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Types } from '../../../interfaces/types.interface';
-import { Brands } from '../../../interfaces/brands.interface';
-
+import { FormsModule } from '@angular/forms';
 @Component({
-  selector: 'shared-select',
+  selector: 'shared-select-type',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './select.component.html',
-  styleUrl: './select.component.css'
+  templateUrl: './select-type.component.html',
+  styleUrl: './select-type.component.css'
 })
-export class SelectComponent {
-
-
+export class SelectTypeComponent {
   @Input()
-  public listBrands: Brands[]=[];
-  @Input()
-  public value!: number;
-  // @Output()
-  // public option: number=0;
+  public listTypes!: Types[];
   @Output()
   public option:EventEmitter<number>= new EventEmitter();
-
+  @Input()
+  public value!: number;
   onSelectChange(event: any) {
     const idOption = event.target.value;
     // Haz algo con el índice seleccionado, por ejemplo, llamar a una función

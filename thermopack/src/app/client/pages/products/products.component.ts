@@ -7,29 +7,100 @@ import { PaginationComponent } from "../../../shared/components/pagination/pagin
 import { RouterModule } from '@angular/router';
 import { FootersComponent } from "../../components/footers/footers.component";
 import { Products } from '../../../interfaces/products.interface';
+import { Types } from '../../../interfaces/types.interface';
 import { MainService } from '../../../services/service';
+import { Data } from '../../../interfaces/data.interface';
+import { Brands } from '../../../interfaces/brands.interface';
+import { Categories } from '../../../interfaces/categories.interface';
+import { SelectTypeComponent } from "../../../shared/components/select-type/select-type.component";
 @Component({
     selector: 'client-page-products',
     standalone: true,
     templateUrl: './products.component.html',
     styleUrl: './products.component.css',
-    imports: [SelectComponent, ListCardComponent, SidebarComponent, SearchComponent, PaginationComponent, RouterModule, FootersComponent]
+    imports: [SelectComponent, ListCardComponent, SidebarComponent, SearchComponent, PaginationComponent, RouterModule, FootersComponent, SelectTypeComponent]
 })
 export class ProductsComponent {
+limpiarFiltros() {
+  this.service.cleanfilter()
+}
   constructor(
     private service: MainService,
 
   ) {}
-  ngOnInit() {
-    this.loadProducts();
-  }
-  public title:string='Nuestros productos';
-  public description:string='  Cotice con nosotros la distribución de los productos hasta sus puntos de interés. Ofecemos una amplia cobertura del mercado con varias marcas y categorías. Insertar más texto convincente para el cliente. En esta página se muestran las categorías de los productos que se ofrecen.';
-  public categories: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
-  public brands: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
-  public types: string[]=['Insecticidas', 'Repelentes','Aromatizantes'];
-  public products: Products[]=[];
 
+  public title:string='Nuestros productos';
+  public description:string=' ';
+  public categories: Categories[]=[];
+  public brands: Brands[]=[];
+  public types: Types[]=[];
+  public products: Products[]=[];
+  public data!: Data;
+  public totalProducts:number=0;
+
+
+  ngOnInit(): void {
+    this.loadProducts();
+    this.getData();
+    this.getAllTypes();
+    this.getAllBrands();
+    this.getAllCategories();
+    this.service.products$.subscribe(response => {
+      // Actualizar los datos del componente con los datos del servicio
+      this.products = response.products;
+      this.totalProducts = response.totalCount;
+    });
+
+    // Llamar al método getServices() una vez al inicio
+    this.service.filterProducts(this.limitProducts, this.offsetProducts);
+
+  }
+  getProducts(): void{
+    this.products=this.service.products;
+  }
+  get offsetProducts():number{
+    return this.service.offsetProducts;
+  }
+  get limitProducts():number{
+    return this.service.limitProducts;
+  }
+  getData(): void {
+      this.service.getData().subscribe((data) => {
+      this.data = data[0];
+      this.title=this.data.productsTitle;
+      this.description=this.data.productsParagraph;
+    });
+  }
+  getAllTypes(): void {
+    this.service.getAllTypes().subscribe((types) => {
+    this.types = types;
+    // this.title=this.data.productsTitle;
+    // this.description=this.data.productsParagraph;
+  });
+}
+  getAllBrands(): void {
+    this.service.getAllBrands().subscribe((brands) => {
+    this.brands = brands;
+    // this.title=this.data.productsTitle;
+    // this.description=this.data.productsParagraph;
+  });
+  }
+  getAllCategories(): void {
+    this.service.getAllCategories().subscribe((categories) => {
+    this.categories = categories;
+    // this.title=this.data.productsTitle;
+    // this.description=this.data.productsParagraph;
+  });
+  }
+
+  loadBrands(index:number):void{
+      console.log("alo buenas", this.brands[index]._id)
+      this.service.filterProducts(this.limitProducts, this.offsetProducts,  this.brands[index]._id )
+  }
+  loadTypes(index:number):void{
+    console.log("alo buenas", this.types[index]._id)
+    this.service.filterProducts(this.limitProducts, this.offsetProducts, undefined, undefined, this.types[index]._id )
+  }
   loadProducts() {
     const limit = 10;
     const offset = 0;
@@ -38,49 +109,49 @@ export class ProductsComponent {
     const type = '65f6549ca75f2ad5cb62e931';
     const name = 'Pro';
 
-    // limit y offset obligatorio
-    this.service.filterProducts(limit, offset)
-        .subscribe(products => {
-          this.products = products;
-          console.log(1)
-          console.log(products)
-        });
+    // // limit y offset obligatorio
+    // this.service.filterProducts(limit, offset)
+    //     .subscribe(products => {
+    //       this.products = products;
+    //       console.log(1)
+    //       console.log(products)
+    //     });
 
 
-    this.service.filterProducts(limit, offset, brandId )
-      .subscribe(products => {
-        this.products = products;
-        console.log(2)
-        console.log(products)
-      });
+    // this.service.filterProducts(limit, offset, brandId )
+    //   .subscribe(products => {
+    //     this.products = products;
+    //     console.log(2)
+    //     console.log(products)
+    //   });
 
-    this.service.filterProducts(limit, offset, undefined, categorie )
-      .subscribe(products => {
-        this.products = products;
-        console.log(3)
-        console.log(products)
-      });
+    // this.service.filterProducts(limit, offset, undefined, categorie )
+    //   .subscribe(products => {
+    //     this.products = products;
+    //     console.log(3)
+    //     console.log(products)
+    //   });
 
-      this.service.filterProducts(limit, offset, undefined, undefined, type )
-      .subscribe(products => {
-        this.products = products;
-        console.log(4)
-        console.log(products)
-      });
+    //   this.service.filterProducts(limit, offset, undefined, undefined, type )
+    //   .subscribe(products => {
+    //     this.products = products;
+    //     console.log(4)
+    //     console.log(products)
+    //   });
 
-      this.service.filterProducts(limit, offset, undefined, undefined, undefined, name )
-      .subscribe(products => {
-        this.products = products;
-        console.log(5)
-        console.log(products)
-      });
+    //   this.service.filterProducts(limit, offset, undefined, undefined, undefined, name )
+    //   .subscribe(products => {
+    //     this.products = products;
+    //     console.log(5)
+    //     console.log(products)
+    //   });
 
-      this.service.filterProducts(limit, offset, undefined, undefined, undefined, 'Ra' )
-      .subscribe(products => {
-        this.products = products;
-        console.log(5)
-        console.log(products)
-      });
+    //   this.service.filterProducts(limit, offset, undefined, undefined, undefined, 'Ra' )
+    //   .subscribe(products => {
+    //     this.products = products;
+    //     console.log(5)
+    //     console.log(products)
+    //   });
   }
 
 }

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, switchMap, tap} from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap} from 'rxjs';
 import { Brands } from '../interfaces/brands.interface';
 import { Categories } from '../interfaces/categories.interface';
 import { Users } from '../interfaces/users.interface';
@@ -16,8 +16,76 @@ import { Contact } from '../interfaces/contact.interface';
 })
 export class MainService{
   private connectionUrl: string = 'http://localhost:3000/server/';
+  private termSearch?:string;
+  private idSelectBrand?:string;
+  private idSelectType?:string;
+  private idCategory?:string;
+
+  //** Varibles de services IMPORTANES para paginacion */
+  public services: Services[]=[];
+  public totalServices:number=0;
+  private _limitService:number=6;
+  private _offsetServices: number=0;
+  private servicesSubject: BehaviorSubject<{ services: Services[], totalCount: number }> = new BehaviorSubject<{ services: Services[], totalCount: number }>({ services: [], totalCount: 0 });
+  public services$: Observable<{ services: Services[], totalCount: number }> = this.servicesSubject.asObservable();
 
   constructor(private http: HttpClient) { }
+
+  //** Varibles de products IMPORTANES para paginacion */
+  public products: Products[]=[];
+  public totalProducts:number=0;
+  private _limitProducts:number=10;
+  private _offsetProducts: number=0;
+  private productsSubject: BehaviorSubject<{ products: Products[], totalCount: number }> = new BehaviorSubject<{ products: Products[], totalCount: number }>({ products: [], totalCount: 0 });
+  public products$: Observable<{ products: Products[], totalCount: number }> = this.productsSubject.asObservable();
+  //pagination
+  public nextPage(id:string):void{
+    if(id=="0"){
+    this._offsetServices=this._offsetServices+this._limitService;
+    this.getServices();
+    }else{
+      this._offsetProducts=this._offsetProducts+this._limitProducts;
+      this.filterProducts(this._limitProducts,this._offsetProducts);
+    }
+ }
+
+ public pastPage(id:string):void{
+  //Servicio
+  if(id=="0"){
+    if((this._offsetServices-this._limitService)<=this._limitService){
+      this._offsetServices=0;
+    }
+    else{
+      this._offsetServices=this._offsetServices-this._limitService;
+    }
+
+    this.getServices();
+  }
+  else{
+    console.log('hola desde el server')
+    if((this._offsetProducts-this._limitProducts)<=this._limitProducts){
+      this._offsetProducts=0;
+    }
+    else{
+      this._offsetProducts=this._offsetProducts-this._limitProducts;
+    }
+
+    this.filterProducts(this._limitProducts,this._offsetProducts);
+  }
+
+ }
+ get offset(): number{
+  return this._offsetServices;
+  }
+  get limit():number{
+    return this._limitService
+  }
+  get offsetProducts(): number{
+    return this._offsetProducts;
+    }
+    get limitProducts():number{
+      return this._limitProducts
+    }
 
   // brands
 
@@ -238,7 +306,26 @@ export class MainService{
         catchError(() => of([]))
       );
   }
+// Observable<{ services: Services[], totalCount: number }>
+getServices(): void {
+  const url = `${this.connectionUrl}services`;
+  const params = new HttpParams()
+    .set('limit', this._limitService.toString())
+    .set('offset', this._offsetServices.toString());
 
+  this.http.get<{ services: Services[], totalCount: number }>(url, { params })
+    .pipe(
+      catchError(() => of({ services: [], totalCount: 0 })),
+      tap((response) => {
+        // Actualizar los atributos del servicio con la respuesta del servidor
+        this.services = response.services;
+        this.totalServices = response.totalCount;
+        // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
+        this.servicesSubject.next(response);
+      })
+    )
+    .subscribe();
+}
   getServiceByName(name: string): Observable<Services> {
     const url = `${this.connectionUrl}services/${name}`;
     return this.http.get<Services>(url)
@@ -281,6 +368,28 @@ export class MainService{
       );
   }
 
+  getProducts(): void {
+
+    const url = `${this.connectionUrl}products`;
+    const params = new HttpParams()
+      .set('limit', this._limitProducts.toString())
+      .set('offset', this._offsetProducts.toString());
+
+    this.http.get<{ products: Products[], totalCount: number }>(url, { params })
+      .pipe(
+        catchError(() => of({ products: [], totalCount: 0 })),
+        tap((response) => {
+          // Actualizar los atributos del servicio con la respuesta del servidor
+          this.products = response.products;
+          console.log(this.products)
+          this.totalProducts = response.totalCount;
+          // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
+          console.log(this.totalProducts, 'si buenas')
+          this.productsSubject.next(response);
+        })
+      )
+      .subscribe();
+  }
   getProductByName(name: string): Observable<Products> {
     const url = `${this.connectionUrl}products/${name}`;
     return this.http.get<Products>(url)
@@ -288,15 +397,68 @@ export class MainService{
         catchError(() => of({} as Products))
       );
   }
+  getProductsByCategoryId(categoryId: string):void{
+    const url = `${this.connectionUrl}products/category/${categoryId}`;
+    this.http.get<Products[]>(url)
+      .pipe(
+        catchError(() => of([])),
+        tap((response) => {
+          // Actualizar los atributos del servicio con la respuesta del servidor
+          this.products = response;
+        })
+      );
+  }
 
-  filterProducts(limit: number, offset: number, brandId ?: string, categoryId?: string, typeId?: string, name?: string): Observable<Products[]> {
+  // filterProducts(limit: number, offset: number, brandId ?: string, categoryId?: string, typeId?: string, name?: string): Observable<Products[]> {
+  //   let url = `${this.connectionUrl}products?limit=${limit}&offset=${offset}`;
+  //   if (brandId) url += `&brandId=${brandId}`;
+  //   if (categoryId) url += `&categoryId=${categoryId}`;
+  //   if (typeId) url += `&typeId=${typeId}`;
+  //   if (name) url += `&name=${name}`;
+
+  //   return this.http.get<Products[]>(url);
+  // }
+
+  cleanfilter(){
+    this.idSelectBrand=undefined;
+    this.idCategory =undefined;
+    this.idSelectType=undefined;
+    this.termSearch=undefined;
+    this.filterProducts(this._limitProducts,this._offsetProducts);
+
+  }
+  filterProducts(limit: number, offset: number, brandId ?: string, categoryId?: string, typeId?: string, name?: string): void {
     let url = `${this.connectionUrl}products?limit=${limit}&offset=${offset}`;
-    if (brandId) url += `&brandId=${brandId}`;
-    if (categoryId) url += `&categoryId=${categoryId}`;
-    if (typeId) url += `&typeId=${typeId}`;
-    if (name) url += `&name=${name}`;
-
-    return this.http.get<Products[]>(url);
+    if (brandId || this.idSelectBrand) {
+      this.idSelectBrand = brandId || this.idSelectBrand;
+      url += `&brandId=${this.idSelectBrand}`;
+    }
+    if (categoryId || this.idCategory) {
+      this.idCategory = categoryId || this.idCategory;
+      url += `&categoryId=${this.idCategory}`;
+    }
+    if (typeId || this.idSelectType) {
+      this.idSelectType = typeId || this.idSelectType;
+      url += `&typeId=${this.idSelectType}`;
+    }
+    if (name || this.termSearch) {
+      this.termSearch = name || this.termSearch;
+      url += `&name=${this.termSearch}`;
+    }
+    console.log(this.idCategory,this.idSelectBrand,this.idSelectType, this.termSearch)
+    this.http.get<{ products: Products[], totalCount: number }>(url)
+    .pipe(
+      catchError(() => of({ products: [], totalCount: 0 })),
+      tap((response) => {
+        // Actualizar los atributos del servicio con la respuesta del servidor
+        this.products = response.products;
+        this.totalProducts = response.totalCount;
+        console.log(this.products, 'seleccione desde categorias', this.totalProducts)
+        // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
+        this.productsSubject.next(response);
+      })
+    )
+    .subscribe();;
   }
 
   createProduct(name: string, description: string,
@@ -330,7 +492,6 @@ export class MainService{
   }
 
   // data
-
   getData(): Observable<Data[]> {
     const url = `${this.connectionUrl}data`;
     return this.http.get<Data[]>(url)
@@ -338,6 +499,7 @@ export class MainService{
         catchError(() => of([]))
       );
   }
+
 
   updateData(slogan: string, description: string, mision: string, vision: string,
               logo: string, visionImages: string[], presentationImages: string[],

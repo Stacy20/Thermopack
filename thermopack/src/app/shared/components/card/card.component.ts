@@ -23,8 +23,15 @@ export class CardComponent {
   @Input()
   public type!:number;
 
+  @Input()
+  public permissions!:number;
   constructor(private router: Router) {}
 
+  // id: string;
+  // name: string;
+  // description: string;
+  // price: number;
+  // images: Buffer[];
   public gotoEdit(){
     if(this.type === 1){
       this.router.navigate(['/admin/products/edit/AnyID']);

@@ -1,0 +1,6 @@
+<select class="form-select" aria-label="Buscar por tipo" (change)="onSelectChange($event)">
+  <option selected disabled hidden value="">Buscar por tipo</option>
+  @for (option of listTypes; track $index) {
+      <option value={{$index}}>{{option.name}}</option>
+  }
+</select>

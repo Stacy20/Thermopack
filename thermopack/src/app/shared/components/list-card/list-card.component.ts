@@ -17,6 +17,11 @@ export class ListCardComponent {
   @Input()
   public products: Products[] = [];
 
+  onInit():void{
+
+  }
   @Input()
   public type!: number;
+  @Input()
+  public permissions!: number;
 }
