@@ -3,14 +3,17 @@
     <div class="col-9 col-sm-12 col-md-12 col-lg-9 ">
       <div class="mb-3 col-11 ms-3">
         <div class="row shadow p-2 bg-body rounded">
-          <div class="col-6 d-flex align-items-center">
-            <span class="me-4">Marca:</span>
-            <shared-select class="col-7"></shared-select>
+          <div class="col-5 d-flex align-items-center">
+            <span class="me-4" aria-label="Etiqueta para seleccionar la marca">Marca:</span>
+            <shared-select class="col-8" [listBrands]="brands" [value]="0" (option)="loadBrands($event)" aria-label="Seleccionar marca"></shared-select>
           </div>
-          <div class="col-6 d-flex align-items-center">
-            <span class="me-4">Tipo:</span>
-            <shared-select class="col-7"></shared-select>
+          <div class="col-5 d-flex align-items-center">
+            <span class="me-4" aria-label="Etiqueta para seleccionar el tipo">Tipo:</span>
+            <shared-select-type  class="col-8" [listTypes]="types" [value]="0" (option)="loadTypes($event)" aria-label="Seleccionar tipo"></shared-select-type>
           </div>
+          <button type="button" class="col-1 my-custom-button" (click)="limpiarFiltros()" title="Limpiar filtros" aria-label="Limpiar filtros">
+            <i class="fas fa-broom" aria-hidden="true"></i>
+          </button>
         </div>
       </div>
       <div class="container mybackground col-12 ms-2 ">
@@ -18,10 +21,10 @@
           <shared-search></shared-search>
         </div>
         <div class="row justify-content-center align-items-center">
-          <shared-list-card [type]="1"></shared-list-card>
+          <shared-list-card [type]="1" [products]="products" [permissions]="1"></shared-list-card>
         </div>
         <div class="mt-5 ">
-          <shared-pagination></shared-pagination>
+          <shared-pagination [type]="'1'"></shared-pagination>
         </div>
       </div>
     </div>
