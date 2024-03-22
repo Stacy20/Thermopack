@@ -559,11 +559,11 @@ getServices(): void {
       );
   }
 
-  updateContactData(welcomeParagraph: string, ubicationText: string, ubicationLink: string,
+  updateContactData(welcomeParagraph: string, ubicationText: string, ubicationGMLink: string, ubicationWazeLink: string,
                     telephoneNumbers: string[], email: string, whatsappLink: string, facebookLink: string,
                     instagramLink: string, youtubeLink: string): Observable<Contact> {
     const url = `${this.connectionUrl}contact`;
-    return this.http.put<Contact>(url, { welcomeParagraph, ubicationText, ubicationLink,
+    return this.http.put<Contact>(url, { welcomeParagraph, ubicationText, ubicationGMLink, ubicationWazeLink,
                                     telephoneNumbers, email, whatsappLink, facebookLink,
                                     instagramLink, youtubeLink
       })

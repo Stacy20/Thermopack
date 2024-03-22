@@ -34,7 +34,8 @@ export class ConfigContactPageComponent {
 
   public welcomeParagraph: string = '';
   public ubicationText: string = '';
-  public ubicationLink: string = '';
+  public ubicationGMLink: string = '';
+  public ubicationWazeLink: string = '';
   public telephoneNumbers: string[] = ['','',''];
   public email: string = '';
   public whatsappLink: string = '';
@@ -49,7 +50,8 @@ export class ConfigContactPageComponent {
     this.service.getContactData().subscribe((contact) => {
       this.welcomeParagraph = contact[0].welcomeParagraph;
       this.ubicationText = contact[0].ubicationText;
-      this.ubicationLink = contact[0].ubicationLink;
+      this.ubicationGMLink = contact[0].ubicationGMLink;
+      this.ubicationWazeLink = contact[0].ubicationWazeLink;
       this.telephoneNumbers  = contact[0].telephoneNumbers;
       this.email = contact[0].email;
       this.whatsappLink = contact[0].whatsappLink;
@@ -68,7 +70,7 @@ export class ConfigContactPageComponent {
   }
 
   save() {
-    this.service.updateContactData(this.welcomeParagraph, this.ubicationText, this.ubicationLink,
+    this.service.updateContactData(this.welcomeParagraph, this.ubicationText, this.ubicationGMLink, this.ubicationWazeLink,
       this.telephoneNumbers, this.email, this.whatsappLink, this.facebookLink,
       this.instagramLink, this.youtubeLink).subscribe((data) => {
       // console.log(data)

@@ -14,7 +14,8 @@ router.put('/', async (req, res) => {
   const contactData = await ContactModel.findOneAndUpdate({}, { $set: {
     welcomeParagraph: req.body.welcomeParagraph,
     ubicationText: req.body.ubicationText,
-    ubicationLink: req.body.ubicationLink,
+    ubicationGMLink: req.body.ubicationGMLink,
+    ubicationWazeLink: req.body.ubicationWazeLink,
     telephoneNumbers: req.body.telephoneNumbers,
     email: req.body.email,
     whatsappLink: req.body.whatsappLink,
