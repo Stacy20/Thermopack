@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
+import { MainService } from '../../../services/service';
 @Component({
   selector: 'shared-card',
   standalone: true,
@@ -8,6 +9,7 @@ import { RouterModule, Router } from '@angular/router';
   styleUrl: './card.component.css'
 })
 export class CardComponent {
+
   @Input()
   public title:string='Card title';
 
@@ -25,7 +27,10 @@ export class CardComponent {
 
   @Input()
   public permissions!:number;
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private service: MainService,
+    ) {}
 
   // id: string;
   // name: string;
@@ -39,6 +44,13 @@ export class CardComponent {
     if(this.type === 2){
       this.router.navigate(['/admin/services/edit/AnyID']);
     }
+  }
+
+  public deleteProduct(){
+    this.service.deleteProductByName(this.title).subscribe((product) => {
+      console.log(product);
+      location.reload();
+    });
   }
 
 }
