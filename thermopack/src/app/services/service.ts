@@ -34,7 +34,7 @@ export class MainService{
   //** Varibles de products IMPORTANES para paginacion */
   public products: Products[]=[];
   public totalProducts:number=0;
-  private _limitProducts:number=10;
+  private _limitProducts:number=9;
   private _offsetProducts: number=0;
   private productsSubject: BehaviorSubject<{ products: Products[], totalCount: number }> = new BehaviorSubject<{ products: Products[], totalCount: number }>({ products: [], totalCount: 0 });
   public products$: Observable<{ products: Products[], totalCount: number }> = this.productsSubject.asObservable();
