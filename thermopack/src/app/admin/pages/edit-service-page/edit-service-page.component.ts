@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
     imports: [ConfigGalleryComponent, NavbarComponent, UnderConstructionComponent, FormsModule, CommonModule]
 })
 export class EditServicePageComponent {
+
   constructor(
     private service: MainService,
     private route: ActivatedRoute,
@@ -27,6 +28,7 @@ export class EditServicePageComponent {
       this.getData(params.get('id'));;
     });
   }
+
   public originalName: string = '';
   public name: string = '';
   public description: string = '';
@@ -57,7 +59,6 @@ export class EditServicePageComponent {
       reader.readAsDataURL(file);
     }
   }
-
 
   deleteImage(index: number) {
     this.images[index] = '';
