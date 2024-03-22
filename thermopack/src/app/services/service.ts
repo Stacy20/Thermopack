@@ -15,8 +15,10 @@ import { Data } from '../interfaces/data.interface';
 })
 export class MainService{
   private connectionUrl: string = 'http://localhost:3000/server/';
-  private termSelect:string='';
-
+  private termSearch?:string;
+  private idSelectBrand?:string;
+  private idSelectType?:string;
+  private idCategory?:string;
 
   //** Varibles de services IMPORTANES para paginacion */
   public services: Services[]=[];
@@ -67,7 +69,7 @@ export class MainService{
       this._offsetProducts=this._offsetProducts-this._limitProducts;
     }
 
-    this.getProducts();
+    this.filterProducts(this._limitProducts,this._offsetProducts);
   }
 
  }
@@ -415,13 +417,34 @@ getServices(): void {
 
   //   return this.http.get<Products[]>(url);
   // }
+
+  cleanfilter(){
+    this.idSelectBrand=undefined;
+    this.idCategory =undefined;
+    this.idSelectType=undefined;
+    this.termSearch=undefined;
+    this.filterProducts(this._limitProducts,this._offsetProducts);
+
+  }
   filterProducts(limit: number, offset: number, brandId ?: string, categoryId?: string, typeId?: string, name?: string): void {
     let url = `${this.connectionUrl}products?limit=${limit}&offset=${offset}`;
-    if (brandId) url += `&brandId=${brandId}`;
-    if (categoryId) url += `&categoryId=${categoryId}`;
-    if (typeId) url += `&typeId=${typeId}`;
-    if (name) url += `&name=${name}`;
-
+    if (brandId || this.idSelectBrand) {
+      this.idSelectBrand = brandId || this.idSelectBrand;
+      url += `&brandId=${this.idSelectBrand}`;
+    }
+    if (categoryId || this.idCategory) {
+      this.idCategory = categoryId || this.idCategory;
+      url += `&categoryId=${this.idCategory}`;
+    }
+    if (typeId || this.idSelectType) {
+      this.idSelectType = typeId || this.idSelectType;
+      url += `&typeId=${this.idSelectType}`;
+    }
+    if (name || this.termSearch) {
+      this.termSearch = name || this.termSearch;
+      url += `&name=${this.termSearch}`;
+    }
+    console.log(this.idCategory,this.idSelectBrand,this.idSelectType, this.termSearch)
     this.http.get<{ products: Products[], totalCount: number }>(url)
     .pipe(
       catchError(() => of({ products: [], totalCount: 0 })),
@@ -429,7 +452,7 @@ getServices(): void {
         // Actualizar los atributos del servicio con la respuesta del servidor
         this.products = response.products;
         this.totalProducts = response.totalCount;
-        console.log(this.products, 'seleccione desde categorias', categoryId)
+        console.log(this.products, 'seleccione desde categorias', this.totalProducts)
         // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
         this.productsSubject.next(response);
       })

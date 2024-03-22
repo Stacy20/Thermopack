@@ -2,20 +2,13 @@
   <h3 class="mb-3">Categorías</h3>
   <div class="list-group list-group-flush">
     @for (category of this.categories; track $index) {
-      <!-- <button (click)="searchTag(tag)" class="list-group-item list-group-item-action">
-        {{tag.split('/').pop() | titlecase}}
-      </button> -->
-      <button class="list-group-item list-group-item-action text-primary ps-0" (click)="getProductsByCategoryId($index)">
-       {{category.name}}
-      </button>
+      <a  class="list-group-item category-button ps-0"
+      (click)="getProductsByCategoryId($index)"
+      >
+      <span [class.active]="selectedCategory === $index">
+        {{category.name}}
+      </span>
+   </a>
     }
-    <!-- @for (cattegory of getTags(); track $index) {
-      <button (click)="searchTag(tag)" class="list-group-item list-group-item-action">
-        {{tag.split('/').pop() | titlecase}}
-        <span class="badge rounded-pill bg-dark">
-          {{tag.includes('by-artist') ? 'Artista' : 'Canción'}}
-        </span>
-      </button>
-    } -->
   </div>
 </div>

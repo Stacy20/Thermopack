@@ -22,7 +22,7 @@ import { SelectTypeComponent } from "../../../shared/components/select-type/sele
 })
 export class ProductsComponent {
 limpiarFiltros() {
-throw new Error('Method not implemented.');
+  this.service.cleanfilter()
 }
   constructor(
     private service: MainService,

@@ -65,7 +65,7 @@ router.get('/', async (req, res) => {
     if (name) filter.name = { $regex: name as string, $options: 'i' };
 
     const products = await ProductsModel.find(filter).skip(parseInt(offset as string)).limit(parseInt(limit as string)).lean().exec();
-    const totalCount = await ProductsModel.countDocuments();
+    const totalCount =  await ProductsModel.countDocuments(filter);
     res.status(200).json({
                     products: products,
                     totalCount: totalCount

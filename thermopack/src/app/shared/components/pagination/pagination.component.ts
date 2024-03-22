@@ -9,7 +9,7 @@ import { MainService } from '../../../services/service';
   styleUrl: './pagination.component.css'
 })
 export class PaginationComponent {
-  currentPage: number = 0;
+  currentPage: number = 1;
 
   @Input()
   public type!:string

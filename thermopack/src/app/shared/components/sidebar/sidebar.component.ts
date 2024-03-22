@@ -10,6 +10,7 @@ import { MainService } from '../../../services/service';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
+  public selectedCategory: number | null = null;
   constructor(
     private service:MainService,
     ){}
@@ -22,6 +23,7 @@ export class SidebarComponent {
 
     console.log('voy a ir a llamar', index, this.categories[index]._id, this.categories[index] )
     this.service.filterProducts(this.limitProducts, this.offsetProducts, undefined, this.categories[index]._id )
+    this.selectedCategory = index;
   }
 
   get offsetProducts():number{
