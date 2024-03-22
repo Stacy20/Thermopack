@@ -12,6 +12,7 @@ import ProductsRouter from './routes/products.route';
 import ServicesRouter from './routes/services.route';
 import TypesRouter from './routes/types.route';
 import UsersRouter from './routes/users.route';
+import ContactRouter from './routes/contact.route';
 
 const app = express();
 const port = 3000;
@@ -28,6 +29,7 @@ app.use('/server/products', ProductsRouter);
 app.use('/server/services', ServicesRouter);
 app.use('/server/types', TypesRouter);
 app.use('/server/users', UsersRouter);
+app.use('/server/contact', ContactRouter);
 
 
 const connectionString = 'mongodb+srv://thermopackdev:stacyalonsoyraquel123.@maincluster.xawfxad.mongodb.net/thermopack';

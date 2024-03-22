@@ -9,7 +9,7 @@
           <p class="text-responsive">Párrafo de bienvenida</p>
         </div>
         <div class="col-md-6">
-          <textarea class="form-control"></textarea>
+          <textarea class="form-control" [(ngModel)]="welcomeParagraph"></textarea>
         </div>
       </div>
 
@@ -18,7 +18,7 @@
           <p class="text-responsive">Texto de la ubicación</p>
         </div>
         <div class="col-md-6">
-          <textarea class="form-control"></textarea>
+          <textarea class="form-control" [(ngModel)]="ubicationText"></textarea>
         </div>
       </div>
 
@@ -27,7 +27,7 @@
           <p class="text-responsive">Enlace de la ubicación</p>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" [(ngModel)]="ubicationLink">
         </div>
       </div>
 
@@ -35,9 +35,14 @@
         <div class="col-md-3">
           <p class="text-responsive">Números de teléfono</p>
         </div>
-        <div class="col-md-6">
-          <input type="text" class="form-control">
-          <!-- TODO Texto debajo del input -->
+        <div class="col-md-6 d-flex align-items-center ">
+          <input type="text" class="form-control w-50" [(ngModel)]="newNumber">
+          <button class="btn btn-outline-secondary " type="button" (click)="addNumber()">+</button>
+          <p class="text-responsive">
+            <ng-container *ngFor="let number of telephoneNumbers">
+              {{ number }}
+            </ng-container>
+          </p>
         </div>
       </div>
 
@@ -46,7 +51,7 @@
           <p class="text-responsive">Correo electrónico</p>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" [(ngModel)]="email">
         </div>
       </div>
 
@@ -55,7 +60,7 @@
           <p class="text-responsive">Enlace de Whatsapp</p>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" [(ngModel)]="whatsappLink">
         </div>
       </div>
 
@@ -64,7 +69,7 @@
           <p class="text-responsive">Enlace de Facebook</p>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" [(ngModel)]="facebookLink">
         </div>
       </div>
 
@@ -73,7 +78,7 @@
           <p class="text-responsive">Enlace de Instagram</p>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" [(ngModel)]="instagramLink">
         </div>
       </div>
 
@@ -82,25 +87,23 @@
           <p class="text-responsive">Enlace de Youtube</p>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" [(ngModel)]="youtubeLink">
         </div>
       </div>
 
       <div class="row mb-4">
         <div class="offset-3 col-md-6">
-          <button class="btn btn-success me-4">Guardar</button>
-          <button class="btn btn-danger">Cancelar</button>
+          <button class="btn btn-success me-4" (click)="save()">Guardar</button>
         </div>
       </div>
 
       <div class="col-md-12 my-4">
         <h4>Imágenes de Contacto</h4>
         <p>Seleccione una imagen para cambiarla.</p>
-        <admin-config-gallery></admin-config-gallery>
+        <admin-config-gallery [identifier]="'1'" [images]="this.images"></admin-config-gallery>
         <div class="row my-4">
           <div class="col-md-6">
-            <button class="btn btn-success me-4">Guardar</button>
-            <button class="btn btn-danger">Cancelar</button>
+            <button class="btn btn-success me-4" (click)="saveImages()">Guardar</button>
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import { Services } from '../interfaces/services.interface';
 import { Products } from '../interfaces/products.interface';
 import { Privileges } from '../interfaces/privileges.interface';
 import { Data } from '../interfaces/data.interface';
+import { Contact } from '../interfaces/contact.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -383,6 +384,37 @@ export class MainService{
     return this.http.put<Data>(url, {productsTitle, productsParagraph, servicesTitle, servicesParagraph})
     .pipe(
     catchError(() => of({} as Data))
+    );
+  }
+
+  // contact
+
+  getContactData(): Observable<Contact[]> {
+    const url = `${this.connectionUrl}contact`;
+    return this.http.get<Contact[]>(url)
+      .pipe(
+        catchError(() => of([]))
+      );
+  }
+
+  updateContactData(welcomeParagraph: string, ubicationText: string, ubicationLink: string,
+                    telephoneNumbers: string[], email: string, whatsappLink: string, facebookLink: string,
+                    instagramLink: string, youtubeLink: string): Observable<Contact> {
+    const url = `${this.connectionUrl}contact`;
+    return this.http.put<Contact>(url, { welcomeParagraph, ubicationText, ubicationLink,
+                                    telephoneNumbers, email, whatsappLink, facebookLink,
+                                    instagramLink, youtubeLink
+      })
+      .pipe(
+        catchError(() => of({} as Contact))
+      );
+  }
+
+  updateContactImages(images: string[]): Observable<Contact> {
+    const url = `${this.connectionUrl}contact`;
+    return this.http.put<Contact>(url, { images })
+    .pipe(
+    catchError(() => of({} as Contact))
     );
   }
 
