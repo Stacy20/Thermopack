@@ -31,4 +31,7 @@ export class DetailPageComponent {
     },
     // ... más imágenes
   ];
+  formatDescription(description: string): string {
+    return description.replace(/\n/g, '<br>');
+  }
 }
