@@ -8,5 +8,5 @@ export interface Products {
   price: number;
   categoryId: string;
   subcategoryId: string;
-  images: String[];
+  images: string[];
 }

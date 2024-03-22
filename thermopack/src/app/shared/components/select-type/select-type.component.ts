@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class SelectTypeComponent {
   @Input()
+  public selectedType: string = 'Tipo 1';
+  @Input()
   public listTypes!: Types[];
   @Output()
   public option:EventEmitter<number>= new EventEmitter();

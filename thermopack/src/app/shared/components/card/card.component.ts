@@ -34,7 +34,7 @@ export class CardComponent {
   // images: Buffer[];
   public gotoEdit(){
     if(this.type === 1){
-      this.router.navigate(['/admin/products/edit/AnyID']);
+      this.router.navigate(['/admin/products/edit/'+this.title]);
     }
     if(this.type === 2){
       this.router.navigate(['/admin/services/edit/AnyID']);
