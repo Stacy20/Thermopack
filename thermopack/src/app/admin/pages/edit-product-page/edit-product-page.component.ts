@@ -9,7 +9,6 @@ import { Types } from '../../../interfaces/types.interface';
 import { SelectTypeComponent } from '../../../shared/components/select-type/select-type.component';
 import { CommonModule } from '@angular/common';
 import { Brands } from '../../../interfaces/brands.interface';
-import { SelectComponent } from '../../../shared/components/select/select.component';
 
 @Component({
     selector: 'admin-edit-product-page',

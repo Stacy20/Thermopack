@@ -37,20 +37,27 @@ export class CardComponent {
   // description: string;
   // price: number;
   // images: Buffer[];
-  public gotoEdit(){
+  public gotoEditProduct(){
     if(this.type === 1){
       this.router.navigate(['/admin/products/edit/'+this.title]);
     }
     if(this.type === 2){
-      this.router.navigate(['/admin/services/edit/AnyID']);
+      this.router.navigate(['/admin/services/edit/'+this.title]);
     }
   }
 
   public deleteProduct(){
-    this.service.deleteProductByName(this.title).subscribe((product) => {
-      console.log(product);
-      location.reload();
-    });
+    if(this.type === 1){
+      this.service.deleteProductByName(this.title).subscribe((product) => {
+        console.log(product);
+        location.reload();
+      });
+    }
+    if(this.type === 2){
+      this.service.deleteServiceByName(this.title).subscribe((service) => {
+        //console.log(service);
+        location.reload();
+      });
+    }
   }
-
 }
