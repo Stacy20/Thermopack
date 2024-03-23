@@ -42,7 +42,7 @@ export class ContactUsComponent {
     this.service.getContactData().subscribe((contact) => {
       this.welcomeParagraph = contact[0].welcomeParagraph;
       this.ubicationText = contact[0].ubicationText;
-      this.ubicationLink = contact[0].ubicationLink;
+      this.ubicationLink = contact[0].ubicationGMLink;
       this.telephoneNumbers  = contact[0].telephoneNumbers;
       console.log(this.telephoneNumbers, 'hola')
       this.email = contact[0].email;
