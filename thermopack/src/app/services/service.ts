@@ -267,6 +267,7 @@ export class MainService{
 
   getUserByEmail(email: string): Observable<Users> {
     const url = `${this.connectionUrl}users/${email}`;
+    console.log(url)
     return this.http.get<Users>(url)
       .pipe(
         catchError(() => of({} as Users))
