@@ -2,7 +2,8 @@ export interface Contact {
   id: string;
   welcomeParagraph: string;
   ubicationText: string;
-  ubicationLink: string;
+  ubicationGMLink: string;
+  ubicationWazeLink: string;
   telephoneNumbers: string[];
   email: string;
   whatsappLink: string;

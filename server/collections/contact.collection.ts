@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const contactSchema = new mongoose.Schema({
     welcomeParagraph: { type: String },
     ubicationText: { type: String },
-    ubicationLink: { type: String },
+    ubicationGMLink: { type: String },
+    ubicationWazeLink: { type: String },
     telephoneNumbers: { type: [String] },
     email: { type: String },
     whatsappLink: { type: String },
