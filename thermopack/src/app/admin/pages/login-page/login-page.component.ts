@@ -20,6 +20,8 @@ export class LoginPageComponent {
 
   public email: string = '';
   public password: string = '';
+  public passwordFieldType: string = 'password';
+  public passwordIcon: string = "assets/icons/visibility.svg";
 
   submitUserLogin(): void {
     if (this.email == '') { return; }
@@ -32,7 +34,15 @@ export class LoginPageComponent {
         console.log('la contrasenha no coincide');// TODO alert
         return;
       }
+      console.log('log in');
+      this.service.isLoggedIn = true;
       this.router.navigate(['/admin/config']);
     });
   }
+
+  togglePasswordVisibility() {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+    this.passwordIcon = this.passwordIcon === "assets/icons/visibility.svg" ? "assets/icons/visibility_off.svg" : "assets/icons/visibility.svg";
+  }
+
 }

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MainService } from '../../../services/service';
 import { Data } from '../../../interfaces/data.interface';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'admin-config-home-page',
@@ -41,15 +42,17 @@ import { DomSanitizer } from '@angular/platform-browser';
       background-color: #0196ad;
     }
     `,
-    imports: [NavbarComponent, ConfigGalleryComponent, FormsModule]
+    imports: [NavbarComponent, ConfigGalleryComponent, FormsModule, ]
 })
 export class ConfigHomePageComponent {
   constructor(
     private service: MainService,
     private _sanitizer: DomSanitizer,
+    private router: Router,
   ) {}
 
   ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
     this.getData();
   }
   public data!: Data;

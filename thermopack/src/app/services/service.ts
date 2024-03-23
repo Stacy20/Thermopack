@@ -20,6 +20,7 @@ export class MainService{
   private idSelectBrand?:string;
   private idSelectType?:string;
   private idCategory?:string;
+  public isLoggedIn:boolean = false;
 
   //** Varibles de services IMPORTANES para paginacion */
   public services: Services[]=[];
