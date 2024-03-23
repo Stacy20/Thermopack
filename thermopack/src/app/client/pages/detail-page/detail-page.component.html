@@ -8,6 +8,9 @@
       <div class="col-7  col-sm-12 col-md-12 col-lg-7">
         <div class="mt-5 ms-5 me-5">
           <p class="h5" [innerHTML]="formatDescription(description)"></p>
+          @if (price!=0) {
+            <p class="h5">Precio: {{price}}</p>
+          }
             <p class="h5 mt-5 mb-5"></p>
             <!-- <button [routerLink]="['/detalles']" type="button" class="my-custom-button mt-5 mb-5">Solicitar producto</button>
              -->
@@ -34,4 +37,3 @@
 
 </div>
 
-<client-component-footers></client-component-footers>
