@@ -3,5 +3,5 @@ export interface Services {
   name: string;
   description: string;
   price: number;
-  images: String[];
+  images: string[];
 }

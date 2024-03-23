@@ -10,6 +10,7 @@ import { MainService } from '../../../services/service';
 })
 export class CardComponent {
 
+
   @Input()
   public title:string='Card title';
 
@@ -37,6 +38,10 @@ export class CardComponent {
   // description: string;
   // price: number;
   // images: Buffer[];
+  public gotoVerMas():void {
+    this.router.navigate(['detalles/'+this.type+'/'+this.title]);
+
+  }
   public gotoEdit(){
     if(this.type === 1){
       this.router.navigate(['/admin/products/edit/'+this.title]);
