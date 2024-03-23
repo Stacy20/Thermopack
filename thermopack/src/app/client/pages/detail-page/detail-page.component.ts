@@ -59,15 +59,13 @@ export class DetailPageComponent {
       this.title= service.name;
       this.description = service.description;
       this.price = service.price;
-      // this.images = service.images;
-      console.log(service.images, 'soy manifica')
-      service.images.forEach(imageString => {
-
-        if (imageString !== '') {
-          const base64String = imageString.split(',')[1];
-          console.log(base64String,"vomoooooo")
-          const imageItem = new ImageItem({ src: base64String, thumb: base64String });
-          this.images.push(imageItem);
+      this.images = [];
+      service.images.forEach((imageString) => {
+        if (imageString != ''){
+          this.images.push(new ImageItem(
+            { src: imageString,
+            thumb: imageString},
+          ));
         }
       });
     });
@@ -81,7 +79,15 @@ export class DetailPageComponent {
       this.title= product.name;
       this.description = product.description;
       this.price = product.price;
-      // this.images = product.images;
+      this.images = [];
+      product.images.forEach((imageString) => {
+        if (imageString != ''){
+          this.images.push(new ImageItem(
+            { src: imageString,
+            thumb: imageString},
+          ));
+        }
+      });
     });
   }
 }
