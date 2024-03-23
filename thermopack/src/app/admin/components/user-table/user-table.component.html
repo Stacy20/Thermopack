@@ -12,7 +12,7 @@
   <tbody>
     <!--? En realidad, no hace falta mostrar la contraseña para que no ande viajando tanto por las APIs-->
     <tr class="align-middle">
-      <td contentEditable #txtUserEmail>Agregar un correo</td>
+      <td><input type="text" [(ngModel)]="email" placeholder="Agregar un correo" style="border: none; outline: none;"></td>
       <td>
         <span class="badge py-2 px-3 w-100"
           [ngClass]="{'text-bg-success': checkedPrivilages[EnumPrivileges.EditText],
@@ -59,7 +59,7 @@
       </td>
 
       <td class="w-25">
-        <button class="btn btn-info text-light mx-auto" (click)="selectedUser = null; isEditing = false; addUser($event)">
+        <button class="btn btn-info text-light mx-auto" (click)="selectedUser = null; isEditing = false; addUser()">
           <img src="assets/icons/remove_person_icon.svg" alt="Eliminar" class="me-1">
           Agregar</button>
       </td>

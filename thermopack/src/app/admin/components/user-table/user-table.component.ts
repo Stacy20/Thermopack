@@ -2,10 +2,10 @@ import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { YesNoPipePipe } from "../../pipes/yes-no-pipe.pipe";
 import { CommonModule } from '@angular/common';
+import { MainService } from '../../../services/service';
 
 interface UsersTableRow {
   userEmail: string;
-  userPswrd: string;
   privEditText: boolean;
   privAddItems: boolean;
   privEditItems: boolean;
@@ -37,16 +37,19 @@ enum Privileges {
     imports: [FormsModule, YesNoPipePipe, CommonModule]
 })
 export class UserTableComponent {
+  constructor(
+    private service: MainService,
+  ) {}
 
-  public users: UsersTableRow[] = [
-    { userEmail: 'jarrieta@anymail.com', userPswrd: 'abcdef', privEditText: true, privAddItems: true, privEditItems: true, privDelItems: true, editable: false },
-    { userEmail: 'amoreira@anymail.com', userPswrd: 'ghijk', privEditText: false, privAddItems: true, privEditItems: true, privDelItems: false, editable: false },
-    { userEmail: 'dmiranda@anymail.com', userPswrd: 'lmnop', privEditText: true, privAddItems: false, privEditItems: false, privDelItems: false, editable: false },
-    { userEmail: 'fblanco@anymail.com', userPswrd: 'qrstuv', privEditText: true, privAddItems: true, privEditItems: false, privDelItems: false, editable: false }
-  ];
+  ngOnInit() {
+    this.getData();;
+  }
 
+  public users: UsersTableRow[] = [];
   public selectedUser : UsersTableRow | null = null;
   public isEditing : boolean = false
+  public email: string = '';
+  public privileges: boolean[] = [false,false,false,false];
 
   @ViewChild('txtUserEmail')
   private txtUserEmail !: ElementRef<HTMLInputElement>;
@@ -79,18 +82,36 @@ export class UserTableComponent {
   }
 
   checkChange(event: Event, privilege : Privileges){
+    this.privileges[privilege] = this.privileges[privilege] === false ? true : false;
     this.checkedPrivilages[privilege] = (<HTMLInputElement>event.target).checked
   }
 
-  addUser(event: Event) : void{
-    let newUser : User = {
-      userEmail: this.txtUserEmail.nativeElement.textContent!,
-      userPswrd: this.txtUserPswrd.nativeElement.textContent!,
-      privEditText: this.chkPrivEditText.nativeElement.checked,
-      privAddItems: this.chkPrivAddItems.nativeElement.checked,
-      privEditItems: this.chkPrivEditItems.nativeElement.checked,
-      privDelItems: this.chkPrivDelItems.nativeElement.checked
+  isEmail(email: string) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
+
+  addUser() : void{
+    for (let i = 0; i < this.users.length; i++) {
+      if (this.users[i].userEmail == this.email || !this.isEmail(this.email)){
+        return; // TODO alert
+      }
     }
-    console.log(newUser);
+    const p = 'Password123.'; //TODO generar contrasenhas
+    const privilegesAsNumbers = this.privileges.map(privilege => privilege ? 1 : 0);
+    this.service.createUser(this.email, p, privilegesAsNumbers).subscribe((user) => {
+      if (user.email == this.email){
+        // TODO alert que salio bien
+        location.reload();
+      }
+    });
+  }
+
+  getData(): void {
+    this.service.getAllUsers().subscribe((users) => {
+      for (let i = 0; i < users.length; i++) {
+        this.users.push({ userEmail: users[i].email, privEditText: users[i].privileges[0] == 1, privAddItems: users[i].privileges[1] == 1, privEditItems: users[i].privileges[2] == 1, privDelItems: users[i].privileges[3] == 1, editable: false })
+      }
+    });
   }
 }

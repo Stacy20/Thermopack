@@ -273,7 +273,7 @@ export class MainService{
       );
   }
 
-  createUser(email: string, password: string, privileges: string[]): Observable<Users> {
+  createUser(email: string, password: string, privileges: number[]): Observable<Users> {
     const url = `${this.connectionUrl}users`;
     return this.http.post<Users>(url, { email, password, privileges })
       .pipe(
@@ -281,7 +281,7 @@ export class MainService{
       );
   }
 
-  updateUserByEmail(email: string, newEmail: string, password: string, privileges: string[]): Observable<Users> {
+  updateUserByEmail(email: string, newEmail: string, password: string, privileges: number[]): Observable<Users> {
     const url = `${this.connectionUrl}users/${email}`;
     return this.http.put<Users>(url, { newEmail, password, privileges })
       .pipe(
