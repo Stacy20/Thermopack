@@ -11,6 +11,9 @@
           </div>
           <div class="col-md-6">
             <input type="text" class="form-control" [(ngModel)]="eslogan" />
+            @if (eslogan.length < 5) {
+              <div class="text-danger">Debe tener al menos 5 caracteres</div>
+            }
           </div>
         </div>
         <div class="row mb-3">
@@ -19,6 +22,10 @@
           </div>
           <div class="col-md-6">
             <textarea class="form-control" [(ngModel)]="description"></textarea>
+            @if (description.length < 5) {
+              <div class="text-danger">Debe tener al menos 5 caracteres</div>
+            }
+
           </div>
         </div>
         <div class="row mb-3">
@@ -27,6 +34,9 @@
           </div>
           <div class="col-md-6">
             <textarea class="form-control" [(ngModel)]="mision"></textarea>
+            @if (mision.length < 5) {
+              <div class="text-danger">Debe tener al menos 5 caracteres</div>
+            }
           </div>
         </div>
         <div class="row mb-3">
@@ -35,6 +45,9 @@
           </div>
           <div class="col-md-6">
             <textarea class="form-control" [(ngModel)]="vision"></textarea>
+            @if (vision.length < 5) {
+              <div class="text-danger">Debe tener al menos 5 caracteres</div>
+            }
           </div>
         </div>
         <div class="row mb-4">
@@ -75,7 +88,7 @@
         <hr />
         <h4>Misión y Visión</h4>
         <p>Seleccione una imagen para cambiarla.</p>
-        <admin-config-gallery [identifier]="'1'" [images]="this.visionImages"></admin-config-gallery>
+        <admin-config-gallery  [identifier]="'1'" [images]="this.visionImages" (imagesNew)="updateImages($event)"></admin-config-gallery>
         <div class="row my-4">
           <div class="col-md-6">
             <button class="btn btn-success me-4" (click)="saveVisionImages()">Guardar</button>
@@ -84,7 +97,7 @@
 
         <h4 class="mt-4">Presentación</h4>
         <p>Seleccione una imagen para cambiarla o borrarla.</p>
-        <admin-config-gallery [identifier]="'2'" [images]="this.presentationImages"></admin-config-gallery>
+        <admin-config-gallery [identifier]="'2'" [images]="this.presentationImages" (imagesNew)="updateImages($event)"></admin-config-gallery>
         <div class="row my-4">
           <div class="col-md-6">
             <button class="btn btn-success me-4" (click)="savePresentationImages()">Guardar</button>

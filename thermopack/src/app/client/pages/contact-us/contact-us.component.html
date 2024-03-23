@@ -10,7 +10,7 @@
             </div>
             <div class="col-6 col-sm-10 col-lg-7 col-md-10 mt-3">
               <h1 class="text-light" aria-label="Título principal">Contáctenos</h1>
-              <p class="h4 mt-5 me-3 mb-3 text-light" aria-label="Descripción">{{description}}</p>
+              <p class="h4 mt-5 me-3 mb-3 text-light" aria-label="Descripción" [innerHTML]="formatDescription(description)"></p>
             </div>
           </div>
         </div>

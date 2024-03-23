@@ -8,6 +8,9 @@
       <button *ngIf="this.images[0] !== ''" class="btn btn-link delete-button" (click)="deleteImage(0)">
         <i class="fas fa-trash-alt"></i>
       </button>
+      @if (this.images[0]=='') {
+        <div class="text-danger">Debe seleccionar una imagen. <br> De otra manera no se guaradará el cambio</div>
+      }
     </div>
     <div class="col-md-3 my-2">
       <label for="image2 + {{this.identifier}}">
@@ -17,7 +20,11 @@
       <button *ngIf="this.images[1] !== ''" class="btn btn-link delete-button" (click)="deleteImage(1)">
         <i class="fas fa-trash-alt"></i>
       </button>
+      @if (this.images[1]=='') {
+        <div class="text-danger">Debe seleccionar una imagen. <br> De otra manera no se guaradará el cambio</div>
+      }
     </div>
+
     <div class="col-md-3 my-2">
       <label for="image3 + {{this.identifier}}">
         <input type="file" id="image3 + {{this.identifier}}" (change)="handleFileInput($event, 2)" style="display: none;">
@@ -26,6 +33,9 @@
       <button *ngIf="this.images[2] !== ''" class="btn btn-link delete-button" (click)="deleteImage(2)">
         <i class="fas fa-trash-alt"></i>
       </button>
+      @if (this.images[2]=='') {
+        <div class="text-danger">Debe seleccionar una imagen. <br> De otra manera no se guaradará el cambio</div>
+      }
     </div>
     <div class="col-md-3 my-2">
       <label for="image4 + {{this.identifier}}">
@@ -35,6 +45,9 @@
       <button *ngIf="this.images[3] !== ''" class="btn btn-link delete-button" (click)="deleteImage(3)">
         <i class="fas fa-trash-alt"></i>
       </button>
+      @if (this.images[3]=='') {
+        <div class="text-danger">Debe seleccionar una imagen. <br> De otra manera no se guaradará el cambio</div>
+      }
     </div>
   </div>
 </div>

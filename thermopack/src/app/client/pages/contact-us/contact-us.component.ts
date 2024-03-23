@@ -56,4 +56,8 @@ export class ContactUsComponent {
       console.log(this.images)
     });
   }
+  formatDescription(description: string): string {
+    console.log(description)
+    return description.replace(/\n/g, '<br>');
+  }
 }
