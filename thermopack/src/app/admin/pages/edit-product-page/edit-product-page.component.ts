@@ -119,7 +119,7 @@ export class EditProductPageComponent {
 
 
   deleteImage(index: number) {
-    this.images[index] = '';
+    this.images.splice(index, 1);
   }
 
   update(){
