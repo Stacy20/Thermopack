@@ -69,9 +69,9 @@
     <tr class="align-middle" [class.table-primary]="user === selectedUser" (click)="selectedUser = user">
       <td [contentEditable]="user.editable">{{ user.userEmail }}</td>
       <td>
-        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privEditText, 'text-bg-danger': !user.privEditText}">
-          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privEditText" id="checkbox1">
-          <label class="form-check-label ms-2" for="checkbox1">{{ user.privEditText | yesNoPipe: 'es' }}</label>
+        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privCreateUsers, 'text-bg-danger': !user.privCreateUsers}">
+          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privCreateUsers" id="checkbox1">
+          <label class="form-check-label ms-2" for="checkbox1">{{ user.privCreateUsers | yesNoPipe: 'es' }}</label>
         </span>
       </td>
       <td>
@@ -95,10 +95,10 @@
 
       <td class="w-25">
         @if (user === selectedUser && !user.editable) {
-        <button class="btn btn-primary me-2 mx-auto" (click)="user.editable = true; isEditing = true">
+        <button class="btn btn-primary me-2 mx-auto" (click)="editUser(user)">
           <img src="assets/icons/edit_note_icon.svg" alt="Editar" class="me-1">
           Editar</button>
-        <button class="btn btn-danger mx-auto" (click)="selectedUser = null; isEditing = false">
+        <button class="btn btn-danger mx-auto"  (click)="deleteUser(user)">
           <img src="assets/icons/remove_person_icon.svg" alt="Eliminar" class="me-1">
           Eliminar</button>
         }

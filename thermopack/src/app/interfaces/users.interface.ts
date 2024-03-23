@@ -4,3 +4,7 @@ export interface Users {
   password: string;
   privileges: number[];
 }
+
+export interface DeleteResponse {
+  message: string;
+}

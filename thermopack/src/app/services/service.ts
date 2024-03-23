@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap} from 'rxjs';
 import { Brands } from '../interfaces/brands.interface';
 import { Categories } from '../interfaces/categories.interface';
-import { Users } from '../interfaces/users.interface';
+import { Users, DeleteResponse } from '../interfaces/users.interface';
 import { Types } from '../interfaces/types.interface';
 import { Services } from '../interfaces/services.interface';
 import { Products } from '../interfaces/products.interface';
@@ -289,11 +289,11 @@ export class MainService{
       );
   }
 
-  deleteUserByEmail(email: string): Observable<Users> {
+  deleteUserByEmail(email: string): Observable<DeleteResponse> {
     const url = `${this.connectionUrl}users/${email}`;
-    return this.http.delete<Users>(url)
+    return this.http.delete<DeleteResponse>(url)
       .pipe(
-        catchError(() => of({} as Users))
+        catchError(() => of({} as DeleteResponse))
       );
   }
 
