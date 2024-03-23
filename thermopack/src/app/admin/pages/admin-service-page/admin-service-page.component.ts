@@ -5,6 +5,7 @@ import { PaginationComponent } from '../../../shared/components/pagination/pagin
 import { MainService } from '../../../services/service';
 import { Services } from '../../../interfaces/services.interface';
 import { Data } from '../../../interfaces/data.interface';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'admin-admin-service-page',
@@ -22,9 +23,11 @@ export class AdminServicePageComponent {
 
   constructor(
     private service:MainService,
+    private router: Router
   ){}
 
   ngOnInit(): void {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
     this.getData();
     // Suscribirse al observable services$ en el servicio
     this.service.services$.subscribe(response => {

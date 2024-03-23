@@ -24,6 +24,7 @@ export class EditServicePageComponent {
   ) {}
 
   ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
     this.route.paramMap.subscribe(params => {
       this.getData(params.get('id'));;
     });

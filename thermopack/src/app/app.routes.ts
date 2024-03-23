@@ -8,15 +8,15 @@ import { ConfigContactPageComponent } from './admin/pages/config-contact-page/co
 import { ConfigHomePageComponent } from './admin/pages/config-home-page/config-home-page.component';
 import { EditProductPageComponent } from './admin/pages/edit-product-page/edit-product-page.component';
 import { EditServicePageComponent } from './admin/pages/edit-service-page/edit-service-page.component';
+import { UsersPageComponent } from './admin/pages/users-page/users-page.component';
+import { AdminPageComponent } from './admin/pages/admin-page/admin-page.component';
 import { NotFoundPageComponent } from './shared/pages/not-found-page/not-found-page.component';
 import { ProductsComponent } from './client/pages/products/products.component';
 import { HomeComponent } from './client/pages/home/home.component';
 import { ContactUsComponent } from './client/pages/contact-us/contact-us.component';
 import { DetailPageComponent } from './client/pages/detail-page/detail-page.component';
 import { PageServicesComponent } from './client/pages/page-services/page-services.component';
-import { UsersPageComponent } from './admin/pages/users-page/users-page.component';
 import { ClientComponent } from './client/pages/client/client.component';
-import { AdminPageComponent } from './admin/pages/admin-page/admin-page.component';
 
 export const routes: Routes = [
   {

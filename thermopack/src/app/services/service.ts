@@ -30,7 +30,32 @@ export class MainService{
   private servicesSubject: BehaviorSubject<{ services: Services[], totalCount: number }> = new BehaviorSubject<{ services: Services[], totalCount: number }>({ services: [], totalCount: 0 });
   public services$: Observable<{ services: Services[], totalCount: number }> = this.servicesSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') == 'true';
+    const lastLogin = localStorage.getItem('lastLogin');
+    this.isLoggedIn = lastLogin && this.hanPasado24MenosHoras(lastLogin) ? this.isLoggedIn : false;
+}
+
+  hanPasado24MenosHoras(lastLogin: string): boolean {
+    if (!lastLogin) {
+      return false;
+    }
+    const lastLoginDate = new Date(lastLogin);
+    const now = new Date();
+    const diffMs = now.getTime() - lastLoginDate.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+
+    return diffHours < 24;
+  }
+
+  login() {
+    this.isLoggedIn = true;
+    localStorage.setItem('isLoggedIn', 'true');
+    const now = new Date();
+    const dateTimeString = now.toISOString();
+    localStorage.setItem('lastLogin', dateTimeString);
+  }
+
 
   //** Varibles de products IMPORTANES para paginacion */
   public products: Products[]=[];

@@ -11,6 +11,7 @@ import { Data } from '../../../interfaces/data.interface';
 import { Brands } from '../../../interfaces/brands.interface';
 import { Categories } from '../../../interfaces/categories.interface';
 import { SelectTypeComponent } from "../../../shared/components/select-type/select-type.component";
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'admin-admin-product-page',
@@ -23,7 +24,7 @@ export class AdminProductPageComponent {
 
     constructor(
       private service: MainService,
-
+      private router: Router
     ) {}
 
     public title:string='Nuestros productos';
@@ -35,8 +36,8 @@ export class AdminProductPageComponent {
     public data!: Data;
     public totalProducts:number=0;
 
-
     ngOnInit(): void {
+      if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
       this.getData();
       this.getAllTypes();
       this.getAllBrands();

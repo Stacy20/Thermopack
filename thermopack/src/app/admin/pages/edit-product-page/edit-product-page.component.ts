@@ -4,7 +4,7 @@ import { UnderConstructionComponent } from "../../../shared/components/under-con
 import { ConfigGalleryComponent } from '../../components/config-gallery/config-gallery.component';
 import { FormsModule } from '@angular/forms';
 import { MainService } from '../../../services/service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Types } from '../../../interfaces/types.interface';
 import { SelectTypeComponent } from '../../../shared/components/select-type/select-type.component';
 import { CommonModule } from '@angular/common';
@@ -21,9 +21,11 @@ export class EditProductPageComponent {
   constructor(
     private service: MainService,
     private route: ActivatedRoute,
+    private router: Router,
   ) {}
 
   ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
     this.route.paramMap.subscribe(params => {
       this.getData(params.get('id'));;
     });

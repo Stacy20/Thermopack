@@ -35,7 +35,7 @@ export class LoginPageComponent {
         return;
       }
       console.log('log in');
-      this.service.isLoggedIn = true;
+      this.service.login();
       this.router.navigate(['/admin/config']);
     });
   }

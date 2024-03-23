@@ -4,6 +4,7 @@ import { ConfigGalleryComponent } from "../../components/config-gallery/config-g
 import { MainService } from '../../../services/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'admin-config-contact-page',
@@ -26,9 +27,11 @@ import { CommonModule } from '@angular/common';
 export class ConfigContactPageComponent {
   constructor(
     private service: MainService,
+    private router: Router
   ) {}
 
   ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
     this.getData();
   }
 
