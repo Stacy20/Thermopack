@@ -77,8 +77,6 @@ export class ConfigHomePageComponent {
   public misionPast: string = '';
   public visionPast: string = '';
   public logoPast: string = '';
-  public visionImagesPast: string[] = ['','','',''];
-  public presentationImagesPast: string[] = ['','','',''];
   public productosTitlePast: string = '';
   public productosTextPast: string = '';
   public servicesTitlePast: string = '';
@@ -104,14 +102,20 @@ export class ConfigHomePageComponent {
 
   getData(): void {
     this.service.getData().subscribe((data) => {
-      this.data =this.dataPast =data[0];
-      this.eslogan = this.esloganPast =this.data.slogan;
-      this.description =  this.descriptionPast =this.data.description;
-      this.mision =  this.misionPast =this.data.mision;
-      this.vision =  this.visionPast =this.data.vision;
-      this.logo =this.logoPast = this.data.logo;
-      this.visionImages =this.visionImagesPast = this.data.visionImages;
-      this.presentationImages =this.presentationImagesPast = this.data.presentationImages;
+      this.data =data[0];
+      this.dataPast =data[0];
+      this.eslogan = this.data.slogan;
+      this.esloganPast =this.data.slogan;
+      this.description = this.data.description;
+      this.descriptionPast =this.data.description;
+      this.mision =this.data.mision;
+      this.misionPast =this.data.mision;
+      this.vision =  this.data.vision;
+      this.visionPast =this.data.vision;
+      this.logo  = this.data.logo;
+      this.logoPast = this.data.logo;
+      this.visionImages  = this.data.visionImages;
+      this.presentationImages = this.data.presentationImages;
       this.productosTitle = this.productosTitlePast =this.data.productsTitle;
       this.productosText =this.productosTextPast = this.data.productsParagraph;
       this.servicesTitle =this.servicesTitlePast = this.data.servicesTitle;
@@ -185,7 +189,7 @@ export class ConfigHomePageComponent {
 
   }
 
-  updateImages(datos: ImagesNewEvent) {
+  updateImages(datos: ImagesNewEvent) { //! RAQUE SE CAE
     if(datos.identifier=='1'){
       this.visionImages = datos.images;
     }
@@ -197,7 +201,6 @@ export class ConfigHomePageComponent {
     // Verificar si los elementos de los arrays son iguales
     for (let i = 0; i < array1.length; i++) {
       if (array1[i] =='') {
-        console.log('uhmm')
         this.sweetAlertService.showAlert('Error', 'Todos las imagenes son obligatorias', 'error');
         return false;
       }
@@ -207,22 +210,26 @@ export class ConfigHomePageComponent {
   }
 
   savePresentationImages() {
-    if(this.arraysAreEqual(this.presentationImages)){
-    this.sweetAlertService.showConfirmationAlert(
-      'Confirmación',
-      '¿Está seguro que desea realizar cambios?',
-      () => {
-        this.service.updatePresentationImages(this.presentationImages).subscribe(
-          (data) => {
-            this.sweetAlertService.showAlert('Éxito', 'Las imágenes se han guardado correctamente', 'success');
-          },
-          (error) => {
-            this.sweetAlertService.showAlert('Error', 'Hubo un error al guardar las imágenes', 'error');
-            console.error('Error al actualizar las imágenes:', error);
-          }
-        );
-      });
+    // if(this.arraysAreEqual(this.presentationImages)){
+    // this.sweetAlertService.showConfirmationAlert(
+    //   'Confirmación',
+    //   '¿Está seguro que desea realizar cambios?',
+    //   () => {
+    //     this.service.updatePresentationImages(this.presentationImages).subscribe(
+    //       (data) => {
+    //         this.sweetAlertService.showAlert('Éxito', 'Las imágenes se han guardado correctamente', 'success');
+    //       },
+    //       (error) => {
+    //         this.sweetAlertService.showAlert('Error', 'Hubo un error al guardar las imágenes', 'error');
+    //         console.error('Error al actualizar las imágenes:', error);
+    //       }
+    //     );
+    //   });
+    // }
+    this.service.updatePresentationImages(this.presentationImages).subscribe((data) => {
+      // console.log(data)
     }
+    );
   }
 
   saveProductsServices() {

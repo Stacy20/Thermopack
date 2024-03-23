@@ -18,6 +18,7 @@ export class ConfigGalleryComponent {
 
 
   handleFileInput(event: any, index:number) {
+    console.log(this.images)
     const file: File = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (e: any) => {
@@ -28,6 +29,7 @@ export class ConfigGalleryComponent {
       images: this.images,
       identifier: this.identifier
     };
+    console.log(data.images, 'en el mas alla')
     this.imagesNew.emit(data)
   }
 
