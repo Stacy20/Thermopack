@@ -67,7 +67,7 @@
 
     @for (user of users; track $index) {
     <tr class="align-middle" [class.table-primary]="user === selectedUser" (click)="selectedUser = user">
-      <td [contentEditable]="user.editable">{{ user.userEmail }}</td>
+      <td><input type="text" [(ngModel)]="user.userEmail" style="border: none; outline: none; background-color: transparent;" [size]="user.userEmail.length"></td>
       <td>
         <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privCreateUsers, 'text-bg-danger': !user.privCreateUsers}">
           <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privCreateUsers" id="checkbox1">
@@ -104,10 +104,10 @@
         }
 
         @if (user === selectedUser && user.editable) {
-        <button class="btn btn-info text-light me-2 mx-auto" (click)="user.editable = false; isEditing = false">
+        <button class="btn btn-info text-light me-2 mx-auto" (click)="saveUser(user, $index)">
           <img src="assets/icons/check_circle_icon.svg" alt="Eliminar" class="me-1">
           Guardar</button>
-        <button class="btn btn-secondary mx-auto" (click)="user.editable = false; isEditing = false">
+        <button class="btn btn-secondary mx-auto" (click)="user.editable = false; isEditing = false; reset(user, $index)">
           <img src="assets/icons/cancel_close_icon.svg" alt="Eliminar" class="me-1">
           Cancelar</button>
         }

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { YesNoPipePipe } from "../../pipes/yes-no-pipe.pipe";
 import { CommonModule } from '@angular/common';
 import { MainService } from '../../../services/service';
+import { Users } from '../../../interfaces/users.interface';
 
 interface UsersTableRow {
   userEmail: string;
@@ -11,15 +12,6 @@ interface UsersTableRow {
   privDelItems: boolean;
   privCreateUsers: boolean;
   editable: boolean;
-}
-
-interface User {
-  userEmail: string;
-  userPswrd: string;
-  privCreateUsers: boolean;
-  privAddItems: boolean;
-  privEditItems: boolean;
-  privDelItems: boolean;
 }
 
 enum Privileges {
@@ -49,6 +41,7 @@ export class UserTableComponent {
   public selectedUser : UsersTableRow | null = null;
   public isEditing : boolean = false
   public email: string = '';
+  public originalEmail: string = '';
   public privileges: boolean[] = [false,false,false,false];
 
   @ViewChild('txtUserEmail')
@@ -110,7 +103,7 @@ export class UserTableComponent {
   getData(): void {
     this.service.getAllUsers().subscribe((users) => {
       for (let i = 0; i < users.length; i++) {
-        this.users.push({ userEmail: users[i].email, privCreateUsers: users[i].privileges[0] == 1, privAddItems: users[i].privileges[1] == 1, privEditItems: users[i].privileges[2] == 1, privDelItems: users[i].privileges[3] == 1, editable: false })
+        this.users.push({ userEmail: users[i].email, privAddItems: users[i].privileges[0] == 1, privEditItems: users[i].privileges[1] == 1, privDelItems: users[i].privileges[2] == 1, privCreateUsers: users[i].privileges[3] == 1, editable: false })
       }
     });
   }
@@ -118,6 +111,39 @@ export class UserTableComponent {
   editUser(user: UsersTableRow): void {
     user.editable = true;
     this.isEditing = true;
+    this.originalEmail = user.userEmail;
+  }
+
+  saveUser(user: UsersTableRow, index: number): void {
+    console.log('save') // TODO alert de confirmacion
+    for (let i = 0; i < this.users.length; i++) {
+      if (!this.isEmail(user.userEmail) || (this.users[i].userEmail == user.userEmail && i != index)){
+        console.log('email repetido o invalido') // TODO alert
+        return;
+      }
+    }
+
+    if (!this.existSuperAdminWithout(user)){
+      if (!user.privAddItems || !user.privCreateUsers || !user.privDelItems || !user.privEditItems){
+        console.log('ocupa super admin'); // TODO alert
+        return;
+      }
+    }
+
+    this.service.getAllUsers().subscribe((users) => {
+      const privilegesAsNumbers = [user.privAddItems ? 1 : 0, user.privEditItems ? 1 : 0,
+                                   user.privDelItems ? 1 : 0, user.privCreateUsers ? 1 : 0]
+      this.service.updateUserByEmail(users[index].email, user.userEmail, users[index].password, privilegesAsNumbers).subscribe((response) => {
+        if (response.message == 'Successfully modified'){
+          user.editable = false;
+          this.isEditing = false;
+          this.selectedUser = null;
+          console.log('exito') // TODO alert
+        }else{
+          console.log('error') // TODO alert
+        }
+      });
+    });
   }
 
   existSuperAdminWithout(user: UsersTableRow): boolean {
@@ -128,7 +154,7 @@ export class UserTableComponent {
         return true;
       }
     }
-    console.log("no puede dejar sin superadmin")
+    console.log("no puede dejar sin superadmin") // TODO alert
     return false;
   }
 
@@ -148,7 +174,20 @@ export class UserTableComponent {
         }
       });
     }
+  }
 
+  reset(user: UsersTableRow, index: number): void {
+    user.editable = false;
+    this.isEditing = false;
+    this.selectedUser = null;
+
+    this.service.getAllUsers().subscribe((users) => {
+      user.userEmail = users[index].email;
+      user.privAddItems = users[index].privileges[0] == 1 ? true : false;
+      user.privEditItems = users[index].privileges[1] == 1 ? true : false;
+      user.privDelItems = users[index].privileges[2] == 1 ? true : false;
+      user.privCreateUsers = users[index].privileges[3] == 1 ? true : false;
+    });
   }
 
 }

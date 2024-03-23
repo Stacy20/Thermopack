@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap} from 'rxjs';
 import { Brands } from '../interfaces/brands.interface';
 import { Categories } from '../interfaces/categories.interface';
-import { Users, DeleteResponse } from '../interfaces/users.interface';
+import { Users, DBResponse } from '../interfaces/users.interface';
 import { Types } from '../interfaces/types.interface';
 import { Services } from '../interfaces/services.interface';
 import { Products } from '../interfaces/products.interface';
@@ -281,19 +281,19 @@ export class MainService{
       );
   }
 
-  updateUserByEmail(email: string, newEmail: string, password: string, privileges: number[]): Observable<Users> {
+  updateUserByEmail(email: string, newEmail: string, password: string, privileges: number[]): Observable<DBResponse> {
     const url = `${this.connectionUrl}users/${email}`;
-    return this.http.put<Users>(url, { newEmail, password, privileges })
+    return this.http.put<DBResponse>(url, { newEmail, password, privileges })
       .pipe(
-        catchError(() => of({} as Users))
+        catchError(() => of({} as DBResponse))
       );
   }
 
-  deleteUserByEmail(email: string): Observable<DeleteResponse> {
+  deleteUserByEmail(email: string): Observable<DBResponse> {
     const url = `${this.connectionUrl}users/${email}`;
-    return this.http.delete<DeleteResponse>(url)
+    return this.http.delete<DBResponse>(url)
       .pipe(
-        catchError(() => of({} as DeleteResponse))
+        catchError(() => of({} as DBResponse))
       );
   }
 

@@ -5,6 +5,6 @@ export interface Users {
   privileges: number[];
 }
 
-export interface DeleteResponse {
+export interface DBResponse {
   message: string;
 }
