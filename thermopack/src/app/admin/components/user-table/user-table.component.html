@@ -2,11 +2,10 @@
   <thead>
     <tr>
       <th>Correo</th>
-      <th>Contraseña</th>
-      <th>Editar texto</th>
       <th>Agregar items</th>
       <th>Editar items</th>
       <th>Eliminar items</th>
+      <th>Crear Usuarios</th>
       <th></th>
     </tr>
   </thead>
@@ -14,7 +13,6 @@
     <!--? En realidad, no hace falta mostrar la contraseña para que no ande viajando tanto por las APIs-->
     <tr class="align-middle">
       <td contentEditable #txtUserEmail>Agregar un correo</td>
-      <td contentEditable #txtUserPswrd></td>
       <td>
         <span class="badge py-2 px-3 w-100"
           [ngClass]="{'text-bg-success': checkedPrivilages[EnumPrivileges.EditText],
@@ -70,7 +68,6 @@
     @for (user of users; track $index) {
     <tr class="align-middle" [class.table-primary]="user === selectedUser" (click)="selectedUser = user">
       <td [contentEditable]="user.editable">{{ user.userEmail }}</td>
-      <td [contentEditable]="user.editable" style="font: password;">{{ user.userPswrd }}</td>
       <td>
         <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privEditText, 'text-bg-danger': !user.privEditText}">
           <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privEditText" id="checkbox1">
