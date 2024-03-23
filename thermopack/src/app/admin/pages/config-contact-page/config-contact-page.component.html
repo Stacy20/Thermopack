@@ -24,10 +24,19 @@
 
       <div class="row mb-3">
         <div class="col-md-3">
-          <p class="text-responsive">Enlace de la ubicación</p>
+          <p class="text-responsive">Enlace de Google Maps</p>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control" [(ngModel)]="ubicationLink">
+          <input type="text" class="form-control" [(ngModel)]="ubicationGMLink">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <p class="text-responsive">Enlace de Waze</p>
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control" [(ngModel)]="ubicationWazeLink">
         </div>
       </div>
 
@@ -57,7 +66,7 @@
 
       <div class="row mb-3">
         <div class="col-md-3">
-          <p class="text-responsive">Enlace de Whatsapp</p>
+          <p class="text-responsive">Núumero de Whatsapp</p>
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control" [(ngModel)]="whatsappLink">
@@ -97,7 +106,7 @@
         </div>
       </div>
 
-      <div class="col-md-12 my-4">
+      <div class="offset-2 col-md-12 my-4">
         <h4>Imágenes de Contacto</h4>
         <p>Seleccione una imagen para cambiarla.</p>
         <admin-config-gallery [identifier]="'1'" [images]="this.images"></admin-config-gallery>
