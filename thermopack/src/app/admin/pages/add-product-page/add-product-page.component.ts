@@ -4,7 +4,7 @@ import { UnderConstructionComponent } from "../../../shared/components/under-con
 import { ConfigGalleryComponent } from '../../components/config-gallery/config-gallery.component';
 import { FormsModule } from '@angular/forms';
 import { MainService } from '../../../services/service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Types } from '../../../interfaces/types.interface';
 import { SelectTypeComponent } from '../../../shared/components/select-type/select-type.component';
 import { CommonModule } from '@angular/common';
@@ -21,10 +21,12 @@ import { SweetAlertService } from '../../services/sweet-alert.service';
 export class AddProductPageComponent {
   constructor(
     private service: MainService,
-    private sweetAlertService: SweetAlertService
+    private sweetAlertService: SweetAlertService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
     this.getData();;
   }
 
@@ -130,7 +132,7 @@ export class AddProductPageComponent {
         console.log(response)
       });
       this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
-    
+
   }
 
   validateInput(event: KeyboardEvent) {

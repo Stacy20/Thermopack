@@ -29,6 +29,10 @@ export class AddServicePageComponent {
     private sweetAlertService: SweetAlertService
   ) {}
 
+  ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
+  }
+
   handleFileInput(event: any) {
     const files: FileList = event.target.files;
     for (let i = 0; i < files.length; i++) {

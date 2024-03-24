@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap, throwError} from 'rxjs';
 import { Brands } from '../interfaces/brands.interface';
 import { Categories } from '../interfaces/categories.interface';
-import { Users } from '../interfaces/users.interface';
+import { Users, DBResponse } from '../interfaces/users.interface';
 import { Types } from '../interfaces/types.interface';
 import { Services } from '../interfaces/services.interface';
 import { Products } from '../interfaces/products.interface';
@@ -20,6 +20,7 @@ export class MainService{
   private idSelectBrand?:string;
   private idSelectType?:string;
   private idCategory?:string;
+  public isLoggedIn:boolean = false;
 
   //** Varibles de services IMPORTANES para paginacion */
   public services: Services[]=[];
@@ -29,7 +30,32 @@ export class MainService{
   private servicesSubject: BehaviorSubject<{ services: Services[], totalCount: number }> = new BehaviorSubject<{ services: Services[], totalCount: number }>({ services: [], totalCount: 0 });
   public services$: Observable<{ services: Services[], totalCount: number }> = this.servicesSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') == 'true';
+    const lastLogin = localStorage.getItem('lastLogin');
+    this.isLoggedIn = lastLogin && this.hanPasado24MenosHoras(lastLogin) ? this.isLoggedIn : false;
+}
+
+  hanPasado24MenosHoras(lastLogin: string): boolean {
+    if (!lastLogin) {
+      return false;
+    }
+    const lastLoginDate = new Date(lastLogin);
+    const now = new Date();
+    const diffMs = now.getTime() - lastLoginDate.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+
+    return diffHours < 24;
+  }
+
+  login() {
+    this.isLoggedIn = true;
+    localStorage.setItem('isLoggedIn', 'true');
+    const now = new Date();
+    const dateTimeString = now.toISOString();
+    localStorage.setItem('lastLogin', dateTimeString);
+  }
+
 
   //** Varibles de products IMPORTANES para paginacion */
   public products: Products[]=[];
@@ -267,13 +293,14 @@ export class MainService{
 
   getUserByEmail(email: string): Observable<Users> {
     const url = `${this.connectionUrl}users/${email}`;
+    console.log(url)
     return this.http.get<Users>(url)
       .pipe(
         catchError(() => of({} as Users))
       );
   }
 
-  createUser(email: string, password: string, privileges: string[]): Observable<Users> {
+  createUser(email: string, password: string, privileges: number[]): Observable<Users> {
     const url = `${this.connectionUrl}users`;
     return this.http.post<Users>(url, { email, password, privileges })
       .pipe(
@@ -281,19 +308,19 @@ export class MainService{
       );
   }
 
-  updateUserByEmail(email: string, newEmail: string, password: string, privileges: string[]): Observable<Users> {
+  updateUserByEmail(email: string, newEmail: string, password: string, privileges: number[]): Observable<DBResponse> {
     const url = `${this.connectionUrl}users/${email}`;
-    return this.http.put<Users>(url, { newEmail, password, privileges })
+    return this.http.put<DBResponse>(url, { newEmail, password, privileges })
       .pipe(
-        catchError(() => of({} as Users))
+        catchError(() => of({} as DBResponse))
       );
   }
 
-  deleteUserByEmail(email: string): Observable<Users> {
+  deleteUserByEmail(email: string): Observable<DBResponse> {
     const url = `${this.connectionUrl}users/${email}`;
-    return this.http.delete<Users>(url)
+    return this.http.delete<DBResponse>(url)
       .pipe(
-        catchError(() => of({} as Users))
+        catchError(() => of({} as DBResponse))
       );
   }
 

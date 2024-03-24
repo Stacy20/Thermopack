@@ -7,6 +7,7 @@ import { Data } from '../../../interfaces/data.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SweetAlertService } from '../../services/sweet-alert.service';
 import { ImagesNewEvent } from '../../interfaces/images-new-event';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'admin-config-home-page',
@@ -43,7 +44,7 @@ import { ImagesNewEvent } from '../../interfaces/images-new-event';
       background-color: #0196ad;
     }
     `,
-    imports: [NavbarComponent, ConfigGalleryComponent, FormsModule]
+    imports: [NavbarComponent, ConfigGalleryComponent, FormsModule, ]
 })
 export class ConfigHomePageComponent {
 
@@ -51,10 +52,12 @@ export class ConfigHomePageComponent {
   constructor(
     private service: MainService,
     private _sanitizer: DomSanitizer,
-    private sweetAlertService: SweetAlertService
+    private sweetAlertService: SweetAlertService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
     this.getData();
   }
 

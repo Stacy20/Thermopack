@@ -5,6 +5,7 @@ import { MainService } from '../../../services/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SweetAlertService } from '../../services/sweet-alert.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'admin-config-contact-page',
@@ -25,7 +26,6 @@ import { SweetAlertService } from '../../services/sweet-alert.service';
   imports: [NavbarComponent, ConfigGalleryComponent, FormsModule, CommonModule],
 })
 export class ConfigContactPageComponent {
-
   public welcomeParagraph: string = '';
   public ubicationText: string = '';
   public ubicationGMLink: string = '';
@@ -55,10 +55,12 @@ export class ConfigContactPageComponent {
 
   constructor(
     private service: MainService,
-    private sweetAlertService: SweetAlertService
+    private sweetAlertService: SweetAlertService,
+    private router: Router
   ) {}
 
   ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
     this.getData();
   }
 

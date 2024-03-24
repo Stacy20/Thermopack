@@ -2,19 +2,17 @@
   <thead>
     <tr>
       <th>Correo</th>
-      <th>Contraseña</th>
-      <th>Editar texto</th>
       <th>Agregar items</th>
       <th>Editar items</th>
       <th>Eliminar items</th>
+      <th>Crear Usuarios</th>
       <th></th>
     </tr>
   </thead>
   <tbody>
     <!--? En realidad, no hace falta mostrar la contraseña para que no ande viajando tanto por las APIs-->
     <tr class="align-middle">
-      <td contentEditable #txtUserEmail>Agregar un correo</td>
-      <td contentEditable #txtUserPswrd></td>
+      <td><input type="text" [(ngModel)]="email" placeholder="Agregar un correo" style="border: none; outline: none;"></td>
       <td>
         <span class="badge py-2 px-3 w-100"
           [ngClass]="{'text-bg-success': checkedPrivilages[EnumPrivileges.EditText],
@@ -61,7 +59,7 @@
       </td>
 
       <td class="w-25">
-        <button class="btn btn-info text-light mx-auto" (click)="selectedUser = null; isEditing = false; addUser($event)">
+        <button class="btn btn-info text-light mx-auto" (click)="selectedUser = null; isEditing = false; addUser()">
           <img src="assets/icons/remove_person_icon.svg" alt="Eliminar" class="me-1">
           Agregar</button>
       </td>
@@ -69,12 +67,11 @@
 
     @for (user of users; track $index) {
     <tr class="align-middle" [class.table-primary]="user === selectedUser" (click)="selectedUser = user">
-      <td [contentEditable]="user.editable">{{ user.userEmail }}</td>
-      <td [contentEditable]="user.editable" style="font: password;">{{ user.userPswrd }}</td>
+      <td><input type="text" [(ngModel)]="user.userEmail" style="border: none; outline: none; background-color: transparent;" [size]="user.userEmail.length"></td>
       <td>
-        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privEditText, 'text-bg-danger': !user.privEditText}">
-          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privEditText" id="checkbox1">
-          <label class="form-check-label ms-2" for="checkbox1">{{ user.privEditText | yesNoPipe: 'es' }}</label>
+        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privCreateUsers, 'text-bg-danger': !user.privCreateUsers}">
+          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privCreateUsers" id="checkbox1">
+          <label class="form-check-label ms-2" for="checkbox1">{{ user.privCreateUsers | yesNoPipe: 'es' }}</label>
         </span>
       </td>
       <td>
@@ -98,19 +95,19 @@
 
       <td class="w-25">
         @if (user === selectedUser && !user.editable) {
-        <button class="btn btn-primary me-2 mx-auto" (click)="user.editable = true; isEditing = true">
+        <button class="btn btn-primary me-2 mx-auto" (click)="editUser(user)">
           <img src="assets/icons/edit_note_icon.svg" alt="Editar" class="me-1">
           Editar</button>
-        <button class="btn btn-danger mx-auto" (click)="selectedUser = null; isEditing = false">
+        <button class="btn btn-danger mx-auto"  (click)="deleteUser(user)">
           <img src="assets/icons/remove_person_icon.svg" alt="Eliminar" class="me-1">
           Eliminar</button>
         }
 
         @if (user === selectedUser && user.editable) {
-        <button class="btn btn-info text-light me-2 mx-auto" (click)="user.editable = false; isEditing = false">
+        <button class="btn btn-info text-light me-2 mx-auto" (click)="saveUser(user, $index)">
           <img src="assets/icons/check_circle_icon.svg" alt="Eliminar" class="me-1">
           Guardar</button>
-        <button class="btn btn-secondary mx-auto" (click)="user.editable = false; isEditing = false">
+        <button class="btn btn-secondary mx-auto" (click)="user.editable = false; isEditing = false; reset(user, $index)">
           <img src="assets/icons/cancel_close_icon.svg" alt="Eliminar" class="me-1">
           Cancelar</button>
         }

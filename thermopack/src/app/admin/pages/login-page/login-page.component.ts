@@ -1,19 +1,15 @@
 import { Component } from '@angular/core';
 import { MainService } from './../../../services/service';
-import { Brands } from '../../../interfaces/brands.interface';
-import { Categories } from '../../../interfaces/categories.interface';
 import { Users } from '../../../interfaces/users.interface';
-import { Types } from '../../../interfaces/types.interface';
-import { Services } from '../../../interfaces/services.interface';
-import { Products } from '../../../interfaces/products.interface';
-import { Privileges } from '../../../interfaces/privileges.interface';
-import { Data } from '../../../interfaces/data.interface';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { YesNoPipePipe } from '../../pipes/yes-no-pipe.pipe';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'admin-login-page',
   standalone: true,
-  imports: [],
+  imports: [FormsModule, YesNoPipePipe, CommonModule],
   templateUrl: './login-page.component.html'
 })
 export class LoginPageComponent {
@@ -22,9 +18,31 @@ export class LoginPageComponent {
     private service: MainService
   ) {}
 
-  submitUserLogin(): void {
-    //?Aquí se consume la API para la verificación y acreditación del usuario.
+  public email: string = '';
+  public password: string = '';
+  public passwordFieldType: string = 'password';
+  public passwordIcon: string = "assets/icons/visibility.svg";
 
-    this.router.navigate(['/admin/config']);
+  submitUserLogin(): void {
+    if (this.email == '') { return; }
+    this.service.getUserByEmail(this.email).subscribe((user) => {
+      if (Object.keys(user).length == 0){
+        console.log('no se encuentra el correo registrado');// TODO alert
+        return;
+      }
+      if (!(user.password == this.password)){
+        console.log('la contrasenha no coincide');// TODO alert
+        return;
+      }
+      console.log('log in');
+      this.service.login();
+      this.router.navigate(['/admin/config']);
+    });
   }
+
+  togglePasswordVisibility() {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+    this.passwordIcon = this.passwordIcon === "assets/icons/visibility.svg" ? "assets/icons/visibility_off.svg" : "assets/icons/visibility.svg";
+  }
+
 }
