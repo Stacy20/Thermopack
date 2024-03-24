@@ -76,6 +76,12 @@ export class AddProductPageComponent {
         event.options.splice(0,1);
       }
       this.selectedType = event.options[0];
+
+      if(this.selectedType.value === this.selectedType.label){
+        this.service.createType(this.selectedType.label).subscribe((response) => {
+          this.selectedType.value = response._id;
+        });
+      }
     }else{
       this.selectedType = {}
     }
@@ -87,6 +93,12 @@ export class AddProductPageComponent {
         event.options.splice(0,1);
       }
       this.selectedBrand = event.options[0];
+
+      if(this.selectedBrand.value === this.selectedBrand.label){
+        this.service.createBrand(this.selectedBrand.label).subscribe((response) => {
+          this.selectedBrand.value = response._id;
+        });
+      }
     }else{
       this.selectedBrand = {}
     }
@@ -98,6 +110,12 @@ export class AddProductPageComponent {
         event.options.splice(0,1);
       }
       this.selectedCategory = event.options[0];
+
+      if(this.selectedCategory.value === this.selectedCategory.label){
+        this.service.createCategory(this.selectedCategory.label).subscribe((response) => {
+          this.selectedCategory.value = response._id;
+        });
+      }
     }else{
       this.selectedCategory = {}
     }
@@ -109,6 +127,12 @@ export class AddProductPageComponent {
         event.options.splice(0,1);
       }
       this.selectedSubCategory = event.options[0];
+
+      if(this.selectedSubCategory.value === this.selectedSubCategory.label){
+        this.service.createCategory(this.selectedSubCategory.label).subscribe((response) => {
+          this.selectedSubCategory.value = response._id;
+        });
+      }
     }else{
       this.selectedSubCategory = {}
     }
@@ -131,31 +155,6 @@ export class AddProductPageComponent {
   }
 
   save(){
-    if(this.selectedBrand.value === this.selectedBrand.label){
-      this.service.createBrand(this.selectedBrand.label).subscribe((response) => {
-        this.selectedBrand.value = response._id;
-      });
-    }
-
-    if(this.selectedType.value === this.selectedType.label){
-      this.service.createType(this.selectedType.label).subscribe((response) => {
-        this.selectedType.value = response._id;
-      });
-    }
-
-    if(this.selectedCategory.value === this.selectedCategory.label){
-      this.service.createCategory(this.selectedCategory.label).subscribe((response) => {
-        this.selectedCategory.value = response._id;
-      });
-    }
-
-    if(this.selectedSubCategory.value === this.selectedSubCategory.label){
-      this.service.createCategory(this.selectedSubCategory.label).subscribe((response) => {
-        this.selectedSubCategory.value = response._id;
-      });
-    }
-
-
     this.service.getProductByName(this.name).subscribe((product) => {
       if (Object.keys(product).length !== 0){
         return;
