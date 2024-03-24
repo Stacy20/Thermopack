@@ -51,16 +51,21 @@ export class UserTableComponent {
   private txtUserPswrd !: ElementRef<HTMLInputElement>;
 
   @ViewChild('chkPrivEditText')
-  private chkPrivEditText !: ElementRef<HTMLInputElement>;
+  chkPrivEditText !: ElementRef<HTMLInputElement>;
 
   @ViewChild('chkPrivAddItems')
-  private chkPrivAddItems !: ElementRef<HTMLInputElement>;
+  chkPrivAddItems !: ElementRef<HTMLInputElement>;
 
   @ViewChild('chkPrivEditItems')
-  private chkPrivEditItems !: ElementRef<HTMLInputElement>;
+  chkPrivEditItems !: ElementRef<HTMLInputElement>;
 
   @ViewChild('chkPrivDelItems')
-  private chkPrivDelItems !: ElementRef<HTMLInputElement>;
+  chkPrivDelItems !: ElementRef<HTMLInputElement>;
+
+  @ViewChild('txtPrivEditText') txtPrivEditText!: ElementRef<HTMLInputElement>;
+  @ViewChild('txtPrivAddItems') txtPrivAddItems!: ElementRef<HTMLInputElement>;
+  @ViewChild('txtPrivEditItems') txtPrivEditItems!: ElementRef<HTMLInputElement>;
+  @ViewChild('txtPrivDelItems') txtPrivDelItems!: ElementRef<HTMLInputElement>;
 
   public checkedPrivilages : boolean[] = [false, false, false, false];
   public EnumPrivileges = Privileges;
@@ -90,12 +95,35 @@ export class UserTableComponent {
         return; // TODO alert
       }
     }
-    const p = 'Password123.'; //TODO generar contrasenhas
     const privilegesAsNumbers = this.privileges.map(privilege => privilege ? 1 : 0);
-    this.service.createUser(this.email, p, privilegesAsNumbers).subscribe((user) => {
+    this.service.createUser(this.email, privilegesAsNumbers).subscribe((user) => {
       if (user.email == this.email){
-        // TODO alert que salio bien
-        location.reload();
+        console.log('fine')// TODO alert que salio bien
+        this.reload();
+        // location.reload();
+      }
+    });
+  }
+
+  reload(): void {
+    this.email = '';
+    this.checkedPrivilages = this.privileges = [false, false, false, false];
+
+    const checkboxes = [
+      this.txtPrivEditText.nativeElement,
+      this.txtPrivAddItems.nativeElement,
+      this.txtPrivEditItems.nativeElement,
+      this.txtPrivDelItems.nativeElement
+    ];
+
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+    this.users = [];
+    this.service.getAllUsers().subscribe((users) => {
+      for (let i = 0; i < users.length; i++) {
+        this.users.push({ userEmail: users[i].email, privAddItems: users[i].privileges[0] == 1, privEditItems: users[i].privileges[1] == 1, privDelItems: users[i].privileges[2] == 1, privCreateUsers: users[i].privileges[3] == 1, editable: false })
       }
     });
   }

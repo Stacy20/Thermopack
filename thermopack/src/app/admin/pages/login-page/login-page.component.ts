@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { YesNoPipePipe } from '../../pipes/yes-no-pipe.pipe';
 import { CommonModule } from '@angular/common';
+import * as bcrypt from 'bcryptjs';
 
 @Component({
   selector: 'admin-login-page',
@@ -30,13 +31,19 @@ export class LoginPageComponent {
         console.log('no se encuentra el correo registrado');// TODO alert
         return;
       }
-      if (!(user.password == this.password)){
-        console.log('la contrasenha no coincide');// TODO alert
-        return;
-      }
-      console.log('log in');
-      this.service.login(user);
-      this.router.navigate(['/admin/config']);
+      bcrypt.compare(this.password, user.password, (err, result) => {
+        if (err) {
+          console.error('Error al comparar contraseñas:', err);// TODO alert
+          return;
+        }
+        if (!result) {
+          console.log('La contraseña no coincide');// TODO alert
+          return;
+        }
+        console.log('log in');
+        this.service.login(user);
+        this.router.navigate(['/admin/config']);
+      });
     });
   }
 

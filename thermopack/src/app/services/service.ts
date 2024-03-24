@@ -10,6 +10,8 @@ import { Products } from '../interfaces/products.interface';
 import { Privileges } from '../interfaces/privileges.interface';
 import { Data } from '../interfaces/data.interface';
 import { Contact } from '../interfaces/contact.interface';
+import * as bcrypt from 'bcryptjs';
+import emailjs from '@emailjs/browser';
 
 @Injectable({
   providedIn: 'root'
@@ -377,7 +379,17 @@ export class MainService{
       );
   }
 
-  createUser(email: string, password: string, privileges: number[]): Observable<Users> {
+  createUser(email: string, privileges: number[]): Observable<Users> {
+    const passwordGenerated = this.generateSecurePassword(12);
+
+    // enviar correo con la contrasenha
+    this.sendEmailWithPassword(email, passwordGenerated);
+
+    // encriptar contrasenha
+    const saltRounds = 10;
+    const password = bcrypt.hashSync(passwordGenerated, saltRounds);
+
+    // guardar en la bd
     const url = `${this.connectionUrl}users`;
     return this.http.post<Users>(url, { email, password, privileges })
       .pipe(
@@ -401,6 +413,28 @@ export class MainService{
       );
   }
 
+  // users auxiliares
+
+  async sendEmailWithPassword(email: string, password: string): Promise<any> {
+    // Configurar el transporte del correo
+    emailjs.init('r-AFDRCTXu8pq0Vfg')
+    let response = await emailjs.send("service_dffyfl6","template_zbgo64g",{
+      contrasenha: password,
+      to_email: email,
+      });
+    console.log('emailResponse', response )
+  }
+
+  generateSecurePassword(length: number): string {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      const index = Math.floor(Math.random() * charset.length);
+      password += charset[index];
+    }
+    return password;
+  }
+
   // services
 
   getAllServices(): Observable<Services[]> {
@@ -410,26 +444,26 @@ export class MainService{
         catchError(() => of([]))
       );
   }
-// Observable<{ services: Services[], totalCount: number }>
-getServices(): void {
-  const url = `${this.connectionUrl}services`;
-  const params = new HttpParams()
-    .set('limit', this._limitService.toString())
-    .set('offset', this._offsetServices.toString());
+  // Observable<{ services: Services[], totalCount: number }>
+  getServices(): void {
+    const url = `${this.connectionUrl}services`;
+    const params = new HttpParams()
+      .set('limit', this._limitService.toString())
+      .set('offset', this._offsetServices.toString());
 
-  this.http.get<{ services: Services[], totalCount: number }>(url, { params })
-    .pipe(
-      catchError(() => of({ services: [], totalCount: 0 })),
-      tap((response) => {
-        // Actualizar los atributos del servicio con la respuesta del servidor
-        this.services = response.services;
-        this.totalServices = response.totalCount;
-        // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
-        this.servicesSubject.next(response);
-      })
-    )
-    .subscribe();
-}
+    this.http.get<{ services: Services[], totalCount: number }>(url, { params })
+      .pipe(
+        catchError(() => of({ services: [], totalCount: 0 })),
+        tap((response) => {
+          // Actualizar los atributos del servicio con la respuesta del servidor
+          this.services = response.services;
+          this.totalServices = response.totalCount;
+          // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
+          this.servicesSubject.next(response);
+        })
+      )
+      .subscribe();
+  }
   getServiceByName(name: string): Observable<Services> {
     const url = `${this.connectionUrl}services/${name}`;
     return this.http.get<Services>(url)
