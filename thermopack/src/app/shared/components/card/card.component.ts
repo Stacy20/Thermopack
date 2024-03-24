@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { MainService } from '../../../services/service';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'shared-card',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './card.component.html',
   styleUrl: './card.component.css'
 })
@@ -29,7 +30,7 @@ export class CardComponent {
   public permissions!:number;
   constructor(
     private router: Router,
-    private service: MainService,
+    public service: MainService,
     ) {}
 
   // id: string;

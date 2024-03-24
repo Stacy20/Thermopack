@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap} from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, of, switchMap, take, tap} from 'rxjs';
 import { Brands } from '../interfaces/brands.interface';
 import { Categories } from '../interfaces/categories.interface';
 import { Users, DBResponse } from '../interfaces/users.interface';
@@ -21,6 +21,7 @@ export class MainService{
   private idSelectType?:string;
   private idCategory?:string;
   public isLoggedIn:boolean = false;
+  public userLoggedIn: Users|null = null;
 
   //** Varibles de services IMPORTANES para paginacion */
   public services: Services[]=[];
@@ -33,10 +34,19 @@ export class MainService{
   constructor(private http: HttpClient) {
     this.isLoggedIn = localStorage.getItem('isLoggedIn') == 'true';
     const lastLogin = localStorage.getItem('lastLogin');
-    this.isLoggedIn = lastLogin && this.hanPasado24MenosHoras(lastLogin) ? this.isLoggedIn : false;
-}
+    this.isLoggedIn = lastLogin && this.dayHasntPassed(lastLogin) ? this.isLoggedIn : false;
 
-  hanPasado24MenosHoras(lastLogin: string): boolean {
+    const userLoggedIn = localStorage.getItem('userLoggedIn');
+    console.log('userloggedin')
+    if(this.isLoggedIn && userLoggedIn){
+      this.getUserByEmail(userLoggedIn).subscribe((user) => {
+        this.userLoggedIn = user;
+        console.log('this.userLoggedIn', this.userLoggedIn)
+      });
+    }
+  }
+
+  dayHasntPassed(lastLogin: string): boolean {
     if (!lastLogin) {
       return false;
     }
@@ -48,13 +58,80 @@ export class MainService{
     return diffHours < 24;
   }
 
-  login() {
+  login(user: Users) {
     this.isLoggedIn = true;
+    this.userLoggedIn = user;
     localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userLoggedIn', user.email);
     const now = new Date();
     const dateTimeString = now.toISOString();
     localStorage.setItem('lastLogin', dateTimeString);
   }
+
+  logout() {
+    this.isLoggedIn = false;
+    this.userLoggedIn = null;
+    localStorage.setItem('userLoggedIn', '');
+    localStorage.setItem('isLoggedIn', 'false');
+  }
+
+  userCanAdd(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const checkPrivilege = () => {
+        if (this.userLoggedIn && this.userLoggedIn.privileges) {
+          resolve((this.userLoggedIn.privileges[0] == 1) || false);
+        } else {
+          setTimeout(checkPrivilege, 100);
+        }
+      };
+
+      checkPrivilege();
+    });
+  }
+
+  userCanEdit(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const checkPrivilege = () => {
+        if (this.userLoggedIn && this.userLoggedIn.privileges) {
+          resolve((this.userLoggedIn.privileges[1] == 1) || false);
+        } else {
+          setTimeout(checkPrivilege, 100);
+        }
+      };
+
+      checkPrivilege();
+    });
+  }
+
+  userCanDelete(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const checkPrivilege = () => {
+        if (this.userLoggedIn && this.userLoggedIn.privileges) {
+          resolve((this.userLoggedIn.privileges[2] == 1) || false);
+        } else {
+          setTimeout(checkPrivilege, 100);
+        }
+      };
+
+      checkPrivilege();
+    });
+  }
+
+  userCanCreateUsers(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const checkPrivilege = () => {
+        if (this.userLoggedIn && this.userLoggedIn.privileges) {
+          resolve((this.userLoggedIn.privileges[3] == 1) || false);
+        } else {
+          setTimeout(checkPrivilege, 100);
+        }
+      };
+
+      checkPrivilege();
+    });
+  }
+
+
 
 
   //** Varibles de products IMPORTANES para paginacion */

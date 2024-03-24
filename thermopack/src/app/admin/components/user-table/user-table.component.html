@@ -68,12 +68,7 @@
     @for (user of users; track $index) {
     <tr class="align-middle" [class.table-primary]="user === selectedUser" (click)="selectedUser = user">
       <td><input type="text" [(ngModel)]="user.userEmail" style="border: none; outline: none; background-color: transparent;" [size]="user.userEmail.length"></td>
-      <td>
-        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privCreateUsers, 'text-bg-danger': !user.privCreateUsers}">
-          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privCreateUsers" id="checkbox1">
-          <label class="form-check-label ms-2" for="checkbox1">{{ user.privCreateUsers | yesNoPipe: 'es' }}</label>
-        </span>
-      </td>
+
       <td>
         <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privAddItems, 'text-bg-danger': !user.privAddItems}">
           <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privAddItems" id="checkbox2">
@@ -90,6 +85,12 @@
         <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privDelItems, 'text-bg-danger': !user.privDelItems}">
           <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privDelItems" id="checkbox4">
           <label class="form-check-label ms-2" for="checkbox4">{{ user.privDelItems | yesNoPipe: 'es' }}</label>
+        </span>
+      </td>
+      <td>
+        <span class="badge py-2 px-3 w-100" [ngClass]="{'text-bg-success': user.privCreateUsers, 'text-bg-danger': !user.privCreateUsers}">
+          <input type="checkbox" [disabled]="!user.editable" [(ngModel)]="user.privCreateUsers" id="checkbox1">
+          <label class="form-check-label ms-2" for="checkbox1">{{ user.privCreateUsers | yesNoPipe: 'es' }}</label>
         </span>
       </td>
 

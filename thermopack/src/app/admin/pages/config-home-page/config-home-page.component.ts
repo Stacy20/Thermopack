@@ -6,6 +6,7 @@ import { MainService } from '../../../services/service';
 import { Data } from '../../../interfaces/data.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'admin-config-home-page',
@@ -42,11 +43,11 @@ import { Router } from '@angular/router';
       background-color: #0196ad;
     }
     `,
-    imports: [NavbarComponent, ConfigGalleryComponent, FormsModule, ]
+    imports: [NavbarComponent, ConfigGalleryComponent, FormsModule, CommonModule]
 })
 export class ConfigHomePageComponent {
   constructor(
-    private service: MainService,
+    public service: MainService,
     private _sanitizer: DomSanitizer,
     private router: Router,
   ) {}
@@ -67,8 +68,7 @@ export class ConfigHomePageComponent {
   public productosText: string = '';
   public servicesTitle: string = '';
   public servicesText: string = '';
-
-
+  public canEdit: boolean = false;
 
   deleteInputs() {
     this.eslogan = this.description = this.mision = this.vision = this.logo = '';

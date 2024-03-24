@@ -23,8 +23,11 @@ export class AddProductPageComponent {
     private router: Router,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
+    if (!(await this.service.userCanAdd())) {
+      this.router.navigate(['admin/config/home']);
+    }
     this.getData();;
   }
 

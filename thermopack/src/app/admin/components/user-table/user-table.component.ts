@@ -139,6 +139,7 @@ export class UserTableComponent {
           this.isEditing = false;
           this.selectedUser = null;
           console.log('exito') // TODO alert
+          location.reload();
         }else{
           console.log('error') // TODO alert
         }

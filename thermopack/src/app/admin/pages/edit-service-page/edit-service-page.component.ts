@@ -23,8 +23,11 @@ export class EditServicePageComponent {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
+    if (!(await this.service.userCanEdit())) {
+      this.router.navigate(['admin/config/home']);
+    }
     this.route.paramMap.subscribe(params => {
       this.getData(params.get('id'));;
     });

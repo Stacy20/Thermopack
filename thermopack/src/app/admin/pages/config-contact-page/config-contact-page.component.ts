@@ -26,7 +26,7 @@ import { Router } from '@angular/router';
 })
 export class ConfigContactPageComponent {
   constructor(
-    private service: MainService,
+    public service: MainService,
     private router: Router
   ) {}
 

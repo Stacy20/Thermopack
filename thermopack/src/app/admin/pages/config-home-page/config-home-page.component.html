@@ -60,7 +60,7 @@
         </div>
         <div class="row mb-4">
           <div class="offset-3 col-md-6">
-            <button class="btn btn-success me-4" (click)="save()">
+            <button *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[1] == 1" class="btn btn-success me-4" (click)="save()">
               Guardar
             </button>
           </div>
@@ -78,7 +78,7 @@
         <admin-config-gallery [identifier]="'1'" [images]="this.visionImages"></admin-config-gallery>
         <div class="row my-4">
           <div class="col-md-6">
-            <button class="btn btn-success me-4" (click)="saveVisionImages()">Guardar</button>
+            <button *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[1] == 1" class="btn btn-success me-4" (click)="saveVisionImages()">Guardar</button>
           </div>
         </div>
 
@@ -87,7 +87,7 @@
         <admin-config-gallery [identifier]="'2'" [images]="this.presentationImages"></admin-config-gallery>
         <div class="row my-4">
           <div class="col-md-6">
-            <button class="btn btn-success me-4" (click)="savePresentationImages()">Guardar</button>
+            <button *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[1] == 1" class="btn btn-success me-4" (click)="savePresentationImages()">Guardar</button>
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@
         </div>
         <div class="row mb-4">
           <div class="offset-3 col-md-6">
-            <button class="btn btn-success me-4" (click)="saveProductsServices()">Guardar</button>
+            <button *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[1] == 1" class="btn btn-success me-4" (click)="saveProductsServices()">Guardar</button>
           </div>
         </div>
       </div>
