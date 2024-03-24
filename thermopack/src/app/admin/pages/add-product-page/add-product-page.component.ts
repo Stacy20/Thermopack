@@ -10,12 +10,14 @@ import { SelectTypeComponent } from '../../../shared/components/select-type/sele
 import { CommonModule } from '@angular/common';
 import { Brands } from '../../../interfaces/brands.interface';
 
+import { Select2Data, Select2Module } from 'ng-select2-component';
+
 @Component({
     selector: 'admin-add-product-page',
     standalone: true,
     templateUrl: './add-product-page.component.html',
     styles: ``,
-    imports: [ConfigGalleryComponent, NavbarComponent, UnderConstructionComponent, FormsModule, SelectTypeComponent, CommonModule]
+    imports: [ConfigGalleryComponent, NavbarComponent, UnderConstructionComponent, FormsModule, SelectTypeComponent, CommonModule, Select2Module]
 })
 export class AddProductPageComponent {
   constructor(
@@ -25,6 +27,17 @@ export class AddProductPageComponent {
   ngOnInit() {
     this.getData();;
   }
+
+  public data: Select2Data = [
+    {
+        value: 'heliotrope',
+        label: 'Heliotrope'
+    },
+    {
+        value: 'hibiscus',
+        label: 'Hibiscus'
+    },
+];
 
   public name: string = '';
   public description: string = '';
@@ -51,6 +64,7 @@ export class AddProductPageComponent {
         }
       }
     });
+
     this.service.getAllBrands().subscribe((brands) => {
       this.brands = brands;
       for (let i = 0; i < this.brands.length; i++) {
@@ -59,6 +73,7 @@ export class AddProductPageComponent {
         }
       }
     });
+
     this.service.getAllCategories().subscribe((categories) => {
       this.categories = categories;
       for (let i = 0; i < this.categories.length; i++) {
@@ -77,7 +92,15 @@ export class AddProductPageComponent {
   }
 
   selectBrand(event: any) {
-    this.selectedBrand = event.target.value;
+    let selected = undefined
+    if(event.options.length > 0){
+      selected = event.options;
+      console.log(selected);
+      if(selected.length > 1){
+        selected.splice(0,1);
+      }
+    }
+    this.selectedBrand = selected;
   }
 
   selectCategory(event: any) {

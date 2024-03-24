@@ -32,11 +32,21 @@
           <p class="text-responsive">Marca</p>
         </div>
         <div class="col-md-6">
-          <select class="form-select" aria-label="Buscar por tipo" (change)="selectBrand($event)">
+
+
+          <!-- <select class="form-select" aria-label="Buscar por tipo" ()="selectBrand($event)">
             <ng-container *ngFor="let option of brands; let i = index">
               <option [selected]="selectedBrand === i" [value]="i">{{option.name}}</option>
             </ng-container>
-          </select>
+          </select> -->
+
+
+        <select2 [data]="data"
+          placeholder="Seleccione o escriba la marca"
+          multiple
+          autoCreate
+          (update)="selectBrand($event)"></select2>
+
         </div>
       </div>
       <div class="row mb-3">
