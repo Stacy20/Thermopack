@@ -28,87 +28,88 @@ export class AddProductPageComponent {
     this.getData();;
   }
 
-  public data: Select2Data = [
-    {
-        value: 'heliotrope',
-        label: 'Heliotrope'
-    },
-    {
-        value: 'hibiscus',
-        label: 'Hibiscus'
-    },
-];
-
   public name: string = '';
   public description: string = '';
   public price: number = 0;
   public images: string[] = [];
+
   public type: string = '';
-  public types: Types[]=[];
-  public selectedType: number = 0;
+  public types: any[]=[];
+  public selectedType: any = {value: '0', name: ''};
+
   public brand: string = '';
-  public brands: Brands[]=[];
-  public selectedBrand: number = 0;
-  public categories: Brands[]=[];
+  public brands: any[]=[];
+  public selectedBrand: any = {value: '0', name: ''};
+
+  public categories: any[]=[];
   public category: string = '';
-  public selectedCategory: number = 0;
+  public selectedCategory: any = {value: '0', name: ''};
+
   public subCategory: string = '';
-  public selectedSubCategory: number = 0;
+  public selectedSubCategory: any = {value: '0', name: ''};
 
   getData(): void {
     this.service.getAllTypes().subscribe((types) => {
-      this.types = types;
-      for (let i = 0; i < this.types.length; i++) {
-        if (this.types[i]._id == this.type){
-          this.selectedType = i;
-        }
+      for (let i = 0; i < types.length; i++) {
+        this.types[i] = {value: types[i]._id, label: types[i].name};
       }
     });
 
     this.service.getAllBrands().subscribe((brands) => {
-      this.brands = brands;
-      for (let i = 0; i < this.brands.length; i++) {
-        if (this.brands[i]._id == this.brand){
-          this.selectedBrand = i;
-        }
+      for (let i = 0; i < brands.length; i++) {
+        this.brands[i] = {value: brands[i]._id, label: brands[i].name};
       }
     });
 
     this.service.getAllCategories().subscribe((categories) => {
-      this.categories = categories;
-      for (let i = 0; i < this.categories.length; i++) {
-        if (this.categories[i]._id == this.category){
-          this.selectedCategory = i;
-        }
-        if (this.categories[i]._id == this.subCategory){
-          this.selectedSubCategory = i;
-        }
+      for (let i = 0; i < categories.length; i++) {
+        this.categories[i] = {value: categories[i]._id, label: categories[i].name};
       }
     });
   }
 
   selectType(event: any) {
-    this.selectedType = event.target.value;
+    if(event.options.length > 0){
+      if(event.options.length > 1){
+        event.options.splice(0,1);
+      }
+      this.selectedType = event.options[0];
+    }else{
+      this.selectedType = {}
+    }
   }
 
   selectBrand(event: any) {
-    let selected = undefined
     if(event.options.length > 0){
-      selected = event.options;
-      console.log(selected);
-      if(selected.length > 1){
-        selected.splice(0,1);
+      if(event.options.length > 1){
+        event.options.splice(0,1);
       }
+      this.selectedBrand = event.options[0];
+    }else{
+      this.selectedBrand = {}
     }
-    this.selectedBrand = selected;
   }
 
   selectCategory(event: any) {
-    this.selectedCategory = event.target.value;
+    if(event.options.length > 0){
+      if(event.options.length > 1){
+        event.options.splice(0,1);
+      }
+      this.selectedCategory = event.options[0];
+    }else{
+      this.selectedCategory = {}
+    }
   }
 
   selectSubCategory(event: any) {
-    this.selectedSubCategory = event.target.value;
+    if(event.options.length > 0){
+      if(event.options.length > 1){
+        event.options.splice(0,1);
+      }
+      this.selectedSubCategory = event.options[0];
+    }else{
+      this.selectedSubCategory = {}
+    }
   }
 
   handleFileInput(event: any) {
@@ -128,17 +129,42 @@ export class AddProductPageComponent {
   }
 
   save(){
+    if(this.selectedBrand.value === this.selectedBrand.label){
+      this.service.createBrand(this.selectedBrand.label).subscribe((response) => {
+        this.selectedBrand.value = response._id;
+      });
+    }
+
+    if(this.selectedType.value === this.selectedType.label){
+      this.service.createType(this.selectedType.label).subscribe((response) => {
+        this.selectedType.value = response._id;
+      });
+    }
+
+    if(this.selectedCategory.value === this.selectedCategory.label){
+      this.service.createCategory(this.selectedCategory.label).subscribe((response) => {
+        this.selectedCategory.value = response._id;
+      });
+    }
+
+    if(this.selectedSubCategory.value === this.selectedSubCategory.label){
+      this.service.createCategory(this.selectedSubCategory.label).subscribe((response) => {
+        this.selectedSubCategory.value = response._id;
+      });
+    }
+
+
     this.service.getProductByName(this.name).subscribe((product) => {
       if (Object.keys(product).length !== 0){
         return;
       }
       // TODO implementar alerts
       this.service.createProduct(this.name, this.description,
-          this.brands[this.selectedBrand]._id, this.types[this.selectedType]._id, this.price,
-          this.categories[this.selectedCategory]._id, this.categories[this.selectedSubCategory]._id,
-          this.images).subscribe((response) => {
-      console.log(response)
-    });
+        this.selectedBrand.value, this.types[this.selectedType]._id, this.price,
+        this.categories[this.selectedCategory]._id, this.categories[this.selectedSubCategory]._id,
+        this.images).subscribe((response) => {
+        console.log(response)
+      });
     });
   }
 
