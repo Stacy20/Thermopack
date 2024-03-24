@@ -35,18 +35,20 @@ export class AddProductPageComponent {
 
   public type: string = '';
   public types: any[]=[];
-  public selectedType: any = {value: '0', name: ''};
+  public selectedType: any = {value: '0', label: ''};
 
   public brand: string = '';
   public brands: any[]=[];
-  public selectedBrand: any = {value: '0', name: ''};
+  public selectedBrand: any = {value: '0', label: ''};
 
   public categories: any[]=[];
   public category: string = '';
-  public selectedCategory: any = {value: '0', name: ''};
+  public selectedCategory: any = {value: '0', label: ''};
 
   public subCategory: string = '';
-  public selectedSubCategory: any = {value: '0', name: ''};
+  public selectedSubCategory: any = {value: '0', label: ''};
+
+  val1 = '65ffbd1418366f0aa036ae5d'
 
   getData(): void {
     this.service.getAllTypes().subscribe((types) => {
@@ -160,14 +162,12 @@ export class AddProductPageComponent {
       }
       // TODO implementar alerts
       this.service.createProduct(this.name, this.description,
-        this.selectedBrand.value, this.types[this.selectedType]._id, this.price,
-        this.categories[this.selectedCategory]._id, this.categories[this.selectedSubCategory]._id,
+        this.selectedBrand.value, this.selectedType.value, this.price,
+        this.selectedCategory.value, this.selectedSubCategory.value,
         this.images).subscribe((response) => {
         console.log(response)
       });
     });
   }
-
-
 
 }
