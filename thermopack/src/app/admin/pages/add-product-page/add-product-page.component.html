@@ -34,10 +34,11 @@
         <div class="col-md-6">
 
         <select2 [data]="brands"
-          multiple
           autoCreate
-          displaySearchStatus="hidden"
+          displaySearchStatus="always"
+          [value]="valB"
           (update)="selectBrand($event)"></select2>
+
 
         </div>
       </div>
@@ -48,9 +49,8 @@
         <div class="col-md-6">
 
           <select2 [data]="types"
-            multiple
             autoCreate
-            displaySearchStatus="hidden"
+            displaySearchStatus="always"
             (update)="selectType($event)"></select2>
 
         </div>
@@ -63,9 +63,8 @@
         <div class="col-md-6">
 
           <select2 [data]="categories"
-            multiple
             autoCreate
-            displaySearchStatus="hidden"
+            displaySearchStatus="always"
             (update)="selectCategory($event)"></select2>
 
         </div>
@@ -77,9 +76,8 @@
         <div class="col-md-6">
 
           <select2 [data]="categories"
-            multiple
             autoCreate
-            displaySearchStatus="hidden"
+            displaySearchStatus="always"
             (update)="selectSubCategory($event)"></select2>
 
         </div>

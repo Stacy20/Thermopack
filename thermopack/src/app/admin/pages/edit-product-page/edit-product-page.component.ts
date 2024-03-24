@@ -10,12 +10,14 @@ import { SelectTypeComponent } from '../../../shared/components/select-type/sele
 import { CommonModule } from '@angular/common';
 import { Brands } from '../../../interfaces/brands.interface';
 
+import { Select2Data, Select2Module, Select2UpdateEvent } from 'ng-select2-component';
+
 @Component({
     selector: 'admin-edit-product-page',
     standalone: true,
     templateUrl: './edit-product-page.component.html',
     styles: ``,
-    imports: [ConfigGalleryComponent, NavbarComponent, UnderConstructionComponent, FormsModule, SelectTypeComponent, CommonModule]
+    imports: [ConfigGalleryComponent, NavbarComponent, UnderConstructionComponent, FormsModule, SelectTypeComponent, CommonModule, Select2Module]
 })
 export class EditProductPageComponent {
   constructor(
@@ -33,22 +35,27 @@ export class EditProductPageComponent {
   public description: string = '';
   public price: number = 0;
   public images: string[] = [];
+
   public type: string = '';
-  public types: Types[]=[];
-  public selectedType: number = 0;
+  public types: any[]=[];
+  public selectedType: any = {value: '0', label: ''};
+
   public brand: string = '';
-  public brands: Brands[]=[];
-  public selectedBrand: number = 0;
-  public categories: Brands[]=[];
+  public brands: any[]=[];
+  public selectedBrand: any = {value: '0', label: ''};
+
+  public categories: any[]=[];
   public category: string = '';
-  public selectedCategory: number = 0;
+  public selectedCategory: any = {value: '0', label: ''};
+
   public subCategory: string = '';
-  public selectedSubCategory: number = 0;
+  public selectedSubCategory: any = {value: '0', label: ''};
 
   getData(title: string | null): void {
     if (title == null){
       return;
     }
+
     this.service.getProductByName(title).subscribe((product) => {
       this.name = this.originalName = product.name;
       this.description = product.description;
@@ -59,49 +66,84 @@ export class EditProductPageComponent {
       this.subCategory = product.subcategoryId;
       this.images = product.images;
     });
+
     this.service.getAllTypes().subscribe((types) => {
-      this.types = types;
-      for (let i = 0; i < this.types.length; i++) {
-        if (this.types[i]._id == this.type){
-          this.selectedType = i;
-        }
+      for (let i = 0; i < types.length; i++) {
+        this.types[i] = {value: types[i]._id, label: types[i].name};
       }
+      this.selectedType = this.type;
     });
+
     this.service.getAllBrands().subscribe((brands) => {
-      this.brands = brands;
-      for (let i = 0; i < this.brands.length; i++) {
-        if (this.brands[i]._id == this.brand){
-          this.selectedBrand = i;
-        }
+      for (let i = 0; i < brands.length; i++) {
+        this.brands[i] = {value: brands[i]._id, label: brands[i].name};
       }
+      this.selectedBrand = this.brand;
     });
+
     this.service.getAllCategories().subscribe((categories) => {
-      this.categories = categories;
-      for (let i = 0; i < this.categories.length; i++) {
-        if (this.categories[i]._id == this.category){
-          this.selectedCategory = i;
-        }
-        if (this.categories[i]._id == this.subCategory){
-          this.selectedSubCategory = i;
-        }
+      for (let i = 0; i < categories.length; i++) {
+        this.categories[i] = {value: categories[i]._id, label: categories[i].name};
       }
+      this.selectedCategory = this.category;
+      this.selectedSubCategory = this.subCategory;
     });
   }
 
   selectType(event: any) {
-    this.selectedType = event.target.value;
+    if(event.options.length > 0){
+      this.selectedType = event.options[0];
+
+      if(this.selectedType.value === this.selectedType.label){
+        this.service.createType(this.selectedType.label).subscribe((response) => {
+          this.selectedType.value = response._id;
+        });
+      }
+    }else{
+      this.selectedType = {}
+    }
   }
 
   selectBrand(event: any) {
-    this.selectedBrand = event.target.value;
+    if(event.options.length > 0){
+      this.selectedBrand = event.options[0];
+
+      if(this.selectedBrand.value === this.selectedBrand.label){
+        this.service.createBrand(this.selectedBrand.label).subscribe((response) => {
+          this.selectedBrand.value = response._id;
+        });
+      }
+    }else{
+      this.selectedBrand = {}
+    }
   }
 
   selectCategory(event: any) {
-    this.selectedCategory = event.target.value;
+    if(event.options.length > 0){
+      this.selectedCategory = event.options[0];
+
+      if(this.selectedCategory.value === this.selectedCategory.label){
+        this.service.createCategory(this.selectedCategory.label).subscribe((response) => {
+          this.selectedCategory.value = response._id;
+        });
+      }
+    }else{
+      this.selectedCategory = {}
+    }
   }
 
   selectSubCategory(event: any) {
-    this.selectedSubCategory = event.target.value;
+    if(event.options.length > 0){
+      this.selectedSubCategory = event.options[0];
+
+      if(this.selectedSubCategory.value === this.selectedSubCategory.label){
+        this.service.createCategory(this.selectedSubCategory.label).subscribe((response) => {
+          this.selectedSubCategory.value = response._id;
+        });
+      }
+    }else{
+      this.selectedSubCategory = {}
+    }
   }
 
   handleFileInput(event: any) {
@@ -128,8 +170,8 @@ export class EditProductPageComponent {
       }
       // TODO implementar alerts
       this.service.updateProductByName(this.originalName, this.name, this.description,
-          this.brands[this.selectedBrand]._id, this.types[this.selectedType]._id, this.price,
-          this.categories[this.selectedCategory]._id, this.categories[this.selectedSubCategory]._id,
+          this.selectedBrand.value, this.selectedType.value, this.price,
+          this.selectedCategory.value, this.selectedSubCategory.value,
           this.images).subscribe((response) => {
       console.log(response)
     });

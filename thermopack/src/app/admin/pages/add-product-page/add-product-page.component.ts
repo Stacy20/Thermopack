@@ -2,15 +2,12 @@ import { Component } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { UnderConstructionComponent } from "../../../shared/components/under-construction/under-construction.component";
 import { ConfigGalleryComponent } from '../../components/config-gallery/config-gallery.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MainService } from '../../../services/service';
-import { ActivatedRoute } from '@angular/router';
-import { Types } from '../../../interfaces/types.interface';
 import { SelectTypeComponent } from '../../../shared/components/select-type/select-type.component';
 import { CommonModule } from '@angular/common';
-import { Brands } from '../../../interfaces/brands.interface';
 
-import { Select2Data, Select2Module } from 'ng-select2-component';
+import { Select2Data, Select2Module, Select2UpdateEvent } from 'ng-select2-component';
 
 @Component({
     selector: 'admin-add-product-page',
@@ -48,7 +45,7 @@ export class AddProductPageComponent {
   public subCategory: string = '';
   public selectedSubCategory: any = {value: '0', label: ''};
 
-  val1 = '65ffbd1418366f0aa036ae5d'
+  public valB: string = '';
 
   getData(): void {
     this.service.getAllTypes().subscribe((types) => {
@@ -61,6 +58,8 @@ export class AddProductPageComponent {
       for (let i = 0; i < brands.length; i++) {
         this.brands[i] = {value: brands[i]._id, label: brands[i].name};
       }
+      console.log(this.brands[2].value);
+      this.valB = this.brands[2].value;
     });
 
     this.service.getAllCategories().subscribe((categories) => {
@@ -70,11 +69,8 @@ export class AddProductPageComponent {
     });
   }
 
-  selectType(event: any) {
+  selectType(event: Select2UpdateEvent<any>) {
     if(event.options.length > 0){
-      if(event.options.length > 1){
-        event.options.splice(0,1);
-      }
       this.selectedType = event.options[0];
 
       if(this.selectedType.value === this.selectedType.label){
@@ -89,9 +85,6 @@ export class AddProductPageComponent {
 
   selectBrand(event: any) {
     if(event.options.length > 0){
-      if(event.options.length > 1){
-        event.options.splice(0,1);
-      }
       this.selectedBrand = event.options[0];
 
       if(this.selectedBrand.value === this.selectedBrand.label){
@@ -106,9 +99,6 @@ export class AddProductPageComponent {
 
   selectCategory(event: any) {
     if(event.options.length > 0){
-      if(event.options.length > 1){
-        event.options.splice(0,1);
-      }
       this.selectedCategory = event.options[0];
 
       if(this.selectedCategory.value === this.selectedCategory.label){
@@ -123,9 +113,6 @@ export class AddProductPageComponent {
 
   selectSubCategory(event: any) {
     if(event.options.length > 0){
-      if(event.options.length > 1){
-        event.options.splice(0,1);
-      }
       this.selectedSubCategory = event.options[0];
 
       if(this.selectedSubCategory.value === this.selectedSubCategory.label){
