@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { YesNoPipePipe } from '../../pipes/yes-no-pipe.pipe';
 import { CommonModule } from '@angular/common';
+import { SweetAlertService } from '../../services/sweet-alert.service';
 
 @Component({
   selector: 'admin-login-page',
@@ -15,7 +16,8 @@ import { CommonModule } from '@angular/common';
 export class LoginPageComponent {
   constructor(
     private router: Router,
-    private service: MainService
+    private service: MainService,
+    private sweetAlertService: SweetAlertService
   ) {}
 
   public email: string = '';
@@ -27,11 +29,11 @@ export class LoginPageComponent {
     if (this.email == '') { return; }
     this.service.getUserByEmail(this.email).subscribe((user) => {
       if (Object.keys(user).length == 0){
-        console.log('no se encuentra el correo registrado');// TODO alert
+        this.sweetAlertService.showAlert('Error', 'El correo no se encuentra registrado', 'error');
         return;
       }
       if (!(user.password == this.password)){
-        console.log('la contrasenha no coincide');// TODO alert
+        this.sweetAlertService.showAlert('Error', 'Contraseña equivocada', 'error');
         return;
       }
       console.log('log in');
