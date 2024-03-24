@@ -32,14 +32,10 @@
           <p class="text-responsive">Marca</p>
         </div>
         <div class="col-md-6">
-
         <select2 [data]="brands"
           autoCreate
           displaySearchStatus="always"
-          [value]="valB"
           (update)="selectBrand($event)"></select2>
-
-
         </div>
       </div>
       <div class="row mb-3">
@@ -47,7 +43,6 @@
           <p class="text-responsive">Tipo</p>
         </div>
         <div class="col-md-6">
-
           <select2 [data]="types"
             autoCreate
             displaySearchStatus="always"
@@ -55,18 +50,15 @@
 
         </div>
       </div>
-
       <div class="row mb-3">
         <div class="col-md-3">
           <p class="text-responsive">Categoría</p>
         </div>
         <div class="col-md-6">
-
           <select2 [data]="categories"
             autoCreate
             displaySearchStatus="always"
             (update)="selectCategory($event)"></select2>
-
         </div>
       </div>
       <div class="row mb-3">
@@ -74,12 +66,10 @@
           <p class="text-responsive">Subcategoría</p>
         </div>
         <div class="col-md-6">
-
           <select2 [data]="categories"
             autoCreate
             displaySearchStatus="always"
             (update)="selectSubCategory($event)"></select2>
-
         </div>
       </div>
       <div class="row mb-4">
@@ -105,7 +95,6 @@
           <button class="btn btn-success me-4" (click)="save()">Guardar</button>
         </div>
       </div>
-
     </div>
   </div>
 </div>

@@ -45,8 +45,6 @@ export class AddProductPageComponent {
   public subCategory: string = '';
   public selectedSubCategory: any = {value: '0', label: ''};
 
-  public valB: string = '';
-
   getData(): void {
     this.service.getAllTypes().subscribe((types) => {
       for (let i = 0; i < types.length; i++) {
@@ -58,8 +56,6 @@ export class AddProductPageComponent {
       for (let i = 0; i < brands.length; i++) {
         this.brands[i] = {value: brands[i]._id, label: brands[i].name};
       }
-      console.log(this.brands[2].value);
-      this.valB = this.brands[2].value;
     });
 
     this.service.getAllCategories().subscribe((categories) => {
