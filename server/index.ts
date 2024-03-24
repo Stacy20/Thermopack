@@ -13,10 +13,13 @@ import ServicesRouter from './routes/services.route';
 import TypesRouter from './routes/types.route';
 import UsersRouter from './routes/users.route';
 import ContactRouter from './routes/contact.route';
+import * as bodyParser from 'body-parser';
 
 const app = express();
 const port = 3000;
 
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json()); // <- Esta linea permite que se accese el body
 
 app.use(cors());
