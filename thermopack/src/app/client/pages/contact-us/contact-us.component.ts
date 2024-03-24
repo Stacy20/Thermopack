@@ -27,7 +27,8 @@ export class ContactUsComponent {
 
   public welcomeParagraph: string = '';
   public ubicationText: string = '';
-  public ubicationLink: string = '';
+  public ubicacionMaps: string = '';
+  public ubicacionWaze: string = '';
   public telephoneNumbers: string[] = ['','',''];
   public email: string = '';
   public whatsappLink: string = '';
@@ -42,7 +43,8 @@ export class ContactUsComponent {
     this.service.getContactData().subscribe((contact) => {
       this.welcomeParagraph = contact[0].welcomeParagraph;
       this.ubicationText = contact[0].ubicationText;
-      this.ubicationLink = contact[0].ubicationGMLink;
+      this.ubicacionMaps = contact[0].ubicationGMLink;
+      this.ubicacionWaze = contact[0].ubicationWazeLink;
       this.telephoneNumbers  = contact[0].telephoneNumbers;
       console.log(this.telephoneNumbers, 'hola')
       this.email = contact[0].email;

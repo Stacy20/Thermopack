@@ -17,9 +17,9 @@ export class DetailPageComponent {
   public description: string = '';
   public price: number = 0;
   images!: GalleryItem[];
-
+  mensajeWhatsApp: string = 'Estoy intersado en lo siguiente';
   //todo hay que hacer que el link recoja el link de la pagina que se encuentra para poder enviarla tambien
-  whatsappLink = `https://wa.me/${50688598630}?text=Estoy%20interesado%20en%20este%20producto`;
+  public whatsappLink: string = '';
 
 
   // public description:string='con nosotros la distribución de los productos hasta sus puntos de interés.  <br> Ofecemos una amplia cobertura del mercado con varias marcas y categorías. <br> <br> Insertar más texto convincente para el cliente. \n En esta página se muestran las categorías de los productos que se ofrecen. <br> <br> Por aquí puede ir información de precios si es necesario, y la forma de adquirirlo o solicitarlo.';
@@ -30,6 +30,7 @@ export class DetailPageComponent {
   ) {}
 
   ngOnInit() {
+    this.getData()
     this.route.paramMap.subscribe(params => {
       const typeParam = params.get('type');
       if (typeParam !== null) {
@@ -46,8 +47,20 @@ export class DetailPageComponent {
       // this.getData(type, id);
     });
   }
+  openWhatsApp() {
+    if (this.whatsappLink) {
+      console.log(this.whatsappLink)
+      window.open(this.whatsappLink, '_blank');
+    }
+  }
+  getData(): void {
+    this.service.getContactData().subscribe((contact) => {
+      const currentPageUrl = window.location.href;
+      this.whatsappLink = `https://wa.me/${contact[0].whatsappLink}?text=${encodeURIComponent(this.mensajeWhatsApp + '\n\n' + currentPageUrl)}`;
+      console.log(this.whatsappLink, 'hola')
+    });
 
-
+  }
   formatDescription(description: string): string {
     return description.replace(/\n/g, '<br>');
   }

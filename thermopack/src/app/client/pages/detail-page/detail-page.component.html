@@ -16,7 +16,7 @@
              -->
              @if (type==1) {
               <a [href]="whatsappLink" target="_blank">
-                <button type="button" class="my-custom-button mt-5 mb-5">Solicitar producto</button>
+                <button type="button" class="my-custom-button mt-5 mb-5" (click)="openWhatsApp()" >Solicitar producto</button>
               </a>
              }@else {
               <a [href]="whatsappLink" target="_blank">
