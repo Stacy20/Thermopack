@@ -10,7 +10,7 @@
         </div>
         <div class="col-md-6">
           <textarea class="form-control" [(ngModel)]="welcomeParagraph"></textarea>
-          @if (welcomeParagraph.length < 5) {
+          @if (welcomeParagraph.trim().length < 5) {
             <div class="text-danger">Debe tener más de 5 caracteres</div>
           }
         </div>
@@ -22,7 +22,7 @@
         </div>
         <div class="col-md-6">
           <textarea class="form-control" [(ngModel)]="ubicationText"></textarea>
-          @if (ubicationText.length < 5) {
+          @if (ubicationText.trim().length < 5) {
             <div class="text-danger">Debe tener más de 5 caracteres</div>
           }
         </div>
@@ -34,7 +34,7 @@
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control" [(ngModel)]="ubicationGMLink">
-          @if (ubicationGMLink.length < 5) {
+          @if (ubicationGMLink.trim().length < 5) {
             <div class="text-danger">Debe tener más de 5 caracteres</div>
           }
         </div>
@@ -46,7 +46,7 @@
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control" [(ngModel)]="ubicationWazeLink">
-          @if (ubicationWazeLink.length < 5) {
+          @if (ubicationWazeLink.trim().length < 5) {
             <div class="text-danger">Debe tener más de 5 caracteres</div>
           }
         </div>
@@ -59,7 +59,7 @@
         <div class="col-md-6 d-flex align-items-center ">
           <input type="text" class="form-control w-50" [(ngModel)]="newNumber" (ngModelChange)="validateNumber()" >
           <button class="btn btn-outline-secondary ms-2 me-2" type="button" (click)="addNumber()">+</button>
-          @if (!validNumber  && newNumber.length > 0) {
+          @if (!validNumber  && newNumber.trim().length > 0) {
             <div class="text-danger ms-2" >
               Debe empezar con el código 506, no debe contener nigún carácter alfabético y tener una longitud total de 11 números.
             </div>
@@ -78,7 +78,7 @@
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control" [(ngModel)]="email" (ngModelChange)="validateEmail()">
-          @if (!emailValid || email.length < 0) {
+          @if (!emailValid || email.trim().length < 0) {
             <div class="text-danger" >
               Por favor, ingrese un correo electrónico válido.
             </div>
@@ -93,7 +93,7 @@
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control" [(ngModel)]="whatsappLink"  (ngModelChange)="validateWhatsApp()">
-          @if (!validwhatsappLink  || whatsappLink.length < 0) {
+          @if (!validwhatsappLink  || whatsappLink.trim().length < 0) {
               <div class="text-danger ms-2" >
                 Debe empezar con el código 506, no debe contener nigún carácter alfabético y tener una longitud total de 11 números.
               </div>
@@ -108,7 +108,7 @@
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control" [(ngModel)]="facebookLink">
-          @if (facebookLink.length < 5) {
+          @if (facebookLink.trim().length < 5) {
             <div class="text-danger">Debe tener más de 5 caracteres</div>
           }
         </div>
@@ -120,7 +120,7 @@
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control" [(ngModel)]="instagramLink">
-          @if (instagramLink.length < 5) {
+          @if (instagramLink.trim().length < 5) {
             <div class="text-danger">Debe tener más de 5 caracteres</div>
           }
         </div>
@@ -132,7 +132,7 @@
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control" [(ngModel)]="youtubeLink">
-          @if (youtubeLink.length < 5) {
+          @if (youtubeLink.trim().length < 5) {
             <div class="text-danger">Debe tener más de 5 caracteres</div>
           }
         </div>

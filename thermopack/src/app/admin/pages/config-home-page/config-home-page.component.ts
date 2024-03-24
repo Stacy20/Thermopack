@@ -139,7 +139,8 @@ export class ConfigHomePageComponent {
   }
 
   save() {
-    if (!this.eslogan || !this.description || !this.mision || !this.vision || !this.logo) {
+    if (!this.eslogan || this.eslogan.trim().length<5 || !this.description  || this.description.trim().length<5 ||
+     !this.mision || this.mision.trim().length<5  || !this.vision || this.vision.trim().length<5  || !this.logo) {
       this.sweetAlertService.showAlert('Error', 'Todos los campos son obligatorios', 'error');
       return; // Detener el proceso si falta algún campo obligatorio
     }
@@ -233,7 +234,8 @@ export class ConfigHomePageComponent {
   }
 
   saveProductsServices() {
-    if (!this.productosTitle || !this.productosText || !this.servicesTitle || !this.servicesText) {
+    if (!this.productosTitle || this.productosTitle.trim().length<5 || !this.productosText || this.productosText.trim().length<5
+     || !this.servicesTitle || this.servicesTitle.trim().length<5 || !this.servicesText || this.servicesText.trim().length<5) {
       this.sweetAlertService.showAlert('Error', 'Todos los campos son obligatorios', 'error');
       return; // Detener el proceso si falta algún campo obligatorio
     }

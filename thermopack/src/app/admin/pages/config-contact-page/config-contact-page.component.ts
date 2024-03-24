@@ -25,14 +25,6 @@ import { SweetAlertService } from '../../services/sweet-alert.service';
   imports: [NavbarComponent, ConfigGalleryComponent, FormsModule, CommonModule],
 })
 export class ConfigContactPageComponent {
-  constructor(
-    private service: MainService,
-    private sweetAlertService: SweetAlertService
-  ) {}
-
-  ngOnInit() {
-    this.getData();
-  }
 
   public welcomeParagraph: string = '';
   public ubicationText: string = '';
@@ -60,6 +52,16 @@ export class ConfigContactPageComponent {
   public facebookLinkPast: string = '';
   public instagramLinkPast: string = '';
   public youtubeLinkPast: string = '';
+
+  constructor(
+    private service: MainService,
+    private sweetAlertService: SweetAlertService
+  ) {}
+
+  ngOnInit() {
+    this.getData();
+  }
+
 
   getData(): void {
     this.service.getContactData().subscribe((contact) => {
@@ -152,6 +154,15 @@ export class ConfigContactPageComponent {
   }
 
   save() {
+    if (!this.welcomeParagraph ||this.welcomeParagraph.trim().length<5 || !this.ubicationText ||this.ubicationText.trim().length<5
+      || !this.ubicationGMLink ||this.ubicationGMLink.trim().length<5 || !this.telephoneNumbers
+      || !this.email || this.email.trim().length<5  || !this.whatsappLink || this.whatsappLink.trim().length<11
+      || !this.facebookLink ||this.facebookLink.trim().length<5
+      || !this.instagramLink ||this.instagramLink.trim().length<5
+      || !this.youtubeLink ||this.youtubeLink.trim().length<5) {
+      this.sweetAlertService.showAlert('Error', 'Todos los campos son obligatorios', 'error');
+      return; // Detener el proceso si falta algún campo obligatorio
+    }
     if (this.hasChangedHome()) {
       this.sweetAlertService.showConfirmationAlert(
         'Confirmación',

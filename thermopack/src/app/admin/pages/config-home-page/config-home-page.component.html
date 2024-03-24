@@ -11,7 +11,7 @@
           </div>
           <div class="col-md-6">
             <input type="text" class="form-control" [(ngModel)]="eslogan" />
-            @if (eslogan.length < 5) {
+            @if (eslogan.trim().length< 5) {
               <div class="text-danger">Debe tener al menos 5 caracteres</div>
             }
           </div>
@@ -22,7 +22,7 @@
           </div>
           <div class="col-md-6">
             <textarea class="form-control" [(ngModel)]="description"></textarea>
-            @if (description.length < 5) {
+            @if (description.trim().length< 5) {
               <div class="text-danger">Debe tener al menos 5 caracteres</div>
             }
 
@@ -34,7 +34,7 @@
           </div>
           <div class="col-md-6">
             <textarea class="form-control" [(ngModel)]="mision"></textarea>
-            @if (mision.length < 5) {
+            @if (mision.trim().length< 5) {
               <div class="text-danger">Debe tener al menos 5 caracteres</div>
             }
           </div>
@@ -45,7 +45,7 @@
           </div>
           <div class="col-md-6">
             <textarea class="form-control" [(ngModel)]="vision"></textarea>
-            @if (vision.length < 5) {
+            @if (vision.trim().length< 5) {
               <div class="text-danger">Debe tener al menos 5 caracteres</div>
             }
           </div>

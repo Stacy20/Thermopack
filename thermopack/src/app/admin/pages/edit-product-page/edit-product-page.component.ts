@@ -9,6 +9,7 @@ import { Types } from '../../../interfaces/types.interface';
 import { SelectTypeComponent } from '../../../shared/components/select-type/select-type.component';
 import { CommonModule } from '@angular/common';
 import { Brands } from '../../../interfaces/brands.interface';
+import { SweetAlertService } from '../../services/sweet-alert.service';
 
 @Component({
     selector: 'admin-edit-product-page',
@@ -21,6 +22,7 @@ export class EditProductPageComponent {
   constructor(
     private service: MainService,
     private route: ActivatedRoute,
+    private sweetAlertService: SweetAlertService
   ) {}
 
   ngOnInit() {
@@ -122,20 +124,39 @@ export class EditProductPageComponent {
   }
 
   update(){
+    if (!this.name ||this.name.trim().length<3 || !this.description||this.description.trim().length<5 ) {
+      this.sweetAlertService.showAlert('Error', 'Todos los campos son obligatorios', 'error');
+      return; // Detener el proceso si falta algún campo obligatorio
+    }
+    if (this.images.length<1 ) {
+      this.sweetAlertService.showAlert('Error', 'Debe seleccionar una o más imagenes', 'error');
+      return; // Detener el proceso si falta algún campo obligatorio
+    }
     this.service.getProductByName(this.name).subscribe((product) => {
       if (this.name !== this.originalName && Object.keys(product).length !== 0){
+        this.sweetAlertService.showAlert('Error', 'Ya existe un producto llamado' + product.name, 'error');
         return;
       }
-      // TODO implementar alerts
-      this.service.updateProductByName(this.originalName, this.name, this.description,
+      else{
+        this.service.updateProductByName(this.originalName, this.name, this.description,
           this.brands[this.selectedBrand]._id, this.types[this.selectedType]._id, this.price,
           this.categories[this.selectedCategory]._id, this.categories[this.selectedSubCategory]._id,
           this.images).subscribe((response) => {
-      console.log(response)
+          this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
     });
-    });
-  }
+      }
 
+    });
+
+  }
+  validateInput(event: KeyboardEvent) {
+    const inputValue = event.key;
+
+    // Verificar si el valor ingresado es un guión o un signo negativo
+    if (inputValue === '-' || inputValue === '-') {
+      event.preventDefault(); // Bloquear la entrada del usuario
+    }
+  }
 
 
 
