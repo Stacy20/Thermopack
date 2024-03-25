@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MainService } from '../../../services/service';
 
 interface ListItem {
   _id: string;
@@ -8,10 +10,14 @@ interface ListItem {
 @Component({
   selector: 'admin-edit-list',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './edit-list.component.html'
 })
 export class EditListComponent {
+  constructor(
+    public service: MainService,
+  ) {}
+
   @Input() items: ListItem[] = [];
   @Output() edit = new EventEmitter<ListItem>();
   @Output() delete = new EventEmitter<ListItem>();
