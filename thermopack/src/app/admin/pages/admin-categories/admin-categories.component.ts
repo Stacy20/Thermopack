@@ -81,6 +81,9 @@ export class AdminCategoriesComponent {
         (error) => {
           this.sweetAlertService.showAlert('Error', 'Hubo un error al eliminar los datos.', 'error');
         });
+      },
+      () => {
+        location.reload();
       }
     );
   }
@@ -126,6 +129,9 @@ export class AdminCategoriesComponent {
         (error) => {
           this.sweetAlertService.showAlert('Error', 'Hubo un error al eliminar los datos.', 'error');
         });
+      },
+      () => {
+        location.reload();
       }
     );
   }
