@@ -23,7 +23,8 @@ export class EditListComponent {
   public currentPage: number = 1;
 
   private _items: ListItem[] = [];
-
+  public query:string='';
+  public queryRow:number=0;
   @Input()
   set items(value: ListItem[]) {
     this._items = value;
@@ -48,9 +49,16 @@ export class EditListComponent {
 
   updateRenderItems(): void {
     const startIndex = this.offset;
-    const endIndex = Math.min(startIndex + this.limitRows, this.items.length);
-    this.renderItems = this.items.slice(startIndex, endIndex);
-    console.log(startIndex, endIndex)
+    let endIndex;
+    if(this.query.trim().length==0){
+      endIndex= Math.min(startIndex + this.limitRows, this.items.length);
+    }else{
+      endIndex= Math.min(startIndex + this.limitRows, this.queryRow);
+    }if(this.query.trim().length==0){
+      this.renderItems = this.items.slice(startIndex, endIndex);
+    }else{
+      this.renderItems = this.items.filter(item => item.name.toLowerCase().startsWith(this.query.toLowerCase())).slice(startIndex,endIndex);
+    }
   }
 
   editItem(item: ListItem) {
@@ -67,7 +75,13 @@ export class EditListComponent {
   }
 
   generatePagination(): number[] {
-    let totalPages = Math.ceil(this.totalRows / this.limitRows);
+    let totalPages=0
+    if(this.query.trim().length==0){
+      totalPages = Math.ceil(this.totalRows / this.limitRows);
+    }else{
+      totalPages = Math.ceil(this.queryRow / this.limitRows);
+    }
+
     let startPage = 1;
     const paginationItems: number[] = [];
 
@@ -91,5 +105,19 @@ export class EditListComponent {
     this.offset = (this.currentPage - 1) * this.limitRows;
   // Asegurarse de que offset se actualice antes de llamar a updateRenderItems
     setTimeout(() => this.updateRenderItems());
+  }
+
+  search(query: string) {
+    // Aquí puedes realizar la lógica de búsqueda con el valor de la consulta "query"
+    this.query=query
+    if (this.query.trim().length==0) {
+      this.renderItems = this.items.slice(0, this.limitRows);
+      this.currentPage = 1;
+      this.updateRenderItems();
+    } else {
+      this.renderItems = this.items.filter(item => item.name.toLowerCase().startsWith(query.toLowerCase()));
+      this.queryRow=this.renderItems.length;
+      this.updateRenderItems();
+    }
   }
 }

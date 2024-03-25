@@ -1,3 +1,23 @@
+<div class="mt-4 d-flex">
+  <input
+      class="form-control me-2 mt-4"
+      type="search"
+      placeholder="Introduzca el término que desea buscar"
+      aria-label="Introduzca el término que desea buscar"
+      #searchInput
+      (keyup.enter)="search(searchInput.value)"
+  >
+  <button
+      class="btn mt-4"
+      style="background-color: #1c53a8; color:#ffff"
+      title="Buscar"
+      aria-label="Buscar"
+      (click)="search(searchInput.value)"
+  >
+      Search
+  </button>
+</div>
+
 <table class="table">
   <thead>
     <tr>
@@ -39,12 +59,20 @@
         <a class="page-link" (click)="updateCurrentPage(pageNumber - currentPage)">{{ pageNumber }}</a>
       </li>
     }
-
-    @if (totalRows>limitRows) {
-      <li class="page-item">
-        <a class="page-link" (click)="updateCurrentPage(1)">Next</a>
-      </li>
+    @if (query.trim().length==0) {
+      @if (totalRows>limitRows ) {
+        <li class="page-item">
+          <a class="page-link" (click)="updateCurrentPage(1)">Next</a>
+        </li>
+      }
+    }@else {
+      @if (queryRow>limitRows ) {
+        <li class="page-item">
+          <a class="page-link" (click)="updateCurrentPage(1)">Next</a>
+        </li>
+      }
     }
+
 
   </ul>
 </nav>
