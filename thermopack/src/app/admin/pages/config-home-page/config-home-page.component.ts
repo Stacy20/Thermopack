@@ -122,9 +122,9 @@ export class ConfigHomePageComponent {
       this.logo  = this.data.logo;
       this.logoPast = this.data.logo;
       this.visionImages  = this.data.visionImages;
-      this.visionImagesPast.push(...this.data.visionImages)
+      this.visionImagesPast=[...this.data.visionImages]
       this.presentationImages = this.data.presentationImages;
-      this.presentationImagesPast.push(...this.data.visionImages)
+      this.presentationImagesPast= [...this.data.presentationImages]
       this.productosTitle = this.productosTitlePast =this.data.productsTitle;
       this.productosText =this.productosTextPast = this.data.productsParagraph;
       this.servicesTitle =this.servicesTitlePast = this.data.servicesTitle;
@@ -209,20 +209,16 @@ export class ConfigHomePageComponent {
   }
   arraysAreEqualVision(): boolean {
     // Verificar si los elementos de los arrays son iguales
+    let flag=0;
     for (let i = 0; i < this.visionImagesPast.length; i++) {
-      if(this.visionImagesPast[i]!==this.visionImages[i]){
-        break;
-      }
-      else {
-        this.sweetAlertService.showAlert(
-          'Información',
-          'No se realizó ningún cambio, no hay nada que guardar',
-          'info'
-        );
-        return false;
+      if(this.visionImagesPast[i]!=this.visionImages[i]){
+        flag=1;
       }
     }
-
+    if(flag==0){
+        this.sweetAlertService.showAlert('Información','No se realizó ningún cambio, no hay nada que guardar','info');
+        return false;
+    }
     for (let i = 0; i < this.visionImages.length; i++) {
       if (this.visionImages[i] =='') {
         this.sweetAlertService.showAlert('Error', 'Todos las imagenes son obligatorias', 'error');
@@ -231,22 +227,19 @@ export class ConfigHomePageComponent {
     }
     return true;
   }
+
   arraysAreEqualPresentation(): boolean {
     // Verificar si los elementos de los arrays son iguales
+    let flag=0;
     for (let i = 0; i < this.presentationImagesPast.length; i++) {
       if(this.presentationImagesPast[i]!==this.presentationImages[i]){
-        break;
-      }
-      else {
-        this.sweetAlertService.showAlert(
-          'Información',
-          'No se realizó ningún cambio, no hay nada que guardar',
-          'info'
-        );
-        return false;
+        flag=1;
       }
     }
-
+    if(flag==0){
+      this.sweetAlertService.showAlert('Información','No se realizó ningún cambio, no hay nada que guardar','info');
+      return false;
+  }
     for (let i = 0; i < this.presentationImages.length; i++) {
       if (this.presentationImages[i] =='') {
         this.sweetAlertService.showAlert('Error', 'Todos las imagenes son obligatorias', 'error');

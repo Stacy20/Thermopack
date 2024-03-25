@@ -75,9 +75,8 @@ export class EditServicePageComponent {
   }
 
   deleteImage(index: number) {
-    this.images[index] = '';
-    // this.images=this.images.splice(index, 1);
-    console.log(this.images)
+    this.images.splice(index,1);
+    // this.images.splice(index, 1);
   }
 
   update(){
@@ -128,13 +127,14 @@ hasChanged(): boolean {
   }
   arraysAreEqual(): boolean {
     // Verificar si los elementos de los arrays son iguales
+    let flag=0;
     for (let i = 0; i < this.imagesPast.length; i++) {
       if(this.imagesPast[i]!==this.images[i]){
-        break;
+        flag=1;
       }
-      else {
+    }
+    if(flag==0){
         return false;
-      }
     }
     return true;
   }

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { MainService } from '../../../services/service';
 import { CommonModule } from '@angular/common';
+import { SweetAlertService } from '../../../admin/services/sweet-alert.service';
 @Component({
   selector: 'shared-card',
   standalone: true,
@@ -32,6 +33,7 @@ export class CardComponent {
   constructor(
     private router: Router,
     public service: MainService,
+    private sweetAlertService: SweetAlertService,
     ) {}
 
   // id: string;
@@ -54,16 +56,28 @@ export class CardComponent {
 
   public deleteProduct(){
     if(this.type === 1){
+      this.sweetAlertService.showConfirmationAlert(
+        'Confirmación',
+        '¿Está seguro que desea eliminar el producto?',
+        () => {
       this.service.deleteProductByName(this.title).subscribe((product) => {
         console.log(product);
+        this.sweetAlertService.showAlert('Éxito', 'El producto se ha eliminado correctamente', 'success');
         location.reload();
-      });
+      }); }
+      );
     }
     if(this.type === 2){
+      this.sweetAlertService.showConfirmationAlert(
+        'Confirmación',
+        '¿Está seguro que desea eliminar el servicio?',
+        () => {
       this.service.deleteServiceByName(this.title).subscribe((service) => {
         //console.log(service);
+        this.sweetAlertService.showAlert('Éxito', 'El servicio se ha eliminado correctamente correctamente', 'success');
         location.reload();
-      });
+      });}
+      );
     }
   }
 }

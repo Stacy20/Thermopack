@@ -18,19 +18,20 @@ export class ConfigGalleryComponent {
 
 
   handleFileInput(event: any, index:number) {
-    console.log(this.images)
+    console.log(this.images,'al inicio')
     const file: File = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (e: any) => {
       this.images[index] = e.target.result;
+      const data: ImagesNewEvent = {
+        images: this.images,
+        identifier: this.identifier
+      };
+      this.imagesNew.emit(data)
+      console.log(this.images,'despues')
     };
     reader.readAsDataURL(file);
-    const data: ImagesNewEvent = {
-      images: this.images,
-      identifier: this.identifier
-    };
-    console.log(data.images, 'en el mas alla')
-    this.imagesNew.emit(data)
+
   }
 
   deleteImage(index: number) {
