@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 mt-4">
+
+      <h2 class="offset-md-2">Atributos de los productos</h2>
+      <p class="mt-4 offset-md-2">Haga click para ir a una sección.</p>
+      <div class="col-md-4 mb-4 offset-md-2">
+        <div class="btn-group w-100" role="group" aria-label="Basic example">
+          <a href="/admin/categories#marcas" class="btn btn-outline-primary col-md-4">Marcas</a>
+          <a href="/admin/categories#tipos" class="btn btn-outline-primary col-md-4">Tipos</a>
+          <a href="/admin/categories#categorias" class="btn btn-outline-primary col-md-4">Categorías</a>
+        </div>
+      </div>
+
+      <hr>
+      <br>
+
+      <div class="row mb-4" id="marcas">
+        <h3 class="offset-md-2">Marcas</h3>
+        <div class="offset-md-2 col-md-8">
+          <admin-edit-list [items]="brands" (edit)="editBrand($event)" (delete)="deleteBrand($event)"></admin-edit-list>
+        </div>
+      </div>
+
+      <div class="row mb-4" id="tipos">
+        <h3 class="offset-md-2">Tipos</h3>
+        <div class="offset-md-2 col-md-8">
+          <admin-edit-list [items]="types" (edit)="editType($event)" (delete)="deleteType($event)"></admin-edit-list>
+        </div>
+      </div>
+
+      <div class="row mb-4" id="categorias">
+        <h3 class="offset-md-2">Categorías</h3>
+        <div class="offset-md-2 col-md-8">
+          <admin-edit-list [items]="categories" (edit)="editCategory($event)" (delete)="deleteCategory($event)"></admin-edit-list>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

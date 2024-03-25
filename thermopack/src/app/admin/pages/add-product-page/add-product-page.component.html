@@ -38,11 +38,10 @@
           <p class="text-responsive">Marca</p>
         </div>
         <div class="col-md-6">
-          <select class="form-select" aria-label="Buscar por tipo" (change)="selectBrand($event)">
-            <ng-container *ngFor="let option of brands; let i = index">
-              <option [selected]="selectedBrand === i" [value]="i">{{option.name}}</option>
-            </ng-container>
-          </select>
+        <select2 [data]="brands"
+          autoCreate
+          displaySearchStatus="always"
+          (update)="selectBrand($event)"></select2>
         </div>
       </div>
       <div class="row mb-3">
@@ -50,11 +49,11 @@
           <p class="text-responsive">Tipo</p>
         </div>
         <div class="col-md-6">
-          <select class="form-select" aria-label="Buscar por tipo" (change)="selectType($event)">
-            <ng-container *ngFor="let option of types; let i = index">
-              <option [selected]="selectedType === i" [value]="i">{{option.name}}</option>
-            </ng-container>
-          </select>
+          <select2 [data]="types"
+            autoCreate
+            displaySearchStatus="always"
+            (update)="selectType($event)"></select2>
+
         </div>
       </div>
       <div class="row mb-3">
@@ -62,11 +61,10 @@
           <p class="text-responsive">Categoría</p>
         </div>
         <div class="col-md-6">
-          <select class="form-select" aria-label="Buscar por tipo" (change)="selectCategory($event)">
-            <ng-container *ngFor="let option of categories; let i = index">
-              <option [selected]="selectedCategory === i" [value]="i">{{option.name}}</option>
-            </ng-container>
-          </select>
+          <select2 [data]="categories"
+            autoCreate
+            displaySearchStatus="always"
+            (update)="selectCategory($event)"></select2>
         </div>
       </div>
       <div class="row mb-3">
@@ -74,11 +72,10 @@
           <p class="text-responsive">Subcategoría</p>
         </div>
         <div class="col-md-6">
-          <select class="form-select" aria-label="Buscar por tipo" (change)="selectSubCategory($event)">
-            <ng-container *ngFor="let option of categories; let i = index">
-              <option [selected]="selectedSubCategory === i" [value]="i">{{option.name}}</option>
-            </ng-container>
-          </select>
+          <select2 [data]="categories"
+            autoCreate
+            displaySearchStatus="always"
+            (update)="selectSubCategory($event)"></select2>
         </div>
       </div>
       <div class="row mb-4">

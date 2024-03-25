@@ -209,7 +209,7 @@ export class MainService{
 
   createBrand(name: string): Observable<Brands> {
     const url = `${this.connectionUrl}brands`;
-    return this.http.post<Brands>(url, { name: name })
+    return this.http.post<Brands>(url, { name })
       .pipe(
         catchError(() => of({} as Brands))
       );
