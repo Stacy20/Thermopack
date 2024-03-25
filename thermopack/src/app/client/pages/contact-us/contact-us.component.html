@@ -6,11 +6,11 @@
         <div class="col-12 m-4 d-flex ">
           <div class="row mb-5 ">
             <div class="col-6 col-lg-5 col-md-4 col-sm-10 p-0 d-flex justify-content-center align-items-center ">
-              <img [src]=srcLogo alt="logoThermopack" height="200px" width="240px" class="rounded-circle mt-1 centered-image">
+              <img [src]=images[0] alt="logoThermopack" height="200px" width="240px" class="rounded-circle mt-1 centered-image">
             </div>
             <div class="col-6 col-sm-10 col-lg-7 col-md-10 mt-3">
-              <h1 class="text-light">Contáctenos</h1>
-              <p  class="h4 mt-5 me-3 mb-3 text-light">{{description}}</p>
+              <h1 class="text-light" aria-label="Título principal">Contáctenos</h1>
+              <p class="h4 mt-5 me-3 mb-3 text-light" aria-label="Descripción" [innerHTML]="formatDescription(description)"></p>
             </div>
           </div>
         </div>
@@ -18,35 +18,63 @@
       <div class="mt-5 d-flex mb-5">
         <div class="col-5 mt-5 ms-4">
           <ul class="list-unstyled ms-5">
-            <li class="m-2 h5">Ubicación exacta</li>
-            <ul>
-              <li>Maps</li>
-              <li>Waze</li>
-              <li>Texto</li>
+            <!-- * Seccion dedicada a la ubicacion -->
+            <li class="m-2 h5 "><i class="fas fa-regular  fa-location-dot"></i> Ubicación exacta</li>
+            <ul class="sin-puntos">
+              <li role="listitem" ><a [href]="ubicacionMaps" target="_blank">Maps</a> </li>
+              <li> <a [href]="ubicacionWaze" target="_blank">Waze</a> </li>
+              <li>{{ubicationText}}</li>
             </ul>
-            <li class="m-2 h5">Números de teléfono</li>
-            <ul>
-              <li>76829301</li>
-              <li>221343563</li>
+            <!-- * Seccion dedicada a los numeros de telefono -->
+            <li class="m-2 h5"><i class="fas fa-regular fa-phone"></i> Números de teléfono</li>
+            <ul class="sin-puntos">
+              @for (number of telephoneNumbers; track $index) {
+                <li>{{number}}</li>
+              }
+
+
             </ul>
-            <li class="m-2 h5">Correos electrónico</li>
-            <a [href]="whatsappLink" target="_blank">
-              <li class="m-2 h5" >Whatsapp</li>
-            </a>
-            <li class="m-2 h5">Facebook</li>
+
+            <!-- * Seccion dedicada al correo electronico -->
+            <li class="m-2 h5"> <i class="fa-solid fa-envelope"></i> Correo electrónico</li>
+            <ul class="mb-3">
+              {{email}}
+            </ul >
+            <!-- * Seccion dedicada a las redes sociales -->
+            <span class="m-2 h5">
+              <i class="fa-solid fa-share-from-square" aria-hidden="true"></i>
+              <span class="sr-only">Icono de compartir</span> <!-- Texto oculto para lectores de pantalla -->
+                Redes Sociales</span>
+            <ul class="sin-puntos" role="list" aria-label="Lista de redes sociales">
+              <li role="listitem">
+
+                <a [href]="whatsappLink" target="_blank"> Whatsapp</a>
+              </li>
+              <li role="listitem">
+                <a [href]="facebookLink" target="_blank">Facebook</a>
+              </li>
+              <li role="listitem">
+                <a [href]="youtubeLink" target="_blank">Youtube</a>
+              </li>
+              <li role="listitem">
+                <a [href]="instagramLink" target="_blank">Instagram</a>
+              </li>
+            </ul>
+
+
+
           </ul>
         </div>
         <div class="col-7 dots-container">
           <div class="row">
             <div class="container centrar-imgen col-5  me-0">
-              <img src="https://hips.hearstapps.com/hmg-prod/images/types-of-flowers-for-garden-black-eyed-susans-1674848363.jpeg" class="d-block w-100" alt="...">
+              <img [src]=images[1] class="d-block w-100" alt="...">
             </div>
             <div class="container centrar-imgen col-5 mt-5  ">
-              <img src="https://hips.hearstapps.com/hmg-prod/images/types-of-flowers-for-garden-black-eyed-susans-1674848363.jpeg" class="d-block w-100" alt="...">
+              <img [src]=images[2] class="d-block w-100" alt="...">
             </div>
           </div>
         </div>
       </div>
   </div>
 </div>
-<client-component-footers></client-component-footers>

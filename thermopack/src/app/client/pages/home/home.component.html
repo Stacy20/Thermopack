@@ -3,13 +3,13 @@
         <div class="col-12 m-4 d-flex mb-0">
           <div class="row mb-5 mb-0 ms-4">
             <div class="col-6 col-lg-3 col-md-4 col-sm-10 p-0 ms-5 mt-5">
-              <img [src]=srcLogo alt="logoSpoti" height="200px" width="240px" class="rounded-circle mt-1 centered-image">
+              <img [src]=srcLogo alt="logo" height="200px" width="240px" class="rounded-circle mt-1 centered-image">
             </div>
             <div class="col-5 col-lg-4 col-md-7 col-sm-11 p-0 mt-3">
               <h1 class="m-1 text-light">{{slogan}}</h1>
             </div>
             <div class="col-4 col-sm-10 col-lg-4 col-md-10 mt-3">
-              <h4 class="mt-5 me-3  text-light">{{companyDescription}} </h4>
+              <h4 class="mt-5 me-3  text-light" [innerHTML]="formatDescription(companyDescription)"></h4>
             </div>
           </div>
         </div>
@@ -23,7 +23,7 @@
       <div class="mt-5 d-flex mb-5">
         <div class="col-5  mt-5 ms-4">
           <h1 class="mt-5">{{titleMission}}</h1>
-          <p>{{descriptionMission}}</p>
+          <p  [innerHTML]="formatDescription(descriptionMission)"></p>
         </div>
         <div class="col-7 col-lg-6 col-md-6 col-sm-5 dots-container">
           <div class="row">
@@ -49,11 +49,10 @@
         </div>
         <div class="col-5 mt-5 ms-4">
           <h1 class="mt-5">{{titleVision}}</h1>
-          <p>{{descriptionVision}}</p>
+          <p [innerHTML]="formatDescription(descriptionVision)"></p>
         </div>
 
       </div>
 
     </div>
 
-    <client-component-footers></client-component-footers>

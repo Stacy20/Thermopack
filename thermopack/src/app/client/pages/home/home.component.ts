@@ -33,7 +33,10 @@ export class HomeComponent {
   public descriptionVision:string='';
   public srcVision1:string='';
   public srcVision2:string='';
-
+  formatDescription(description: string): string {
+    console.log(description)
+    return description.replace(/\n/g, '<br>');
+  }
   getData(): void {
     this.service.getData().subscribe((data) => {
       this.srcLogo = data[0].logo;

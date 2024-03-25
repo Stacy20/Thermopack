@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { YesNoPipePipe } from '../../pipes/yes-no-pipe.pipe';
 import { CommonModule } from '@angular/common';
 import * as bcrypt from 'bcryptjs';
+import { SweetAlertService } from '../../services/sweet-alert.service';
 
 @Component({
   selector: 'admin-login-page',
@@ -16,7 +17,8 @@ import * as bcrypt from 'bcryptjs';
 export class LoginPageComponent {
   constructor(
     private router: Router,
-    private service: MainService
+    private service: MainService,
+    private sweetAlertService: SweetAlertService
   ) {}
 
   public email: string = '';
@@ -28,16 +30,16 @@ export class LoginPageComponent {
     if (this.email == '') { return; }
     this.service.getUserByEmail(this.email).subscribe((user) => {
       if (Object.keys(user).length == 0){
-        console.log('no se encuentra el correo registrado');// TODO alert
+        this.sweetAlertService.showAlert('Error', 'El correo no se encuentra registrado', 'error');
         return;
       }
       bcrypt.compare(this.password, user.password, (err, result) => {
         if (err) {
-          console.error('Error al comparar contraseñas:', err);// TODO alert
+          this.sweetAlertService.showAlert('Error', 'Error al comparar contraseñas:'+ err, 'error');
           return;
         }
         if (!result) {
-          console.log('La contraseña no coincide');// TODO alert
+          this.sweetAlertService.showAlert('Error', 'Contraseña equivocada', 'error');
           return;
         }
         this.service.login(user);
@@ -53,14 +55,16 @@ export class LoginPageComponent {
 
   forgotPassword() {
     if (this.email == '') {
-      return; // TODO alert ingrese un correo
+      this.sweetAlertService.showAlert('Error', 'Debe ingresar un correo', 'error');
+      return;
     }
     this.service.getUserByEmail(this.email).subscribe((user) => {
       if (Object.keys(user).length == 0){
-        console.log('no se encuentra el correo registrado'); // TODO alert
+        this.sweetAlertService.showAlert('Error', 'El correo ingresado no se encuentra ingresado', 'error');
         return;
       }
-      this.service.forgotPassword(this.email, user.privileges); // TODO alert
+      this.service.forgotPassword(this.email, user.privileges);
+      this.sweetAlertService.showAlert('Información', 'Se le ha enviado a su correo la nueva contraseña', 'info');
     });
   }
 

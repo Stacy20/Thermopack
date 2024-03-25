@@ -45,7 +45,7 @@ export const routes: Routes = [
         component: PageServicesComponent
       },
       {
-        path: 'detalles',
+        path: 'detalles/:type/:id',
         component: DetailPageComponent
       }
     ]

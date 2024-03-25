@@ -1,8 +1,6 @@
 <div class=" container justify-content-center align-items-center ">
   <h1>{{title}}</h1>
-  <div class="me-5">
-    {{description}}
-  </div>
+  <div class="me-5" [innerHTML]="formatDescription(description)"></div>
 </div>
   <div class="container justify-content-center align-items-center" >
       <div class=" justify-content-center align-items-center">
@@ -12,6 +10,3 @@
         <shared-pagination [type]="'0'"></shared-pagination>
       </div>
   </div>
-  <!-- <button (click)="crearServicio()" class="btn"> Crear servicio</button> -->
-  <client-component-footers></client-component-footers>
-

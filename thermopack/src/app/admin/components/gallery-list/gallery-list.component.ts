@@ -16,6 +16,7 @@ export class GalleryListComponent {
   }
 
   removeImage(index: number): void {
-    this.images.splice(index, 1);
+    this.images[index] = '';
+    // this.images.splice(index, 1);
   }
 }

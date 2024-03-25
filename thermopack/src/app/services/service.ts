@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, take, tap} from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap, throwError} from 'rxjs';
 import { Brands } from '../interfaces/brands.interface';
 import { Categories } from '../interfaces/categories.interface';
 import { Users, DBResponse } from '../interfaces/users.interface';
@@ -669,7 +669,10 @@ export class MainService{
     const url = `${this.connectionUrl}data`;
     return this.http.put<Data>(url, { slogan, description, mision, vision, logo})
     .pipe(
-    catchError(() => of({} as Data))
+      catchError((error: HttpErrorResponse) => {
+        // Aquí puedes devolver un mensaje de error específico
+        return throwError('Hubo un error al procesar la solicitud');
+      })
     );
   }
 
@@ -677,7 +680,10 @@ export class MainService{
     const url = `${this.connectionUrl}data`;
     return this.http.put<Data>(url, { visionImages })
     .pipe(
-    catchError(() => of({} as Data))
+      catchError((error: HttpErrorResponse) => {
+        // Aquí puedes devolver un mensaje de error específico
+        return throwError('Hubo un error al procesar la solicitud');
+      })
     );
     }
 
@@ -685,7 +691,10 @@ export class MainService{
     const url = `${this.connectionUrl}data`;
     return this.http.put<Data>(url, { presentationImages })
     .pipe(
-    catchError(() => of({} as Data))
+      catchError((error: HttpErrorResponse) => {
+        // Aquí puedes devolver un mensaje de error específico
+        return throwError('Hubo un error al procesar la solicitud');
+      })
     );
   }
 
@@ -694,7 +703,10 @@ export class MainService{
     const url = `${this.connectionUrl}data`;
     return this.http.put<Data>(url, {productsTitle, productsParagraph, servicesTitle, servicesParagraph})
     .pipe(
-    catchError(() => of({} as Data))
+      catchError((error: HttpErrorResponse) => {
+        // Aquí puedes devolver un mensaje de error específico
+        return throwError('Hubo un error al procesar la solicitud');
+      })
     );
   }
 

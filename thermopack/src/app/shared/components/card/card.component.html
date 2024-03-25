@@ -11,7 +11,8 @@
     @if (permissions==0) {
       <div >
         <!-- todo aqui debemos enviar el type, para que cuando llegue a la página de detalle sepa que informacion es la que se esta mostrando  -->
-        <a [routerLink]="['/detalles']"  style="display: flex; justify-content: right;">Ver más</a>
+        <a (click)="gotoVerMas()" style="display: flex; justify-content: right;">Ver más</a>
+        {{id}}
       </div>
     }
     @else {

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MainService } from '../../../services/service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SweetAlertService } from '../../services/sweet-alert.service';
 
 @Component({
     selector: 'admin-add-service-page',
@@ -24,7 +25,8 @@ export class AddServicePageComponent {
   constructor(
     private service: MainService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private sweetAlertService: SweetAlertService
   ) {}
 
   async ngOnInit() {
@@ -48,21 +50,32 @@ export class AddServicePageComponent {
 
   deleteImage(index: number) {
     this.images[index] = '';
+    // this.images.splice(index, 1);
   }
 
   insert(){
-    this.service.getServiceByName(this.name).subscribe((service) => {
-      if (this.name !== service.name && Object.keys(service).length !== 0){
-        alert(`Ya existe un servicio llamado ${service.name}`)
-        return;
-      }
-      // TODO implementar alerts
-        this.service.createService(this.name, this.description, this.price, this.images)
-          .subscribe((response) => {
-        //console.log(response)
-        alert('Servicio agregado correctamente')
+    if (!this.name ||this.name.trim().length<3 || !this.description||this.description.trim().length<5 ) {
+      this.sweetAlertService.showAlert('Error', 'Todos los campos son obligatorios', 'error');
+      return; // Detener el proceso si falta algún campo obligatorio
+    }
+    if (this.images.length<1 ) {
+      this.sweetAlertService.showAlert('Error', 'Debe seleccionar una o más imagenes', 'error');
+      return; // Detener el proceso si falta algún campo obligatorio
+    }
+    else{
+      this.service.getServiceByName(this.name).subscribe((service) => {
+        if (this.name !== service.name && Object.keys(service).length !== 0){
+          this.sweetAlertService.showAlert('Error', 'Ya existe un servicio llamado' + service.name, 'error');
+          return;
+        }
+          this.service.createService(this.name, this.description, this.price, this.images)
+            .subscribe((response) => {
+          //console.log(response)
+          this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
+        });
       });
-    });
+    }
+
   }
 
   clear(){
@@ -70,5 +83,13 @@ export class AddServicePageComponent {
     this.description = '';
     this.price = 0;
     this.images = [];
+  }
+  validateInput(event: KeyboardEvent) {
+    const inputValue = event.key;
+
+    // Verificar si el valor ingresado es un guión o un signo negativo
+    if (inputValue === '-' || inputValue === '-') {
+      event.preventDefault(); // Bloquear la entrada del usuario
+    }
   }
 }

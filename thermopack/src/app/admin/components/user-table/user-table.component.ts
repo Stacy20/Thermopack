@@ -4,6 +4,7 @@ import { YesNoPipePipe } from "../../pipes/yes-no-pipe.pipe";
 import { CommonModule } from '@angular/common';
 import { MainService } from '../../../services/service';
 import { Users } from '../../../interfaces/users.interface';
+import { SweetAlertService } from '../../services/sweet-alert.service';
 
 interface UsersTableRow {
   userEmail: string;
@@ -31,6 +32,7 @@ enum Privileges {
 export class UserTableComponent {
   constructor(
     private service: MainService,
+    private sweetAlertService: SweetAlertService
   ) {}
 
   ngOnInit() {
@@ -92,13 +94,14 @@ export class UserTableComponent {
   addUser() : void{
     for (let i = 0; i < this.users.length; i++) {
       if (this.users[i].userEmail == this.email || !this.isEmail(this.email)){
-        return; // TODO alert
+        this.sweetAlertService.showAlert('Error', 'Ya existe un usuario con el mismo correo, por favor cambiarlo', 'error');
+        return;
       }
     }
     const privilegesAsNumbers = this.privileges.map(privilege => privilege ? 1 : 0);
     this.service.createUser(this.email, privilegesAsNumbers).subscribe((user) => {
       if (user.email == this.email){
-        console.log('fine')// TODO alert que salio bien
+        this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
         this.reload();
         // location.reload();
       }
@@ -143,21 +146,24 @@ export class UserTableComponent {
   }
 
   saveUser(user: UsersTableRow, index: number): void {
-    console.log('save') // TODO alert de confirmacion
+
     for (let i = 0; i < this.users.length; i++) {
       if (!this.isEmail(user.userEmail) || (this.users[i].userEmail == user.userEmail && i != index)){
-        console.log('email repetido o invalido') // TODO alert
+        this.sweetAlertService.showAlert('Error', 'El email  esta repetido o es invalido', 'error');
         return;
       }
     }
 
     if (!this.existSuperAdminWithout(user)){
       if (!user.privAddItems || !user.privCreateUsers || !user.privDelItems || !user.privEditItems){
-        console.log('ocupa super admin'); // TODO alert
+        this.sweetAlertService.showAlert('Error', 'Para realizar cambios ocupa ser usuario super administrador', 'error');
         return;
       }
     }
-
+    this.sweetAlertService.showConfirmationAlert(
+      'Confirmación',
+      '¿Está seguro que desea realizar cambios?',
+      () => {
     this.service.getAllUsers().subscribe((users) => {
       const privilegesAsNumbers = [user.privAddItems ? 1 : 0, user.privEditItems ? 1 : 0,
                                    user.privDelItems ? 1 : 0, user.privCreateUsers ? 1 : 0]
@@ -166,13 +172,14 @@ export class UserTableComponent {
           user.editable = false;
           this.isEditing = false;
           this.selectedUser = null;
-          console.log('exito') // TODO alert
+          this.sweetAlertService.showAlert('Éxito', 'El usuario se ha actualizado correctamente', 'success');
           location.reload();
         }else{
-          console.log('error') // TODO alert
+          this.sweetAlertService.showAlert('Error', 'No se puedo actualizar correctamente', 'error');
         }
       });
-    });
+    }); }
+    );
   }
 
   existSuperAdminWithout(user: UsersTableRow): boolean {
@@ -183,7 +190,7 @@ export class UserTableComponent {
         return true;
       }
     }
-    console.log("no puede dejar sin superadmin") // TODO alert
+    this.sweetAlertService.showAlert('Error', 'Debe existir un usuario super administrador', 'error');
     return false;
   }
 
@@ -196,10 +203,10 @@ export class UserTableComponent {
       this.service.deleteUserByEmail(user.userEmail).subscribe((response) => {
         if (response.message == 'Successfully deleted'){
           // TODO alert de listo
-          console.log('exito')
+          this.sweetAlertService.showAlert('Éxito', 'El usuario se ha eliminado correctamente', 'success');
           this.users.splice(this.users.indexOf(user), 1);
         }else{
-          console.log('error')
+          this.sweetAlertService.showAlert('Error', 'No se ha podido eliminar correctamente el usuario', 'error');
         }
       });
     }

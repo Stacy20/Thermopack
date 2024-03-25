@@ -40,7 +40,6 @@ limpiarFiltros() {
 
 
   ngOnInit(): void {
-    this.loadProducts();
     this.getData();
     this.getAllTypes();
     this.getAllBrands();
@@ -101,57 +100,9 @@ limpiarFiltros() {
     console.log("alo buenas", this.types[index]._id)
     this.service.filterProducts(this.limitProducts, this.offsetProducts, undefined, undefined, this.types[index]._id )
   }
-  loadProducts() {
-    const limit = 10;
-    const offset = 0;
-    const brandId  = '65e93703875568b1b101d396'; // Puedes pasar estos valores como necesites
-    const categorie = '65f65dfaa75f2ad5cb62e9e1';
-    const type = '65f6549ca75f2ad5cb62e931';
-    const name = 'Pro';
-
-    // // limit y offset obligatorio
-    // this.service.filterProducts(limit, offset)
-    //     .subscribe(products => {
-    //       this.products = products;
-    //       console.log(1)
-    //       console.log(products)
-    //     });
-
-
-    // this.service.filterProducts(limit, offset, brandId )
-    //   .subscribe(products => {
-    //     this.products = products;
-    //     console.log(2)
-    //     console.log(products)
-    //   });
-
-    // this.service.filterProducts(limit, offset, undefined, categorie )
-    //   .subscribe(products => {
-    //     this.products = products;
-    //     console.log(3)
-    //     console.log(products)
-    //   });
-
-    //   this.service.filterProducts(limit, offset, undefined, undefined, type )
-    //   .subscribe(products => {
-    //     this.products = products;
-    //     console.log(4)
-    //     console.log(products)
-    //   });
-
-    //   this.service.filterProducts(limit, offset, undefined, undefined, undefined, name )
-    //   .subscribe(products => {
-    //     this.products = products;
-    //     console.log(5)
-    //     console.log(products)
-    //   });
-
-    //   this.service.filterProducts(limit, offset, undefined, undefined, undefined, 'Ra' )
-    //   .subscribe(products => {
-    //     this.products = products;
-    //     console.log(5)
-    //     console.log(products)
-    //   });
+  formatDescription(description: string): string {
+    console.log(description)
+    return description.replace(/\n/g, '<br>');
   }
 
 }
