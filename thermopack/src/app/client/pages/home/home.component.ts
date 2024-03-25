@@ -34,7 +34,6 @@ export class HomeComponent {
   public srcVision1:string='';
   public srcVision2:string='';
   formatDescription(description: string): string {
-    console.log(description)
     return description.replace(/\n/g, '<br>');
   }
   getData(): void {

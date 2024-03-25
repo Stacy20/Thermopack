@@ -114,6 +114,7 @@ export class AdminCategoriesComponent {
     })
   }
 
+
   deleteType(type: Types) {
     this.sweetAlertService.showConfirmationAlert(
       'Confirmación',

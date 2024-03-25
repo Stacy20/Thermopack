@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SweetAlertService } from '../../services/sweet-alert.service';
 import { Router } from '@angular/router';
+import { ImagesNewEvent } from '../../interfaces/images-new-event';
 
 @Component({
   selector: 'admin-config-contact-page',
@@ -85,7 +86,7 @@ export class ConfigContactPageComponent {
       this.ubicationGMLinkPast = contact[0].ubicationGMLink;
       this.ubicationWazeLinkPast = contact[0].ubicationWazeLink;
       this.telephoneNumbersPast.push(...contact[0].telephoneNumbers);
-      this.imagesPast.push(...contact[0].images)
+      this.imagesPast=[...contact[0].images]
       this.emailPast = contact[0].email;
       this.whatsappLinkPast = contact[0].whatsappLink;
       this.facebookLinkPast = contact[0].facebookLink;
@@ -216,7 +217,6 @@ export class ConfigContactPageComponent {
       );
     }
   }
-
   saveImages() {
     if(this.arraysAreEqual()){
       this.service.updateContactImages(this.images).subscribe((data) => {
@@ -233,22 +233,19 @@ export class ConfigContactPageComponent {
 
   }
 
+
   arraysAreEqual(): boolean {
     // Verificar si los elementos de los arrays son iguales
+    let flag=0;
     for (let i = 0; i < this.imagesPast.length; i++) {
-      if(this.imagesPast[i]!==this.images[i]){
-        break;
-      }
-      else {
-        this.sweetAlertService.showAlert(
-          'Información',
-          'No se realizó ningún cambio, no hay nada que guardar',
-          'info'
-        );
-        return false;
+      if(this.imagesPast[i]!=this.images[i]){
+        flag=1;
       }
     }
-
+   if(flag==0){
+        this.sweetAlertService.showAlert('Información','No se realizó ningún cambio, no hay nada que guardar','info');
+        return false;
+    }
     for (let i = 0; i < this.images.length; i++) {
       if (this.images[i] =='') {
         this.sweetAlertService.showAlert('Error', 'Todos las imagenes son obligatorias', 'error');
@@ -256,5 +253,10 @@ export class ConfigContactPageComponent {
       }
     }
     return true;
+  }
+
+  updateImages(datos: ImagesNewEvent) {
+    console.log(this.images,this.imagesPast)
+      this.images = datos.images;
   }
 }

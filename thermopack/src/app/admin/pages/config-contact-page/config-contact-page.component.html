@@ -155,7 +155,7 @@
       <div class=" col-md-12 my-4">
         <h4>Imágenes de Contacto</h4>
         <p>Seleccione una imagen para cambiarla.</p>
-        <admin-config-gallery [identifier]="'1'" [images]="this.images"></admin-config-gallery>
+        <admin-config-gallery [identifier]="'1'" [images]="this.images"  (imagesNew)="updateImages($event)"></admin-config-gallery>
         <div class="row my-4">
           <div class="col-md-6">
             <button *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[1] == 1" class="btn btn-success me-4" (click)="saveImages()">Guardar</button>

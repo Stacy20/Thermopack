@@ -17,7 +17,23 @@ import { Select2Data, Select2Module, Select2UpdateEvent } from 'ng-select2-compo
     selector: 'admin-add-product-page',
     standalone: true,
     templateUrl: './add-product-page.component.html',
-    styles: ``,
+    styles: `.input-group input[type='file'] {
+      display: none;
+    }
+
+    .input-group label {
+      background-color: #00b2cc;
+      color: #fff;
+      transition: background-color 0.2s ease-in-out;
+      border: 1px solid #ccc;
+      display: inline-block;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .input-group label:hover {
+      background-color: #0196ad;
+    }`,
     imports: [ConfigGalleryComponent, NavbarComponent, UnderConstructionComponent, FormsModule, SelectTypeComponent, CommonModule, Select2Module]
 })
 export class AddProductPageComponent {
