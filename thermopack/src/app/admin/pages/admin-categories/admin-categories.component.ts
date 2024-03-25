@@ -40,10 +40,20 @@ export class AdminCategoriesComponent {
   }
 
   editBrand(brand: Brands) {
-    this.service.updateBrandByName(brand.name, brand._id).subscribe((response) => {
-      console.log(response);
-      alert('Marca editada');
-    })
+    //brand._id corresponde al newName de la marca
+    this.service.getBrandByName(brand._id).subscribe((response) => {
+      if(response._id === undefined){
+        if(brand._id.trim() !== ''){
+          this.service.updateBrandByName(brand.name, brand._id).subscribe((response) => {
+            alert('Marca editada'); //TODO Alert
+          });
+        }else{
+          alert('No puede registrar una marca vacía.'); //TODO Alert
+        }
+      }else{
+        alert('Esta marca ya está registrada.'); //TODO Alert
+      }
+    });
   }
 
   deleteBrand(brand: Brands) {
@@ -54,9 +64,19 @@ export class AdminCategoriesComponent {
   }
 
   editType(type: Types) {
-    this.service.updateTypeByName(type.name, type._id).subscribe((response) => {
-      console.log(response);
-      alert('Tipo editado');
+    //type._id corresponde al newName del tipo
+    this.service.getTypeByName(type._id).subscribe((response) => {
+      if(response._id === undefined){
+        if(type._id.trim() !== ''){
+          this.service.updateTypeByName(type.name, type._id).subscribe((response) => {
+            alert('Tipo editado'); //TODO Alert
+          });
+        }else{
+          alert('No puede registrar un tipo vacío.'); //TODO Alert
+        }
+      }else{
+        alert('Este tipo ya está registrado.'); //TODO Alert
+      }
     })
   }
 
@@ -68,9 +88,19 @@ export class AdminCategoriesComponent {
   }
 
   editCategory(category: Categories) {
-    this.service.updateCategoryByName(category.name, category._id).subscribe((response) => {
-      console.log(response);
-      alert('Categoría editada');
+    //category._id corresponde al newName de la categoría
+    this.service.getCategoryByName(category._id).subscribe((response) => {
+      if(response._id === undefined){
+        if(category._id.trim() !== ''){
+          this.service.updateCategoryByName(category.name, category._id).subscribe((response) => {
+            alert('Categoría editada'); //TODO Alert
+          });
+        }else{
+          alert('No puede registrar una categoría vacía.'); //TODO Alert
+        }
+      }else{
+        alert('Esta categoría ya está registrada.'); //TODO Alert
+      }
     })
   }
 

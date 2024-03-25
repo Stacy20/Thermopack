@@ -50,13 +50,21 @@ export class EditListComponent {
     const startIndex = this.offset;
     const endIndex = Math.min(startIndex + this.limitRows, this.items.length);
     this.renderItems = this.items.slice(startIndex, endIndex);
-    console.log(startIndex, endIndex)
   }
 
   editItem(item: ListItem) {
     const element = document.querySelector(`[data-index="${item._id}"]`);
     if (element instanceof HTMLElement) {
-      this.edit.emit({_id: element.innerText, name: item.name});
+      const newItem = element.innerText;
+
+      this.edit.emit({_id: newItem, name: item.name});
+
+      if(this.items.find(item => item.name === newItem) || newItem.trim() === ''){
+        element.innerText = item.name;
+      }
+      else{
+        item.name = newItem;
+      }
     }
   }
 

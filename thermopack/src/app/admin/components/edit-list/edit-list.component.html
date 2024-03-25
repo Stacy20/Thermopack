@@ -7,6 +7,9 @@
     </tr>
   </thead>
   <tbody>
+    @if(renderItems.length === 0){
+      <p>No hay elementos para mostrar.</p>
+    }
     @for (item of renderItems; track $index) {
       <tr class="align-middle">
         <td [attr.data-index]="item._id" contentEditable >{{ item.name }}</td>
