@@ -1,0 +1,28 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of items; track $index) {
+      <tr class="align-middle">
+        <td [attr.data-index]="item._id" contentEditable >{{ item.name }}</td>
+        <td class="col-3">
+          <button class="btn btn-success w-100" (click)="editItem(item)">
+            <img src="assets/icons/edit_note_icon.svg" alt="Editar">
+            Editar
+          </button>
+        </td>
+        <td class="col-3">
+          <button class="btn btn-danger w-100" (click)="deleteItem(item)">
+            <img src="assets/icons/cancel_close_icon.svg" alt="Eliminar">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

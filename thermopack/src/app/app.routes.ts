@@ -17,6 +17,7 @@ import { PageServicesComponent } from './client/pages/page-services/page-service
 import { UsersPageComponent } from './admin/pages/users-page/users-page.component';
 import { ClientComponent } from './client/pages/client/client.component';
 import { AdminPageComponent } from './admin/pages/admin-page/admin-page.component';
+import { AdminCategoriesComponent } from './admin/pages/admin-categories/admin-categories.component';
 
 export const routes: Routes = [
   {
@@ -88,6 +89,10 @@ export const routes: Routes = [
       {
         path: 'users',
         component: UsersPageComponent
+      },
+      {
+        path: 'categories',
+        component: AdminCategoriesComponent
       }
     ]
   },
