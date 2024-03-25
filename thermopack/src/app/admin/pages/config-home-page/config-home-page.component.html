@@ -10,7 +10,7 @@
             <p class="text-responsive">Eslogan</p>
           </div>
           <div class="col-md-6">
-            <input type="text" class="form-control" [(ngModel)]="eslogan" />
+            <textarea type="text" class="form-control" [(ngModel)]="eslogan"></textarea>
             @if (eslogan.trim().length< 5) {
               <div class="text-danger">Debe tener al menos 5 caracteres</div>
             }
