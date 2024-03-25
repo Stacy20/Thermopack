@@ -46,7 +46,8 @@ export class AddServicePageComponent {
   }
 
   deleteImage(index: number) {
-    this.images.splice(index, 1);
+    this.images[index] = '';
+    // this.images.splice(index, 1);
   }
 
   insert(){

@@ -84,7 +84,8 @@ export class ConfigHomePageComponent {
   public productosTextPast: string = '';
   public servicesTitlePast: string = '';
   public servicesTextPast: string = '';
-
+  public visionImagesPast: string[] = [];
+  public presentationImagesPast: string[] = [];
   deleteInputs() {
     this.eslogan = this.description = this.mision = this.vision = this.logo = '';
   }
@@ -118,7 +119,9 @@ export class ConfigHomePageComponent {
       this.logo  = this.data.logo;
       this.logoPast = this.data.logo;
       this.visionImages  = this.data.visionImages;
+      this.visionImagesPast.push(...this.data.visionImages)
       this.presentationImages = this.data.presentationImages;
+      this.presentationImagesPast.push(...this.data.visionImages)
       this.productosTitle = this.productosTitlePast =this.data.productsTitle;
       this.productosText =this.productosTextPast = this.data.productsParagraph;
       this.servicesTitle =this.servicesTitlePast = this.data.servicesTitle;
@@ -174,7 +177,7 @@ export class ConfigHomePageComponent {
 
   saveVisionImages() {
     console.log(this.visionImages.length)
-    if(this.arraysAreEqual(this.visionImages)){
+    if(this.arraysAreEqualVision()){
         this.sweetAlertService.showConfirmationAlert(
           'Confirmación',
           '¿Está seguro que desea realizar cambios?',
@@ -193,7 +196,7 @@ export class ConfigHomePageComponent {
 
   }
 
-  updateImages(datos: ImagesNewEvent) { //! RAQUE SE CAE
+  updateImages(datos: ImagesNewEvent) {
     if(datos.identifier=='1'){
       this.visionImages = datos.images;
     }
@@ -201,39 +204,71 @@ export class ConfigHomePageComponent {
       this.presentationImages=datos.images
     }
   }
-  arraysAreEqual(array1: string[]): boolean {
+  arraysAreEqualVision(): boolean {
     // Verificar si los elementos de los arrays son iguales
-    for (let i = 0; i < array1.length; i++) {
-      if (array1[i] =='') {
-        this.sweetAlertService.showAlert('Error', 'Todos las imagenes son obligatorias', 'error');
+    for (let i = 0; i < this.visionImagesPast.length; i++) {
+      if(this.visionImagesPast[i]!==this.visionImages[i]){
+        break;
+      }
+      else {
+        this.sweetAlertService.showAlert(
+          'Información',
+          'No se realizó ningún cambio, no hay nada que guardar',
+          'info'
+        );
         return false;
       }
     }
 
+    for (let i = 0; i < this.visionImages.length; i++) {
+      if (this.visionImages[i] =='') {
+        this.sweetAlertService.showAlert('Error', 'Todos las imagenes son obligatorias', 'error');
+        return false;
+      }
+    }
     return true;
   }
-
-  savePresentationImages() {
-    // if(this.arraysAreEqual(this.presentationImages)){
-    // this.sweetAlertService.showConfirmationAlert(
-    //   'Confirmación',
-    //   '¿Está seguro que desea realizar cambios?',
-    //   () => {
-    //     this.service.updatePresentationImages(this.presentationImages).subscribe(
-    //       (data) => {
-    //         this.sweetAlertService.showAlert('Éxito', 'Las imágenes se han guardado correctamente', 'success');
-    //       },
-    //       (error) => {
-    //         this.sweetAlertService.showAlert('Error', 'Hubo un error al guardar las imágenes', 'error');
-    //         console.error('Error al actualizar las imágenes:', error);
-    //       }
-    //     );
-    //   });
-    // }
-    this.service.updatePresentationImages(this.presentationImages).subscribe((data) => {
-      // console.log(data)
+  arraysAreEqualPresentation(): boolean {
+    // Verificar si los elementos de los arrays son iguales
+    for (let i = 0; i < this.presentationImagesPast.length; i++) {
+      if(this.presentationImagesPast[i]!==this.presentationImages[i]){
+        break;
+      }
+      else {
+        this.sweetAlertService.showAlert(
+          'Información',
+          'No se realizó ningún cambio, no hay nada que guardar',
+          'info'
+        );
+        return false;
+      }
     }
-    );
+
+    for (let i = 0; i < this.presentationImages.length; i++) {
+      if (this.presentationImages[i] =='') {
+        this.sweetAlertService.showAlert('Error', 'Todos las imagenes son obligatorias', 'error');
+        return false;
+      }
+    }
+    return true;
+  }
+  savePresentationImages() {
+    if(this.arraysAreEqualPresentation()){
+      this.sweetAlertService.showConfirmationAlert(
+        'Confirmación',
+        '¿Está seguro que desea realizar cambios?',
+        () => {
+          this.service.updatePresentationImages(this.presentationImages).subscribe(
+            (data) => {
+              this.sweetAlertService.showAlert('Éxito', 'Las imágenes se han guardado correctamente', 'success');
+            },
+            (error) => {
+              this.sweetAlertService.showAlert('Error', 'Hubo un error al guardar las imágenes', 'error');
+              console.error('Error al actualizar las imágenes:', error);
+            }
+          );
+        });
+    }
   }
 
   saveProductsServices() {

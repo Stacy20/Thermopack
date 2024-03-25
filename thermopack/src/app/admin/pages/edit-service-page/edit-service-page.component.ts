@@ -55,7 +55,7 @@ export class EditServicePageComponent {
 
       this.descriptionPast = service.description;
       this.pricePast = service.price;
-      this.imagesPast = service.images;
+      this.imagesPast.push(...service.images)
     });
   }
 
@@ -72,7 +72,8 @@ export class EditServicePageComponent {
   }
 
   deleteImage(index: number) {
-    this.images=this.images.splice(index, 1);
+    this.images[index] = '';
+    // this.images=this.images.splice(index, 1);
     console.log(this.images)
   }
 
@@ -116,15 +117,26 @@ hasChanged(): boolean {
       this.originalName !== this.name ||
       this.description !== this.descriptionPast||
       this.price!==this.pricePast||
-      this.images!==this.imagesPast
+      this.arraysAreEqual()
     ) {
-      console.log(this.images!==this.imagesPast)
       return true; // Hay cambios
     } else {
-      console.log(this.images, this.imagesPast)
       return false; // No hay cambios
     }
   }
+  arraysAreEqual(): boolean {
+    // Verificar si los elementos de los arrays son iguales
+    for (let i = 0; i < this.imagesPast.length; i++) {
+      if(this.imagesPast[i]!==this.images[i]){
+        break;
+      }
+      else {
+        return false;
+      }
+    }
+    return true;
+  }
+
   goBack(){
     this.router.navigate(['/admin/services']);
   }

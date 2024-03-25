@@ -49,6 +49,15 @@ export class EditProductPageComponent {
   public subCategory: string = '';
   public selectedSubCategory: number = 0;
 
+  public descriptionPast: string = '';
+  public pricePast: number = 0;
+  public imagesPast: string[] = [];
+  public typePast: string = '';
+  public brandPast: string = '';
+  public categoryPast: string = '';
+  public subCategoryPast: string = '';
+
+
   getData(title: string | null): void {
     if (title == null){
       return;
@@ -62,6 +71,7 @@ export class EditProductPageComponent {
       this.category = product.categoryId;
       this.subCategory = product.subcategoryId;
       this.images = product.images;
+      this.imagesPast.push(...product.images)
     });
     this.service.getAllTypes().subscribe((types) => {
       this.types = types;
@@ -120,9 +130,9 @@ export class EditProductPageComponent {
     }
   }
 
-
   deleteImage(index: number) {
-    this.images.splice(index, 1);
+    this.images[index] = '';
+    // this.images.splice(index, 1);
   }
 
   update(){
@@ -134,22 +144,56 @@ export class EditProductPageComponent {
       this.sweetAlertService.showAlert('Error', 'Debe seleccionar una o más imagenes', 'error');
       return; // Detener el proceso si falta algún campo obligatorio
     }
-    this.service.getProductByName(this.name).subscribe((product) => {
-      if (this.name !== this.originalName && Object.keys(product).length !== 0){
-        this.sweetAlertService.showAlert('Error', 'Ya existe un producto llamado' + product.name, 'error');
-        return;
-      }
-      else{
-        this.service.updateProductByName(this.originalName, this.name, this.description,
-          this.brands[this.selectedBrand]._id, this.types[this.selectedType]._id, this.price,
-          this.categories[this.selectedCategory]._id, this.categories[this.selectedSubCategory]._id,
-          this.images).subscribe((response) => {
-          this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
-    });
-      }
+    if(this.hasChanged() ){
+      this.service.getProductByName(this.name).subscribe((product) => {
+        if (this.name !== this.originalName && Object.keys(product).length !== 0){
+          this.sweetAlertService.showAlert('Error', 'Ya existe un producto llamado' + product.name, 'error');
+          return;
+        }
+        else{
+          this.service.updateProductByName(this.originalName, this.name, this.description,
+            this.brands[this.selectedBrand]._id, this.types[this.selectedType]._id, this.price,
+            this.categories[this.selectedCategory]._id, this.categories[this.selectedSubCategory]._id,
+            this.images).subscribe((response) => {
+            this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
+      });
+        }
 
-    });
+      });
+    }else{
+      this.sweetAlertService.showAlert('Información', 'No se realizó ningún cambio, no hay nada que guardar', 'info');
+    }
 
+
+  }
+  hasChanged(): boolean {
+    // Verificar si los campos han sido modificados con respecto a los datos cargados del servidor
+    if (
+      this.name !== this.originalName ||
+      this.description !== this.descriptionPast ||
+      this.price !== this.pricePast ||
+      this.type !== this.typePast ||
+      this.brand !== this.brandPast ||
+      this.category !== this.categoryPast ||
+      this.subCategory !== this.subCategoryPast|| this.arraysAreEqual()
+    ) {
+      return true; // Hay cambios
+    } else {
+      return false; // No hay cambios
+    }
+  }
+
+  arraysAreEqual(): boolean {
+    // Verificar si los elementos de los arrays son iguales
+    for (let i = 0; i < this.imagesPast.length; i++) {
+      if(this.imagesPast[i]!==this.images[i]){
+        break;
+      }
+      else {
+        return false;
+      }
+    }
+    return true;
   }
   validateInput(event: KeyboardEvent) {
     const inputValue = event.key;

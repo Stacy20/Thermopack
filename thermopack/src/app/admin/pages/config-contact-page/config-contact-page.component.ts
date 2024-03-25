@@ -26,6 +26,7 @@ import { Router } from '@angular/router';
   imports: [NavbarComponent, ConfigGalleryComponent, FormsModule, CommonModule],
 })
 export class ConfigContactPageComponent {
+
   public welcomeParagraph: string = '';
   public ubicationText: string = '';
   public ubicationGMLink: string = '';
@@ -46,13 +47,13 @@ export class ConfigContactPageComponent {
   public ubicationTextPast: string = '';
   public ubicationGMLinkPast: string = '';
   public ubicationWazeLinkPast: string = '';
-  public telephoneNumbersPast: string[] = ['', '', ''];
+  public telephoneNumbersPast: string[] = [];
   public emailPast: string = '';
   public whatsappLinkPast: string = '';
   public facebookLinkPast: string = '';
   public instagramLinkPast: string = '';
   public youtubeLinkPast: string = '';
-
+  public imagesPast: string[] = [];
   constructor(
     private service: MainService,
     private sweetAlertService: SweetAlertService,
@@ -83,7 +84,8 @@ export class ConfigContactPageComponent {
       this.ubicationTextPast = contact[0].ubicationText;
       this.ubicationGMLinkPast = contact[0].ubicationGMLink;
       this.ubicationWazeLinkPast = contact[0].ubicationWazeLink;
-      this.telephoneNumbersPast = contact[0].telephoneNumbers;
+      this.telephoneNumbersPast.push(...contact[0].telephoneNumbers);
+      this.imagesPast.push(...contact[0].images)
       this.emailPast = contact[0].email;
       this.whatsappLinkPast = contact[0].whatsappLink;
       this.facebookLinkPast = contact[0].facebookLink;
@@ -116,6 +118,11 @@ export class ConfigContactPageComponent {
   validateNumber() {
     this.validNumber = this.validatePhoneNumber(this.newNumber);
   }
+
+  deleteNumber(index: number):void {
+    this.telephoneNumbers.splice(index, 1);
+    console.log(this.telephoneNumbers,this.telephoneNumbersPast)
+    }
 
   validateWhatsApp() {
     this.validwhatsappLink = this.validatePhoneNumber(this.whatsappLink);
@@ -211,8 +218,43 @@ export class ConfigContactPageComponent {
   }
 
   saveImages() {
-    this.service.updateContactImages(this.images).subscribe((data) => {
-      // console.log(data)
-    });
+    if(this.arraysAreEqual()){
+      this.service.updateContactImages(this.images).subscribe((data) => {
+        this.sweetAlertService.showAlert('Éxito','Los datos se han guardado correctamente','success');
+      },
+      (error) => {
+        this.sweetAlertService.showAlert(
+          'Error',
+          'Hubo un error al guardar las imagenes',
+          'error'
+        );
+      });
+    }
+
+  }
+
+  arraysAreEqual(): boolean {
+    // Verificar si los elementos de los arrays son iguales
+    for (let i = 0; i < this.imagesPast.length; i++) {
+      if(this.imagesPast[i]!==this.images[i]){
+        break;
+      }
+      else {
+        this.sweetAlertService.showAlert(
+          'Información',
+          'No se realizó ningún cambio, no hay nada que guardar',
+          'info'
+        );
+        return false;
+      }
+    }
+
+    for (let i = 0; i < this.images.length; i++) {
+      if (this.images[i] =='') {
+        this.sweetAlertService.showAlert('Error', 'Todos las imagenes son obligatorias', 'error');
+        return false;
+      }
+    }
+    return true;
   }
 }
