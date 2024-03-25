@@ -55,7 +55,7 @@ export class ConfigContactPageComponent {
   public youtubeLinkPast: string = '';
   public imagesPast: string[] = [];
   constructor(
-    private service: MainService,
+    public service: MainService,
     private sweetAlertService: SweetAlertService,
     private router: Router
   ) {}
