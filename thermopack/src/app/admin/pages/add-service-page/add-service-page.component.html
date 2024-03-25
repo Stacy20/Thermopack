@@ -40,7 +40,12 @@
       </div>
       <div class="col-md-6">
         <div>
-          <input type="file" multiple (change)="handleFileInput($event)" accept="image/*" style="margin-bottom: 10px;">
+          <div class="input-group mb-3">
+            <input type="file" multiple id="inputFile" (change)="handleFileInput($event)" accept="image/*" style="margin-bottom: 10px;">
+            <label class="input-group-text" for="inputFile"
+            >Seleccionar archivo</label
+          >
+          </div>
           <div>
             <span *ngFor="let image of images; let i = index" >
               <img *ngIf="this.images[i] !== ''" [src]="image" alt="Imagen seleccionada" style="max-height: 50px;">
