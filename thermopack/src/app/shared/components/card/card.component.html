@@ -16,8 +16,8 @@
     }
     @else {
       <div class="d-flex  justify-content-between">
-        <button class="btn mt-4 "style="background-color: #37C132; color:#ffff" (click)="gotoEditProduct()"> Editar</button>
-        <button class="btn mt-4 "style="background-color: #CE0303; color:#ffff" (click)="deleteProduct()"> Eliminar</button>
+        <button *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[1] == 1" class="btn mt-4 "style="background-color: #37C132; color:#ffff" (click)="gotoEditProduct()"> Editar</button>
+        <button *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[2] == 1" class="btn mt-4 "style="background-color: #CE0303; color:#ffff" (click)="deleteProduct()"> Eliminar</button>
       </div>
     }
 

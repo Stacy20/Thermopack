@@ -4,6 +4,8 @@ import { UnderConstructionComponent } from "../../../shared/components/under-con
 import { ConfigGalleryComponent } from '../../components/config-gallery/config-gallery.component';
 import { FormsModule, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MainService } from '../../../services/service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Types } from '../../../interfaces/types.interface';
 import { SelectTypeComponent } from '../../../shared/components/select-type/select-type.component';
 import { CommonModule } from '@angular/common';
 
@@ -19,9 +21,14 @@ import { Select2Data, Select2Module, Select2UpdateEvent } from 'ng-select2-compo
 export class AddProductPageComponent {
   constructor(
     private service: MainService,
+    private router: Router,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
+    if (!(await this.service.userCanAdd())) {
+      this.router.navigate(['admin/config/home']);
+    }
     this.getData();;
   }
 

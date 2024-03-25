@@ -7,3 +7,22 @@
   cursor: pointer;
   font-weight: bold;
 }
+
+.hover-text {
+  display: none;
+}
+
+#logoutButton:hover img {
+  display: none;
+}
+
+#logoutButton:hover .hover-text {
+  display: inline-block;
+}
+
+.custom-btn.btn.btn-outline-light:hover {
+  color: #f8f9fa;
+  background-color: transparent;
+  border-color: #f8f9fa;
+}
+

@@ -10,16 +10,23 @@
         <form class="mt-4">
           <div class="mb-3">
             <label for="inputEmail" class="form-label">Correo Electrónico</label>
-            <input type="email" class="form-control" id="inputEmail" placeholder="Correo Electrónico">
+            <input type="email" class="form-control" id="inputEmail" placeholder="Correo Electrónico" [(ngModel)]="this.email" name="email">
           </div>
           <div class="mb-3">
             <label for="inputPassword" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="inputPassword" placeholder="Contraseña">
+            <div class="d-flex align-items-center">
+              <input type="{{ passwordFieldType }}" class="form-control me-1" id="inputPassword" placeholder="Contraseña" [(ngModel)]="password" name="password">
+              <button type="button" class="btn btn-light" (click)="togglePasswordVisibility()">
+                <img src="{{this.passwordIcon}}" alt="Visibilidad">
+              </button>
+            </div>
           </div>
           <button type="submit" class="mt-4 w-100 btn btn-primary-thermopack btn-lg btn-block" (click)="submitUserLogin()">Ingresar</button>
         </form>
 
-        <p class="text-center mt-3"><a href="#" class="link-secondary link-offset-2-hover link-underline-opacity-0 link-underline-opacity-75-hover">Olvidé mi contraseña</a></p>
+        <p class="text-center mt-3">
+          <button class="btn btn-link" (click)="forgotPassword()">Olvidé mi contraseña</button>
+        </p>
       </div>
     </div>
   </div>

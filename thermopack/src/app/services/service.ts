@@ -1,15 +1,17 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap} from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, of, switchMap, take, tap} from 'rxjs';
 import { Brands } from '../interfaces/brands.interface';
 import { Categories } from '../interfaces/categories.interface';
-import { Users } from '../interfaces/users.interface';
+import { Users, DBResponse } from '../interfaces/users.interface';
 import { Types } from '../interfaces/types.interface';
 import { Services } from '../interfaces/services.interface';
 import { Products } from '../interfaces/products.interface';
 import { Privileges } from '../interfaces/privileges.interface';
 import { Data } from '../interfaces/data.interface';
 import { Contact } from '../interfaces/contact.interface';
+import * as bcrypt from 'bcryptjs';
+import emailjs from '@emailjs/browser';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +22,8 @@ export class MainService{
   private idSelectBrand?:string;
   private idSelectType?:string;
   private idCategory?:string;
+  public isLoggedIn:boolean = false;
+  public userLoggedIn: Users|null = null;
 
   //** Varibles de services IMPORTANES para paginacion */
   public services: Services[]=[];
@@ -29,7 +33,106 @@ export class MainService{
   private servicesSubject: BehaviorSubject<{ services: Services[], totalCount: number }> = new BehaviorSubject<{ services: Services[], totalCount: number }>({ services: [], totalCount: 0 });
   public services$: Observable<{ services: Services[], totalCount: number }> = this.servicesSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') == 'true';
+    const lastLogin = localStorage.getItem('lastLogin');
+    this.isLoggedIn = lastLogin && this.dayHasntPassed(lastLogin) ? this.isLoggedIn : false;
+
+    const userLoggedIn = localStorage.getItem('userLoggedIn');
+    if(this.isLoggedIn && userLoggedIn){
+      this.getUserByEmail(userLoggedIn).subscribe((user) => {
+        this.userLoggedIn = user
+      });
+    }
+  }
+
+  dayHasntPassed(lastLogin: string): boolean {
+    if (!lastLogin) {
+      return false;
+    }
+    const lastLoginDate = new Date(lastLogin);
+    const now = new Date();
+    const diffMs = now.getTime() - lastLoginDate.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+
+    return diffHours < 24;
+  }
+
+  login(user: Users) {
+    this.isLoggedIn = true;
+    this.userLoggedIn = user;
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userLoggedIn', user.email);
+    const now = new Date();
+    const dateTimeString = now.toISOString();
+    localStorage.setItem('lastLogin', dateTimeString);
+  }
+
+  logout() {
+    this.isLoggedIn = false;
+    this.userLoggedIn = null;
+    localStorage.setItem('userLoggedIn', '');
+    localStorage.setItem('isLoggedIn', 'false');
+  }
+
+  userCanAdd(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const checkPrivilege = () => {
+        if (this.userLoggedIn && this.userLoggedIn.privileges) {
+          resolve((this.userLoggedIn.privileges[0] == 1) || false);
+        } else {
+          setTimeout(checkPrivilege, 100);
+        }
+      };
+
+      checkPrivilege();
+    });
+  }
+
+  userCanEdit(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const checkPrivilege = () => {
+        if (this.userLoggedIn && this.userLoggedIn.privileges) {
+          resolve((this.userLoggedIn.privileges[1] == 1) || false);
+        } else {
+          setTimeout(checkPrivilege, 100);
+        }
+      };
+
+      checkPrivilege();
+    });
+  }
+
+  userCanDelete(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const checkPrivilege = () => {
+        if (this.userLoggedIn && this.userLoggedIn.privileges) {
+          resolve((this.userLoggedIn.privileges[2] == 1) || false);
+        } else {
+          setTimeout(checkPrivilege, 100);
+        }
+      };
+
+      checkPrivilege();
+    });
+  }
+
+  userCanCreateUsers(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const checkPrivilege = () => {
+        if (this.userLoggedIn && this.userLoggedIn.privileges) {
+          resolve((this.userLoggedIn.privileges[3] == 1) || false);
+        } else {
+          setTimeout(checkPrivilege, 100);
+        }
+      };
+
+      checkPrivilege();
+    });
+  }
+
+
+
 
   //** Varibles de products IMPORTANES para paginacion */
   public products: Products[]=[];
@@ -62,7 +165,6 @@ export class MainService{
     this.getServices();
   }
   else{
-    console.log('hola desde el server')
     if((this._offsetProducts-this._limitProducts)<=this._limitProducts){
       this._offsetProducts=0;
     }
@@ -273,7 +375,17 @@ export class MainService{
       );
   }
 
-  createUser(email: string, password: string, privileges: string[]): Observable<Users> {
+  createUser(email: string, privileges: number[]): Observable<Users> {
+    const passwordGenerated = this.generateSecurePassword(12);
+
+    // enviar correo con la contrasenha
+    this.sendEmailWithPassword(email, passwordGenerated);
+
+    // encriptar contrasenha
+    const saltRounds = 10;
+    const password = bcrypt.hashSync(passwordGenerated, saltRounds);
+
+    // guardar en la bd
     const url = `${this.connectionUrl}users`;
     return this.http.post<Users>(url, { email, password, privileges })
       .pipe(
@@ -281,20 +393,57 @@ export class MainService{
       );
   }
 
-  updateUserByEmail(email: string, newEmail: string, password: string, privileges: string[]): Observable<Users> {
+  updateUserByEmail(email: string, newEmail: string, password: string, privileges: number[]): Observable<DBResponse> {
     const url = `${this.connectionUrl}users/${email}`;
-    return this.http.put<Users>(url, { newEmail, password, privileges })
+    return this.http.put<DBResponse>(url, { newEmail, password, privileges })
       .pipe(
-        catchError(() => of({} as Users))
+        catchError(() => of({} as DBResponse))
       );
   }
 
-  deleteUserByEmail(email: string): Observable<Users> {
+  deleteUserByEmail(email: string): Observable<DBResponse> {
     const url = `${this.connectionUrl}users/${email}`;
-    return this.http.delete<Users>(url)
+    return this.http.delete<DBResponse>(url)
       .pipe(
-        catchError(() => of({} as Users))
+        catchError(() => of({} as DBResponse))
       );
+  }
+
+  // users auxiliares
+
+  async sendEmailWithPassword(email: string, password: string): Promise<any> {
+    // Configurar el transporte del correo
+    emailjs.init('r-AFDRCTXu8pq0Vfg')
+    let response = await emailjs.send("service_dffyfl6","template_zbgo64g",{
+      contrasenha: password,
+      to_email: email,
+      });
+    // console.log('emailResponse', response )
+  }
+
+  generateSecurePassword(length: number): string {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      const index = Math.floor(Math.random() * charset.length);
+      password += charset[index];
+    }
+    return password;
+  }
+
+  forgotPassword(email: string, privileges: number[]): void {
+    const passwordGenerated = this.generateSecurePassword(12);
+
+    // enviar correo con la contrasenha
+    this.sendEmailWithPassword(email, passwordGenerated);
+
+    // encriptar contrasenha
+    const saltRounds = 10;
+    const password = bcrypt.hashSync(passwordGenerated, saltRounds);
+
+    // actualiza en la bd
+    this.updateUserByEmail(email, email, password, privileges).subscribe((response) => {
+    });
   }
 
   // services
@@ -306,26 +455,26 @@ export class MainService{
         catchError(() => of([]))
       );
   }
-// Observable<{ services: Services[], totalCount: number }>
-getServices(): void {
-  const url = `${this.connectionUrl}services`;
-  const params = new HttpParams()
-    .set('limit', this._limitService.toString())
-    .set('offset', this._offsetServices.toString());
+  // Observable<{ services: Services[], totalCount: number }>
+  getServices(): void {
+    const url = `${this.connectionUrl}services`;
+    const params = new HttpParams()
+      .set('limit', this._limitService.toString())
+      .set('offset', this._offsetServices.toString());
 
-  this.http.get<{ services: Services[], totalCount: number }>(url, { params })
-    .pipe(
-      catchError(() => of({ services: [], totalCount: 0 })),
-      tap((response) => {
-        // Actualizar los atributos del servicio con la respuesta del servidor
-        this.services = response.services;
-        this.totalServices = response.totalCount;
-        // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
-        this.servicesSubject.next(response);
-      })
-    )
-    .subscribe();
-}
+    this.http.get<{ services: Services[], totalCount: number }>(url, { params })
+      .pipe(
+        catchError(() => of({ services: [], totalCount: 0 })),
+        tap((response) => {
+          // Actualizar los atributos del servicio con la respuesta del servidor
+          this.services = response.services;
+          this.totalServices = response.totalCount;
+          // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
+          this.servicesSubject.next(response);
+        })
+      )
+      .subscribe();
+  }
   getServiceByName(name: string): Observable<Services> {
     const url = `${this.connectionUrl}services/${name}`;
     return this.http.get<Services>(url)
@@ -381,10 +530,10 @@ getServices(): void {
         tap((response) => {
           // Actualizar los atributos del servicio con la respuesta del servidor
           this.products = response.products;
-          console.log(this.products)
+          // console.log(this.products)
           this.totalProducts = response.totalCount;
           // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
-          console.log(this.totalProducts, 'si buenas')
+          // console.log(this.totalProducts, 'si buenas')
           this.productsSubject.next(response);
         })
       )
@@ -445,7 +594,7 @@ getServices(): void {
       this.termSearch = name || this.termSearch;
       url += `&name=${this.termSearch}`;
     }
-    console.log(this.idCategory,this.idSelectBrand,this.idSelectType, this.termSearch)
+    // console.log(this.idCategory,this.idSelectBrand,this.idSelectType, this.termSearch)
     this.http.get<{ products: Products[], totalCount: number }>(url)
     .pipe(
       catchError(() => of({ products: [], totalCount: 0 })),
@@ -453,7 +602,7 @@ getServices(): void {
         // Actualizar los atributos del servicio con la respuesta del servidor
         this.products = response.products;
         this.totalProducts = response.totalCount;
-        console.log(this.products, 'seleccione desde categorias', this.totalProducts)
+        // console.log(this.products, 'seleccione desde categorias', this.totalProducts)
         // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
         this.productsSubject.next(response);
       })

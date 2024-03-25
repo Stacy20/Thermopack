@@ -27,6 +27,13 @@ export class AddServicePageComponent {
     private router: Router
   ) {}
 
+  async ngOnInit() {
+    if (!this.service.isLoggedIn){ this.router.navigate(['/login']); }
+    if (!(await this.service.userCanAdd())) {
+      this.router.navigate(['admin/config/home']);
+    }
+  }
+
   handleFileInput(event: any) {
     const files: FileList = event.target.files;
     for (let i = 0; i < files.length; i++) {
