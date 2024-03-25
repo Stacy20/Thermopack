@@ -39,11 +39,9 @@ export class MainService{
     this.isLoggedIn = lastLogin && this.dayHasntPassed(lastLogin) ? this.isLoggedIn : false;
 
     const userLoggedIn = localStorage.getItem('userLoggedIn');
-    console.log('userloggedin')
     if(this.isLoggedIn && userLoggedIn){
       this.getUserByEmail(userLoggedIn).subscribe((user) => {
-        this.userLoggedIn = user;
-        console.log('this.userLoggedIn', this.userLoggedIn)
+        this.userLoggedIn = user
       });
     }
   }
@@ -167,7 +165,6 @@ export class MainService{
     this.getServices();
   }
   else{
-    console.log('hola desde el server')
     if((this._offsetProducts-this._limitProducts)<=this._limitProducts){
       this._offsetProducts=0;
     }
@@ -372,7 +369,6 @@ export class MainService{
 
   getUserByEmail(email: string): Observable<Users> {
     const url = `${this.connectionUrl}users/${email}`;
-    console.log(url)
     return this.http.get<Users>(url)
       .pipe(
         catchError(() => of({} as Users))
@@ -422,7 +418,7 @@ export class MainService{
       contrasenha: password,
       to_email: email,
       });
-    console.log('emailResponse', response )
+    // console.log('emailResponse', response )
   }
 
   generateSecurePassword(length: number): string {
@@ -433,6 +429,21 @@ export class MainService{
       password += charset[index];
     }
     return password;
+  }
+
+  forgotPassword(email: string, privileges: number[]): void {
+    const passwordGenerated = this.generateSecurePassword(12);
+
+    // enviar correo con la contrasenha
+    this.sendEmailWithPassword(email, passwordGenerated);
+
+    // encriptar contrasenha
+    const saltRounds = 10;
+    const password = bcrypt.hashSync(passwordGenerated, saltRounds);
+
+    // actualiza en la bd
+    this.updateUserByEmail(email, email, password, privileges).subscribe((response) => {
+    });
   }
 
   // services
@@ -519,10 +530,10 @@ export class MainService{
         tap((response) => {
           // Actualizar los atributos del servicio con la respuesta del servidor
           this.products = response.products;
-          console.log(this.products)
+          // console.log(this.products)
           this.totalProducts = response.totalCount;
           // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
-          console.log(this.totalProducts, 'si buenas')
+          // console.log(this.totalProducts, 'si buenas')
           this.productsSubject.next(response);
         })
       )
@@ -583,7 +594,7 @@ export class MainService{
       this.termSearch = name || this.termSearch;
       url += `&name=${this.termSearch}`;
     }
-    console.log(this.idCategory,this.idSelectBrand,this.idSelectType, this.termSearch)
+    // console.log(this.idCategory,this.idSelectBrand,this.idSelectType, this.termSearch)
     this.http.get<{ products: Products[], totalCount: number }>(url)
     .pipe(
       catchError(() => of({ products: [], totalCount: 0 })),
@@ -591,7 +602,7 @@ export class MainService{
         // Actualizar los atributos del servicio con la respuesta del servidor
         this.products = response.products;
         this.totalProducts = response.totalCount;
-        console.log(this.products, 'seleccione desde categorias', this.totalProducts)
+        // console.log(this.products, 'seleccione desde categorias', this.totalProducts)
         // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
         this.productsSubject.next(response);
       })

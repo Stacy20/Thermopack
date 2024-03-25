@@ -40,7 +40,6 @@ export class LoginPageComponent {
           console.log('La contraseña no coincide');// TODO alert
           return;
         }
-        console.log('log in');
         this.service.login(user);
         this.router.navigate(['/admin/config']);
       });
@@ -50,6 +49,19 @@ export class LoginPageComponent {
   togglePasswordVisibility() {
     this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
     this.passwordIcon = this.passwordIcon === "assets/icons/visibility.svg" ? "assets/icons/visibility_off.svg" : "assets/icons/visibility.svg";
+  }
+
+  forgotPassword() {
+    if (this.email == '') {
+      return; // TODO alert ingrese un correo
+    }
+    this.service.getUserByEmail(this.email).subscribe((user) => {
+      if (Object.keys(user).length == 0){
+        console.log('no se encuentra el correo registrado'); // TODO alert
+        return;
+      }
+      this.service.forgotPassword(this.email, user.privileges); // TODO alert
+    });
   }
 
 }
