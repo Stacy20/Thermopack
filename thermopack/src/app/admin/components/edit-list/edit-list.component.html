@@ -7,7 +7,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (item of items; track $index) {
+    @for (item of renderItems; track $index) {
       <tr class="align-middle">
         <td [attr.data-index]="item._id" contentEditable >{{ item.name }}</td>
         <td class="col-3">
@@ -26,3 +26,25 @@
     }
   </tbody>
 </table>
+<nav aria-label="navigation">
+  <ul class="pagination justify-content-center">
+    @if (offset!==0) {
+      <li cclass="page-item">
+        <a class="page-link" (click)="updateCurrentPage(-1)" >Previous</a>
+      </li>
+    }
+
+    @for (pageNumber of generatePagination(); track $index) {
+      <li class="page-item"  [class.active]="pageNumber === currentPage">
+        <a class="page-link" (click)="updateCurrentPage(pageNumber - currentPage)">{{ pageNumber }}</a>
+      </li>
+    }
+
+    @if (totalRows>limitRows) {
+      <li class="page-item">
+        <a class="page-link" (click)="updateCurrentPage(1)">Next</a>
+      </li>
+    }
+
+  </ul>
+</nav>

@@ -4,12 +4,14 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FootersComponent } from "../../components/footers/footers.component";
 import { MainService } from '../../../services/service';
 import { GalleryItem, ImageItem } from 'ng-gallery';
+import { CurrencyPipePipe } from '../../../shared/pipes/currency-pipe.pipe';
+
 @Component({
     selector: 'client-page-detail',
     standalone: true,
     templateUrl: './detail-page.component.html',
     styleUrl: './detail-page.component.css',
-    imports: [GalleryComponent, RouterModule, FootersComponent]
+    imports: [GalleryComponent, RouterModule, FootersComponent, CurrencyPipePipe]
 })
 export class DetailPageComponent {
   public type!:number;
