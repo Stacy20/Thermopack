@@ -4,6 +4,7 @@ import { MainService } from '../../../services/service';
 import { Brands } from '../../../interfaces/brands.interface';
 import { Types } from '../../../interfaces/types.interface';
 import { Categories } from '../../../interfaces/categories.interface';
+import { SweetAlertService } from '../../services/sweet-alert.service';
 
 @Component({
     selector: 'app-admin-categories',
@@ -19,6 +20,7 @@ export class AdminCategoriesComponent {
 
   constructor(
     private service: MainService,
+    private sweetAlertService: SweetAlertService,
   ) {}
 
   ngOnInit() {
@@ -40,45 +42,75 @@ export class AdminCategoriesComponent {
   }
 
   editBrand(brand: Brands) {
-    this.service.updateBrandByName(brand.name, brand._id).subscribe((response) => {
-      console.log(response);
-      alert('Marca editada');
-    })
+    this.sweetAlertService.showConfirmationAlert(
+      'Confirmación',
+      '¿Está seguro que desea realizar cambios?',
+      () => {
+      this.service.updateBrandByName(brand.name, brand._id).subscribe((response) => {
+        console.log(response);
+        this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
+      })
+  });
   }
 
   deleteBrand(brand: Brands) {
+    this.sweetAlertService.showConfirmationAlert(
+      'Confirmación',
+      '¿Está seguro que desea eliminar la marca' + brand.name,
+      () => {
     this.service.deleteBrandByName(brand.name).subscribe((response) => {
       console.log(response);
-      alert('Marca eliminada');
+      this.sweetAlertService.showAlert('Éxito', 'La marca'+  brand.name +'se ha eliminado correctamente', 'success');
     })
+  });
   }
 
   editType(type: Types) {
+    this.sweetAlertService.showConfirmationAlert(
+      'Confirmación',
+      '¿Está seguro que desea realizar cambios?',
+      () => {
     this.service.updateTypeByName(type.name, type._id).subscribe((response) => {
       console.log(response);
-      alert('Tipo editado');
+      this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
     })
+  });
   }
 
   deleteType(type: Types) {
+    this.sweetAlertService.showConfirmationAlert(
+      'Confirmación',
+      '¿Está seguro que desea eliminar el tipo' + type.name,
+      () => {
     this.service.deleteTypeByName(type.name).subscribe((response) => {
       console.log(response);
-      alert('Tipo eliminado');
+      this.sweetAlertService.showAlert('Éxito', 'El tipo'+  type.name +'se ha eliminado correctamente', 'success');
     })
+  });
   }
 
   editCategory(category: Categories) {
+    this.sweetAlertService.showConfirmationAlert(
+      'Confirmación',
+      '¿Está seguro que desea realizar cambios?',
+      () => {
     this.service.updateCategoryByName(category.name, category._id).subscribe((response) => {
       console.log(response);
-      alert('Categoría editada');
+      this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
     })
+  });
   }
 
   deleteCategory(category: Categories) {
+    this.sweetAlertService.showConfirmationAlert(
+      'Confirmación',
+      '¿Está seguro que desea eliminar la categoría' + category.name,
+      () => {
     this.service.deleteCategoryByName(category.name).subscribe((response) => {
       console.log(response);
-      alert('Categoría eliminada');
+      this.sweetAlertService.showAlert('Éxito', 'La categoría'+  category.name +'se ha eliminado correctamente', 'success');
     })
+  });
   }
 
 }
