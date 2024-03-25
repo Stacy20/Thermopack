@@ -86,7 +86,6 @@ export class EditServicePageComponent {
       this.sweetAlertService.showAlert('Error', 'Debe seleccionar una o más imagenes', 'error');
       return; // Detener el proceso si falta algún campo obligatorio
     }
-    console.log(this.images.length)
     if (this.hasChanged()) {
       this.sweetAlertService.showConfirmationAlert(
         'Confirmación',
