@@ -69,8 +69,8 @@ export class EditListComponent {
   }
 
   deleteItem(item: ListItem) {
-    this._items = this._items.filter(iterItem => iterItem._id !== item._id);
     this.delete.emit(item);
+    this._items = this._items.filter(iterItem => iterItem._id !== item._id);
     this.updateRenderItems(); // Actualizar renderItems después de eliminar un elemento
   }
 

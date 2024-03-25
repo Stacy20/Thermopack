@@ -13,7 +13,7 @@ export class SweetAlertService {
       icon: icon
     });
   }
-  showConfirmationAlert(title: string, text: string, callback: () => void): void {
+  showConfirmationAlert(title: string, text: string, callbackConfirm: () => void, callbackRefuse?: () => void): void {
     Swal.fire({
       title: title,
       text: text,
@@ -25,7 +25,9 @@ export class SweetAlertService {
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.isConfirmed) {
-        callback(); // Llamar a la función de callback si el usuario confirma
+        callbackConfirm(); // Llamar a la función de callback si el usuario confirma
+      }else if(callbackRefuse){
+        callbackRefuse();
       }
     });
   }
