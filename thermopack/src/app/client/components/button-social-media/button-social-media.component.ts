@@ -61,7 +61,7 @@ export class ButtonSocialMediaComponent {
   getData(): void {
     this.service.getContactData().subscribe((contact) => {
       this.whatsappLink =`https://wa.me/${ contact[0].whatsappLink}?text=${encodeURIComponent(this.mensajeWhatsApp)}`;
-      console.log(this.whatsappLink, 'hola')
+
       this.facebookLink = contact[0].facebookLink;
       this.instagramLink = contact[0].instagramLink;
       this.youtubeLink = contact[0].youtubeLink;

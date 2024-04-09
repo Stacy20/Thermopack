@@ -165,7 +165,6 @@ export class AddProductPageComponent {
   }
 
   save(){
-    console.log(this.name.trim().length<3 )
     if (!this.name ||this.name.trim().length<3 || !this.description||this.description.trim().length<5 ) {
       this.sweetAlertService.showAlert('Error', 'Todos los campos son obligatorios', 'error');
       return; // Detener el proceso si falta algún campo obligatorio
@@ -185,7 +184,7 @@ export class AddProductPageComponent {
       this.selectedBrand.value, this.selectedType.value, this.price,
       this.selectedCategory.value, this.selectedSubCategory.value,
       this.images).subscribe((response) => {
-      console.log(response)
+ 
     });
 
 

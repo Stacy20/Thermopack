@@ -28,8 +28,8 @@ export class FootersComponent {
       this.facebookLink = contact[0].facebookLink;
       this.instagramLink = contact[0].instagramLink;
       this.youtubeLink = contact[0].youtubeLink;
-      console.log(contact[0].youtubeLink)
+      
     });
-    console.log(this.youtubeLink)
+
   }
 }

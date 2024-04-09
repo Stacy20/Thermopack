@@ -20,8 +20,6 @@ export class SidebarComponent {
 
 
   public getProductsByCategoryId(index:number) {
-
-    console.log('voy a ir a llamar', index, this.categories[index]._id, this.categories[index] )
     this.service.filterProducts(this.limitProducts, this.offsetProducts, undefined, this.categories[index]._id )
     this.selectedCategory = index;
   }

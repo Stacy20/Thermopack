@@ -23,7 +23,6 @@ export class PaginationComponent {
     // this.updateCurrentPage(1);
   }
   updateCurrentPage(change: number): void {
-    console.log(this.currentPage);
     this.currentPage += change;
 
     if (change > 0) {

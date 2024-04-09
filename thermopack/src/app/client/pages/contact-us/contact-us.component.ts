@@ -46,20 +46,20 @@ export class ContactUsComponent {
       this.ubicacionMaps = contact[0].ubicationGMLink;
       this.ubicacionWaze = contact[0].ubicationWazeLink;
       this.telephoneNumbers  = contact[0].telephoneNumbers;
-      console.log(this.telephoneNumbers, 'hola')
+
       this.email = contact[0].email;
       this.whatsappLink =`https://wa.me/${ contact[0].whatsappLink}?text=${encodeURIComponent(this.mensajeWhatsApp)}`;
-      console.log(this.whatsappLink, 'hola')
+
       this.facebookLink = contact[0].facebookLink;
       this.instagramLink = contact[0].instagramLink;
       this.youtubeLink = contact[0].youtubeLink;
-      console.log(this.youtubeLink, 'hola')
+
       this.images = contact[0].images;
-      console.log(this.images)
+
     });
   }
   formatDescription(description: string): string {
-    console.log(description)
+
     return description.replace(/\n/g, '<br>');
   }
 }

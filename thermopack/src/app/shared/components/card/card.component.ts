@@ -61,7 +61,6 @@ export class CardComponent {
         '¿Está seguro que desea eliminar el producto?',
         () => {
       this.service.deleteProductByName(this.title).subscribe((product) => {
-        console.log(product);
         this.sweetAlertService.showAlert('Éxito', 'El producto se ha eliminado correctamente', 'success');
         location.reload();
       }); }
@@ -73,7 +72,6 @@ export class CardComponent {
         '¿Está seguro que desea eliminar el servicio?',
         () => {
       this.service.deleteServiceByName(this.title).subscribe((service) => {
-        //console.log(service);
         this.sweetAlertService.showAlert('Éxito', 'El servicio se ha eliminado correctamente correctamente', 'success');
         location.reload();
       });}

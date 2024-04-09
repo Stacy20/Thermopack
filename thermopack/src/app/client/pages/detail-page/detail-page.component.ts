@@ -51,7 +51,6 @@ export class DetailPageComponent {
   }
   openWhatsApp() {
     if (this.whatsappLink) {
-      console.log(this.whatsappLink)
       window.open(this.whatsappLink, '_blank');
     }
   }
@@ -59,7 +58,7 @@ export class DetailPageComponent {
     this.service.getContactData().subscribe((contact) => {
       const currentPageUrl = window.location.href;
       this.whatsappLink = `https://wa.me/${contact[0].whatsappLink}?text=${encodeURIComponent(this.mensajeWhatsApp + '\n\n' + currentPageUrl)}`;
-      console.log(this.whatsappLink, 'hola')
+
     });
 
   }

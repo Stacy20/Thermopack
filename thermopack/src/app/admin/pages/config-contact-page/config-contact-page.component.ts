@@ -122,7 +122,7 @@ export class ConfigContactPageComponent {
 
   deleteNumber(index: number):void {
     this.telephoneNumbers.splice(index, 1);
-    console.log(this.telephoneNumbers,this.telephoneNumbersPast)
+
     }
 
   validateWhatsApp() {
@@ -141,7 +141,7 @@ export class ConfigContactPageComponent {
     // Regular expression to validate the format of an email address
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     this.emailValid = emailRegex.test(this.email);
-    console.log(this.emailValid);
+
   }
   hasChangedHome(): boolean {
     // Verificar si los campos han sido modificados con respecto a los datos cargados del servidor
@@ -256,7 +256,6 @@ export class ConfigContactPageComponent {
   }
 
   updateImages(datos: ImagesNewEvent) {
-    console.log(this.images,this.imagesPast)
       this.images = datos.images;
   }
 }

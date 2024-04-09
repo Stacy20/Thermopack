@@ -18,7 +18,7 @@ export class ConfigGalleryComponent {
 
 
   handleFileInput(event: any, index:number) {
-    console.log(this.images,'al inicio')
+
     const file: File = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (e: any) => {
@@ -28,7 +28,7 @@ export class ConfigGalleryComponent {
         identifier: this.identifier
       };
       this.imagesNew.emit(data)
-      console.log(this.images,'despues')
+
     };
     reader.readAsDataURL(file);
 

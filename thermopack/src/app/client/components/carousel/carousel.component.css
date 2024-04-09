@@ -3,10 +3,29 @@
   justify-content: center;
   align-items: center;
   width: 100%; /* Ancho del contenedor */
-  height: 850px; /* Alto del contenedor */
-  overflow: hidden; /* Para recortar las imágenes que excedan el contenedor */
+  height: 850px; /* Alto predeterminado del contenedor */
+  /* overflow: hidden; Para recortar las imágenes que excedan el contenedor */
 }
 
+/* Media query para pantallas de celular */
+@media (max-width: 576px) {
+  .centrar-img {
+    height: 100%; /* Ajusta el alto del contenedor para pantallas de celular */
+  }
+}
+
+/* Media query para pantallas medianas */
+@media (max-width: 992px) {
+  .centrar-img {
+    height: 500px; /* Ajusta el alto del contenedor para pantallas medianas */
+  }
+}
+/* Media query para pantallas pequenas */
+@media (max-width: 792px) {
+  .centrar-img {
+    height: 400px; /* Ajusta el alto del contenedor para pantallas medianas */
+  }
+}
 .centrar-img img {
   width: 100%; /* La imagen ocupa todo el ancho del contenedor */
   height: auto; /* La altura se ajusta automáticamente para mantener la proporción */

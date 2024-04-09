@@ -88,7 +88,7 @@ export class AddServicePageComponent {
         }
           this.service.createService(this.name, this.description, this.price, this.images)
             .subscribe((response) => {
-          //console.log(response)
+
           this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
         });
       });

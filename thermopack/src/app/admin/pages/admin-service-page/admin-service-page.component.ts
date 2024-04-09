@@ -47,10 +47,10 @@ export class AdminServicePageComponent {
   getData(): void {
     this.service.getData().subscribe((data) => {
       this.data = data[0];
-      //console.log('this.data' , this.data )
+
       this.title=this.data.servicesTitle;
       this.description=this.data.servicesParagraph;
-      //console.log(this.description)
+
     });
   }
 }

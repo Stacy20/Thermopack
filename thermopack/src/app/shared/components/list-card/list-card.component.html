@@ -4,7 +4,7 @@
       <p class="mt-4">No hay productos para mostrar.</p>
     }
     @for (product of products; track $index) {
-      <div class="col-12 col-sm-8 col-md-5 col-lg-4 mt-4">
+      <div class="col-10 col-sm-8 col-md-5 col-lg-4 mt-4">
         <!-- Quiere decir que cuando este en pantallas medianas ocupa 3 columnas y cuando este en peque;as 6 -->
         <!-- todo: requiere las imagenes no olvidad -->
           <shared-card [permissions]="permissions" [type]="type" [id]="product.id" [title]="product.name"
@@ -16,7 +16,7 @@
       <p>No hay servicios para mostrar.</p>
     }
     @for (services of services; track $index) {
-      <div class="col-12 col-sm-8 col-md-5 col-lg-4 mt-4">
+      <div class="col-10 col-sm-8 col-md-5 col-lg-4 mt-4">
         <!-- Quiere decir que cuando este en pantallas medianas ocupa 3 columnas y cuando este en peque;as 6 -->
         <!-- todo: requiere las imagenes no olvidad -->
           <shared-card [permissions]="permissions" [id]="services.id" [title]="services.name" [text]="services.description" [type]="type" [src]="services.images[0]"></shared-card>

@@ -43,10 +43,9 @@ export class PageServicesComponent {
   getData(): void {
     this.service.getData().subscribe((data) => {
       this.data = data[0];
-      console.log('this.data' , this.data )
       this.title=this.data.servicesTitle;
       this.description=this.data.servicesParagraph;
-      console.log(this.description)
+
     });
   }
   crearServicio(): void {
@@ -58,17 +57,16 @@ export class PageServicesComponent {
     this.service.createService(serviceName, serviceDescription, servicePrice, serviceImages)
       .subscribe(
         (result) => {
-          console.log("Servicio creado exitosamente:", result);
+
           // Aquí puedes manejar cualquier lógica adicional después de crear el servicio
         },
         (error) => {
-          console.error("Error al crear el servicio:", error);
+
           // Aquí puedes manejar cualquier error que ocurra durante la creación del servicio
         }
       );
   }
   formatDescription(description: string): string {
-    console.log(description)
     return description.replace(/\n/g, '<br>');
   }
 }

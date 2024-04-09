@@ -21,6 +21,6 @@ export class SelectTypeComponent {
     const idOption = event.target.value;
     // Haz algo con el índice seleccionado, por ejemplo, llamar a una función
       this.option.emit(idOption);
-      console.log(event.target.value)
+   
   }
 }

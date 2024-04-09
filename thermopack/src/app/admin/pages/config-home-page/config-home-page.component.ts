@@ -179,7 +179,7 @@ export class ConfigHomePageComponent {
   }
 
   saveVisionImages() {
-    console.log(this.visionImages.length)
+
     if(this.arraysAreEqualVision()){
         this.sweetAlertService.showConfirmationAlert(
           'Confirmación',
@@ -191,7 +191,6 @@ export class ConfigHomePageComponent {
               },
               (error) => {
                 this.sweetAlertService.showAlert('Error', 'Hubo un error al guardar las imágenes', 'error');
-                console.error('Error al actualizar las imágenes:', error);
               }
             );
     })
@@ -260,7 +259,6 @@ export class ConfigHomePageComponent {
             },
             (error) => {
               this.sweetAlertService.showAlert('Error', 'Hubo un error al guardar las imágenes', 'error');
-              console.error('Error al actualizar las imágenes:', error);
             }
           );
         });

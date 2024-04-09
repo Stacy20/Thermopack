@@ -14,7 +14,6 @@ export class SearchComponent {
     ){}
   search(query: string) {
     // Aquí puedes realizar la lógica de búsqueda con el valor de la consulta "query"
-    console.log("Búsqueda:", query);
 
     this.service.filterProducts(this.limitProducts, this.offsetProducts, undefined, undefined, undefined, query );
 

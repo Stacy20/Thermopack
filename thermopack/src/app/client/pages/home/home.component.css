@@ -11,7 +11,12 @@
   overflow: hidden; /* Para recortar las imágenes que excedan el contenedor */
 
 }
-
+/* Media query para pantallas de celular */
+@media (max-width: 576px) {
+  .centrar-img {
+    height: 100%; /* Ajusta el alto del contenedor para pantallas de celular */
+  }
+}
 .centrar-img img {
   width: 100%; /* La imagen ocupa todo el ancho del contenedor */
   height: auto; /* La altura se ajusta automáticamente para mantener la proporción */

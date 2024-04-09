@@ -93,15 +93,15 @@ limpiarFiltros() {
   }
 
   loadBrands(index:number):void{
-      console.log("alo buenas", this.brands[index]._id)
+
       this.service.filterProducts(this.limitProducts, this.offsetProducts,  this.brands[index]._id )
   }
   loadTypes(index:number):void{
-    console.log("alo buenas", this.types[index]._id)
+
     this.service.filterProducts(this.limitProducts, this.offsetProducts, undefined, undefined, this.types[index]._id )
   }
   formatDescription(description: string): string {
-    console.log(description)
+  
     return description.replace(/\n/g, '<br>');
   }
 

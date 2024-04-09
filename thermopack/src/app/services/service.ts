@@ -418,7 +418,6 @@ export class MainService{
       contrasenha: password,
       to_email: email,
       });
-    // console.log('emailResponse', response )
   }
 
   generateSecurePassword(length: number): string {
@@ -530,10 +529,9 @@ export class MainService{
         tap((response) => {
           // Actualizar los atributos del servicio con la respuesta del servidor
           this.products = response.products;
-          // console.log(this.products)
           this.totalProducts = response.totalCount;
           // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
-          // console.log(this.totalProducts, 'si buenas')
+
           this.productsSubject.next(response);
         })
       )
@@ -594,7 +592,7 @@ export class MainService{
       this.termSearch = name || this.termSearch;
       url += `&name=${this.termSearch}`;
     }
-    // console.log(this.idCategory,this.idSelectBrand,this.idSelectType, this.termSearch)
+
     this.http.get<{ products: Products[], totalCount: number }>(url)
     .pipe(
       catchError(() => of({ products: [], totalCount: 0 })),
@@ -602,7 +600,6 @@ export class MainService{
         // Actualizar los atributos del servicio con la respuesta del servidor
         this.products = response.products;
         this.totalProducts = response.totalCount;
-        // console.log(this.products, 'seleccione desde categorias', this.totalProducts)
         // Emitir la respuesta a través del observable para que los componentes puedan suscribirse a ella
         this.productsSubject.next(response);
       })
