@@ -3,20 +3,22 @@
     <h2>Administrar Productos</h2>
     <hr>
     <div class="col-9 col-sm-12 col-md-12 col-lg-9 ">
-      <div class="mb-3 col-11 ms-3">
+      <div class="mb-3 col-12 ms-3">
         <div class="row shadow p-2 bg-body rounded">
-          <div class="col-5 d-flex align-items-center">
-            <span class="me-4" aria-label="Etiqueta para seleccionar la marca">Marca:</span>
+          <div class="col-12 col-sm-12 col-lg-5 col-md-5 d-flex align-items-center">
+            <span class="me-4 col-2 col-md-2 col-sm-1 ms-1" aria-label="Etiqueta para seleccionar la marca">Marca: </span>
             <shared-select class="col-8" [listBrands]="brands" [value]="0" (option)="loadBrands($event)" aria-label="Seleccionar marca"></shared-select>
-          </div>
-          <div class="col-5 d-flex align-items-center">
-            <span class="me-4" aria-label="Etiqueta para seleccionar el tipo">Tipo:</span>
+        </div>
+          <div class="col-12 col-sm-12 col-lg-5  col-md-5 d-flex align-items-center mt-sm-3 mt-3 mt-lg-0 mt-md-0">
+            <span class="me-4 col-2 col-sm-1" aria-label="Etiqueta para seleccionar el tipo">Tipo:</span>
             <shared-select-type  class="col-8" [listTypes]="types" [value]="0" (option)="loadTypes($event)" aria-label="Seleccionar tipo"></shared-select-type>
           </div>
-          <button type="button" class="col-1 my-custom-button" (click)="limpiarFiltros()" title="Limpiar filtros" aria-label="Limpiar filtros">
+          <button type="button" class="col-3 col-sm-2  col-lg-1 mt-sm-3 mt-3 mt-lg-0 mt-md-0 my-custom-button" (click)="limpiarFiltros()" title="Limpiar filtros" aria-label="Limpiar filtros">
             <i class="fas fa-broom" aria-hidden="true"></i>
           </button>
         </div>
+
+
       </div>
       <div class="container mybackground col-12 ms-2 ">
         <div class="col-8">
