@@ -19,7 +19,7 @@ export class DetailPageComponent {
   public description: string = '';
   public price: number = 0;
   images!: GalleryItem[];
-  mensajeWhatsApp: string = 'Estoy intersado en lo siguiente';
+  mensajeWhatsApp: string = 'Estoy interesado en lo siguiente:';
   //todo hay que hacer que el link recoja el link de la pagina que se encuentra para poder enviarla tambien
   public whatsappLink: string = '';
 
