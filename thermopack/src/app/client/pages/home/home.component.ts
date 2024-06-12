@@ -19,7 +19,7 @@ export class HomeComponent {
   ngOnInit() {
     this.getData();
   }
-
+  public loading:boolean=true;
   public srcLogo:string='';
   public slogan:string='';
   public companyDescription:string='';
@@ -56,6 +56,24 @@ export class HomeComponent {
           ));
         }
       });
+      if (this.checkDataLoaded()) {
+        this.loading = false;
+      }
     });
+  }
+
+  checkDataLoaded(): boolean {
+    return (
+      this.srcLogo !== '' &&
+      this.slogan !== '' &&
+      this.companyDescription !== '' &&
+      this.descriptionMission !== '' &&
+      this.descriptionVision !== '' &&
+      this.srcMission1 !== '' &&
+      this.srcMission2 !== '' &&
+      this.srcVision1 !== '' &&
+      this.srcVision2 !== '' &&
+      this.images.length > 0
+    );
   }
 }

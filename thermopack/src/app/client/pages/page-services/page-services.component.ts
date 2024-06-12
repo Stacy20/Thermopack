@@ -14,6 +14,7 @@ import { Data } from '../../../interfaces/data.interface';
     imports: [PaginationComponent, ListCardComponent, FootersComponent]
 })
 export class PageServicesComponent {
+  public loading: boolean = true;
   public title:string='Nuestros servicios';
   public description:string='';
   public data!: Data;
@@ -30,6 +31,9 @@ export class PageServicesComponent {
       // Actualizar los datos del componente con los datos del servicio
       this.services = response.services;
       this.totalServices = response.totalCount;
+      if (this.checkDataLoaded()) {
+        this.loading = false;
+      }
     });
 
     // Llamar al método getServices() una vez al inicio
@@ -45,7 +49,9 @@ export class PageServicesComponent {
       this.data = data[0];
       this.title=this.data.servicesTitle;
       this.description=this.data.servicesParagraph;
-
+      if (this.checkDataLoaded()) {
+        this.loading = false;
+      }
     });
   }
   crearServicio(): void {
@@ -68,5 +74,14 @@ export class PageServicesComponent {
   }
   formatDescription(description: string): string {
     return description.replace(/\n/g, '<br>');
+  }
+  checkDataLoaded(): boolean {
+    return (
+      this.title !== '' &&
+      this.description !== '' &&
+      this.services.length >= 0 &&
+      this.data !== undefined &&
+      this.totalServices >= 0
+    );
   }
 }

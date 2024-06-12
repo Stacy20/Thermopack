@@ -28,15 +28,15 @@ limpiarFiltros() {
     private service: MainService,
 
   ) {}
-
+  public loading:boolean=true;
   public title:string='Nuestros productos';
-  public description:string=' ';
+  public description:string='';
   public categories: Categories[]=[];
   public brands: Brands[]=[];
   public types: Types[]=[];
   public products: Products[]=[];
   public data!: Data;
-  public totalProducts:number=0;
+  public totalProducts:number=-1;
 
 
   ngOnInit(): void {
@@ -48,11 +48,13 @@ limpiarFiltros() {
       // Actualizar los datos del componente con los datos del servicio
       this.products = response.products;
       this.totalProducts = response.totalCount;
+      if (this.checkDataLoaded()) {
+        this.loading = false;
+        // console.log ('this.loading', this.loading)
+      }
     });
-
     // Llamar al método getServices() una vez al inicio
     this.service.filterProducts(this.limitProducts, this.offsetProducts);
-
   }
   getProducts(): void{
     this.products=this.service.products;
@@ -68,27 +70,33 @@ limpiarFiltros() {
       this.data = data[0];
       this.title=this.data.productsTitle;
       this.description=this.data.productsParagraph;
+      if (this.checkDataLoaded()) {
+        this.loading = false;
+      }
     });
   }
   getAllTypes(): void {
     this.service.getAllTypes().subscribe((types) => {
     this.types = types;
-    // this.title=this.data.productsTitle;
-    // this.description=this.data.productsParagraph;
+    if (this.checkDataLoaded()) {
+      this.loading = false;
+    }
   });
 }
   getAllBrands(): void {
     this.service.getAllBrands().subscribe((brands) => {
     this.brands = brands;
-    // this.title=this.data.productsTitle;
-    // this.description=this.data.productsParagraph;
+    if (this.checkDataLoaded()) {
+      this.loading = false;
+    }
   });
   }
   getAllCategories(): void {
     this.service.getAllCategories().subscribe((categories) => {
     this.categories = categories;
-    // this.title=this.data.productsTitle;
-    // this.description=this.data.productsParagraph;
+    if (this.checkDataLoaded()) {
+      this.loading = false;
+    }
   });
   }
 
@@ -101,8 +109,21 @@ limpiarFiltros() {
     this.service.filterProducts(this.limitProducts, this.offsetProducts, undefined, undefined, this.types[index]._id )
   }
   formatDescription(description: string): string {
-  
+
     return description.replace(/\n/g, '<br>');
+  }
+
+  checkDataLoaded(): boolean {
+    return (
+      this.title !== '' &&
+      this.description !== '' &&
+      this.categories.length > 0 &&
+      this.brands.length > 0 &&
+      this.types.length > 0 &&
+      this.products.length >= 0 &&
+      this.data !== undefined &&
+      this.totalProducts >= 0
+    );
   }
 
 }

@@ -2,8 +2,13 @@
 <div class="container">
   <div class="ms-5 me-5">
     <h1>{{title}}</h1>
-    <div class="me-5" [innerHTML]="formatDescription(description)"></div>
-
+    @if (description=='') {
+      <p class="placeholder-glow">
+        <span class="placeholder col-10 rounded"></span>
+      </p>
+    }@else{
+      <div class="me-5" [innerHTML]="formatDescription(description)"></div>
+    }
   </div>
   <div class="row mt-4 ms-4" >
     <div class="col-11 col-sm-5 col-md-4 col-lg-3">
@@ -32,7 +37,14 @@
           <shared-search></shared-search>
         </div>
         <div class="row justify-content-center align-items-center">
-          <shared-list-card [type]="1" [products]="products" [permissions]="0"></shared-list-card>
+          @if (this.loading){
+            <div class="spinner-border mt-5 mb-2" role="status">
+              <span class="sr-only">Cargando...</span>
+            </div>
+            <h6 class="d-flex justify-content-center align-items-center">Cargando...</h6>
+          }@else{
+            <shared-list-card [type]="1" [products]="products" [permissions]="0"></shared-list-card>
+          }
         </div>
         <div class="mt-5 ">
           <shared-pagination [type]="'1'"></shared-pagination>
