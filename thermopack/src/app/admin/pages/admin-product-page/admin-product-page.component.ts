@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
 export class AdminProductPageComponent {
 
     constructor(
-      private service: MainService,
+      public  service: MainService,
       private router: Router
     ) {}
 
@@ -91,6 +91,9 @@ export class AdminProductPageComponent {
 
     limpiarFiltros() {
       this.service.cleanfilter()
+    }
+    addProductosPage() {
+      this.router.navigate(['/admin/products/add']);
     }
 
 }

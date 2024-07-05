@@ -1,13 +1,25 @@
 <div class="container">
   <div class="row mt-4 ms-4 d-flex justify-content-center">
-    <h2>Administrar Productos</h2>
+    <div class="custom-flex-lg">
+      <h2 class="col-10 col-lg-6 col-md-6 ">Administrar Productos</h2>
+      @if (service.userLoggedIn && service.userLoggedIn.privileges[0] == 1) {
+        <div class="mb-3 col-10 col-lg-6 col-md-6 custom-lg">
+          <button type="button"class="col-10 col-sm-6 col-md-6 col-lg-6  mt-sm-3 mt-3 mt-lg-0 mt-md-0 my-custom-button ps-0 pe-0"  (click)="addProductosPage()" >
+            <i class="fa-solid fa-plus"></i>  Agregar productos</button>
+        </div>
+      }
+    </div>
+
     <hr>
+
     <div class="col-9 col-sm-12 col-md-12 col-lg-9 ">
+
+
       <div class="mb-3 col-12 ms-3">
         <div class="row shadow p-2 bg-body rounded">
           <div class="col-12 col-sm-12 col-lg-5 col-md-5 d-flex align-items-center">
             <span class="me-4 col-2 col-md-2 col-sm-1 ms-1" aria-label="Etiqueta para seleccionar la marca">Marca: </span>
-            <shared-select class="col-8" [listBrands]="brands" [value]="0" (option)="loadBrands($event)" aria-label="Seleccionar marca"></shared-select>
+            <shared-select class="col-8" [listBrands]="brands" [value]="0" (option)="loadBrands($event)" aria-label="Seleccionar marca"> </shared-select>
         </div>
           <div class="col-12 col-sm-12 col-lg-5  col-md-5 d-flex align-items-center mt-sm-3 mt-3 mt-lg-0 mt-md-0">
             <span class="me-4 col-2 col-sm-1" aria-label="Etiqueta para seleccionar el tipo">Tipo:</span>

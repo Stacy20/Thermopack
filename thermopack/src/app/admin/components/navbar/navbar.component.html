@@ -14,16 +14,10 @@
             routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a></li>
         <li class="nav-item"> <a class="nav-link link-light" aria-current="page" routerLink="/admin/config/contact"
             routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Contactos</a></li>
-        <li class="nav-item" *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[0] == 1">
-          <a class="nav-link link-light" aria-current="page" routerLink="/admin/products/add" routerLinkActive="active"
-            [routerLinkActiveOptions]="{exact: true}">Agregar Productos</a>
-        </li>
+
         <li class="nav-item"> <a class="nav-link link-light" aria-current="page" routerLink="/admin/products"
             routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Administrar Productos</a></li>
-        <li class="nav-item" *ngIf="service.userLoggedIn && service.userLoggedIn.privileges[0] == 1">
-          <a class="nav-link link-light" aria-current="page" routerLink="/admin/services/add" routerLinkActive="active"
-            [routerLinkActiveOptions]="{exact: true}">Agregar Servicios</a>
-        </li>
+        
         <li class="nav-item"> <a class="nav-link link-light" aria-current="page" routerLink="/admin/services"
             routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Administrar Servicios</a></li>
         <li class="nav-item"> <a class="nav-link link-light" aria-current="page" routerLink="/admin/categories"
@@ -33,7 +27,7 @@
             [routerLinkActiveOptions]="{exact: true}">Crear usuarios</a>
         </li>
       </ul>
-    
+
     </div>
     <button type="button" class="btn btn-outline-light custom-btn" id="logoutButton" (click)="logout()">
       <img src="assets/icons/logout.svg" alt="Cerrar Sesión">

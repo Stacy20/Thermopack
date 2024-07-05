@@ -36,31 +36,8 @@ export class HomeComponent {
   formatDescription(description: string): string {
     return description.replace(/\n/g, '<br>');
   }
-  // getData(): void {
-  //   this.service.getData().subscribe((data) => {
-  //     this.srcLogo = data[0].logo;
-  //     this.slogan = data[0].slogan;
-  //     this.companyDescription = data[0].description;
-  //     this.descriptionMission = data[0].mision;
-  //     this.descriptionVision = data[0].vision;
-  //     this.srcMission1 = data[0].visionImages[0];
-  //     this.srcMission2 =data[0].visionImages[1];
-  //     this.srcVision1 = data[0].visionImages[2];
-  //     this.srcVision2 = data[0].visionImages[3];
-  //     this.images = [];
-  //     data[0].presentationImages.forEach((imageString) => {
-  //       if (imageString != ''){
-  //         this.images.push(new ImageItem(
-  //           { src: imageString,
-  //           thumb: imageString},
-  //         ));
-  //       }
-  //     });
-  //     if (this.checkDataLoaded()) {
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
+  
+
   async getData(): Promise<void> {
     try {
       const data = await this.service.getTextData();
