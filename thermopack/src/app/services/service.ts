@@ -645,7 +645,58 @@ export class MainService{
         catchError(() => of([]))
       );
   }
+  // getTextData(): Observable<any> {
+  //   const url = `${this.connectionUrl}data/text`;
+  //   return this.http.get(url)
+  //     .pipe(
+  //       catchError((error) => {
+  //         console.error('Error al obtener los datos de texto:', error);
+  //         return of(null);
+  //       })
+  //     );
+  // }
+  async getTextData(): Promise<any> {
+    const url = `${this.connectionUrl}data/text`;
+    try {
+      const data = await this.http.get(url).toPromise();
+      return data;
+    } catch (error) {
+      console.error('Error al obtener los datos de texto:', error);
+      return null;
+    }
+  }
+  async getLogo(): Promise<any> {
+    const url = `${this.connectionUrl}data/logo`;
+    try {
+      const data = await this.http.get(url).toPromise();
+      return data;
+    } catch (error) {
+      console.error('Error al obtener el logo:', error);
+      return null;
+    }
+  }
 
+  async getVisionImages(): Promise<any> {
+    const url = `${this.connectionUrl}data/visionImages`;
+    try {
+      const data = await this.http.get(url).toPromise();
+      return data;
+    } catch (error) {
+      console.error('Error al obtener las imágenes de visión:', error);
+      return null;
+    }
+  }
+
+  async getPresentationImages(): Promise<any> {
+    const url = `${this.connectionUrl}data/presentationImages`;
+    try {
+      const data = await this.http.get(url).toPromise();
+      return data;
+    } catch (error) {
+      console.error('Error al obtener las imágenes de presentación:', error);
+      return null;
+    }
+  }
 
   updateData(slogan: string, description: string, mision: string, vision: string,
               logo: string, visionImages: string[], presentationImages: string[],

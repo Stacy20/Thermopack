@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
     selector: 'admin-admin-service-page',
     standalone: true,
     templateUrl: './admin-service-page.component.html',
-    styles: ``,
+    styleUrl: '../admin-product-page/admin-product-page.component.css',
     imports: [NavbarComponent, ListCardComponent, PaginationComponent]
 })
 export class AdminServicePageComponent {
@@ -22,7 +22,7 @@ export class AdminServicePageComponent {
   public services: Services[]=[];
 
   constructor(
-    private service:MainService,
+    public service:MainService,
     private router: Router
   ){}
 
@@ -52,5 +52,8 @@ export class AdminServicePageComponent {
       this.description=this.data.servicesParagraph;
 
     });
+  }
+  addServicePage() {
+    this.router.navigate(['/admin/services/add']);
   }
 }

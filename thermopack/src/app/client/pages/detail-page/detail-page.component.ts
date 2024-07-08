@@ -20,11 +20,7 @@ export class DetailPageComponent {
   public price: number = 0;
   images!: GalleryItem[];
   mensajeWhatsApp: string = 'Estoy interesado en lo siguiente:';
-  //todo hay que hacer que el link recoja el link de la pagina que se encuentra para poder enviarla tambien
   public whatsappLink: string = '';
-
-
-  // public description:string='con nosotros la distribución de los productos hasta sus puntos de interés.  <br> Ofecemos una amplia cobertura del mercado con varias marcas y categorías. <br> <br> Insertar más texto convincente para el cliente. \n En esta página se muestran las categorías de los productos que se ofrecen. <br> <br> Por aquí puede ir información de precios si es necesario, y la forma de adquirirlo o solicitarlo.';
 
   constructor(
     private service: MainService,

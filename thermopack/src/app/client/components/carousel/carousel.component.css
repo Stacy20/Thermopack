@@ -4,6 +4,7 @@
   align-items: center;
   width: 100%; /* Ancho del contenedor */
   height: 850px; /* Alto predeterminado del contenedor */
+  background-color: white;
   /* overflow: hidden; Para recortar las imágenes que excedan el contenedor */
 }
 
