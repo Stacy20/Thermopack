@@ -54,7 +54,7 @@ Si al ejecutar
    ```sh
    npm install
    ```
-Da problemas de compatibilidad ejecute 
+Da problemas de compatibilidad de dependencias ejecute 
    ```sh
    npm install --legacy-peer-deps
    ```
