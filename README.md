@@ -49,6 +49,16 @@ Sigue estos pasos para instalar y ejecutar el proyecto en tu entorno local:
    ```
    La API estará disponible en `http://localhost:4200/`.
 
+## Troubleshooting 
+Si al ejecutar 
+   ```sh
+   npm install
+   ```
+Da problemas de compatibilidad ejecute 
+   ```sh
+   npm install --legacy-peer-deps
+   ```
+
 ## Derechos de Autor y Licencias
 
 Proyecto desarrollado por **Dot Com Innovations** para el cliente **ThermopackSA**.
