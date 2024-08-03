@@ -129,7 +129,7 @@ export class ProductsComponent {
       this.data !== undefined &&
       this.products.length === 0
     ) {
-      await this.delay(2500);
+      await this.delay(3000);
     }
 
     return (

@@ -41,7 +41,7 @@ const connectionString = 'mongodb+srv://thermopackdev:stacyalonsoyraquel123.@mai
 const main = async () => {
     await mongoose.connect(connectionString);
     app.listen(port, () => {
-        
+        console.log(`La aplicación está escuchando en el puerto ${port}`);
     });
 };
 

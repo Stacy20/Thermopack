@@ -173,23 +173,19 @@ export class AddProductPageComponent {
       this.sweetAlertService.showAlert('Error', 'Debe seleccionar una o más imagenes', 'error');
       return; // Detener el proceso si falta algún campo obligatorio
     }
-    this.service.getProductByName(this.name).subscribe((product) => {
+    this.service.getProductByName(this.name.trim()).subscribe((product) => {
       if (Object.keys(product).length !== 0){
-        this.sweetAlertService.showAlert('Error', 'Ya existe un producto llamado' + product.name, 'error');
+        this.sweetAlertService.showAlert('Error', 'Ya existe un producto llamado ' + product.name, 'error');
         return;
       }
-
-    });
-      this.service.createProduct(this.name, this.description,
+      this.service.createProduct(this.name.trim(), this.description.trim(),
       this.selectedBrand.value, this.selectedType.value, this.price,
       this.selectedCategory.value, this.selectedSubCategory.value,
       this.images).subscribe((response) => {
- 
+        this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
+      });
+
     });
-
-
-      this.sweetAlertService.showAlert('Éxito', 'Los datos se han guardado correctamente', 'success');
-
   }
 
   validateInput(event: KeyboardEvent) {

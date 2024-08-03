@@ -196,7 +196,7 @@ export class EditProductPageComponent {
           return;
         }
         else{
-          this.service.updateProductByName(this.originalName, this.name, this.description,
+          this.service.updateProductByName(this.originalName, this.name.trim(), this.description.trim(),
             this.selectedBrand.value, this.selectedType.value, this.price,
             this.selectedCategory.value, this.selectedSubCategory.value,
             this.images).subscribe((response) => {
