@@ -645,16 +645,7 @@ export class MainService{
         catchError(() => of([]))
       );
   }
-  // getTextData(): Observable<any> {
-  //   const url = `${this.connectionUrl}data/text`;
-  //   return this.http.get(url)
-  //     .pipe(
-  //       catchError((error) => {
-  //         console.error('Error al obtener los datos de texto:', error);
-  //         return of(null);
-  //       })
-  //     );
-  // }
+
   async getTextData(): Promise<any> {
     const url = `${this.connectionUrl}data/text`;
     try {
@@ -714,7 +705,7 @@ export class MainService{
 
   updateMainPage(slogan: string, description: string, mision: string, vision: string,
                   logo: string): Observable<Data> {
-    const url = `${this.connectionUrl}data`;
+    const url = `${this.connectionUrl}data/main-page`;
     return this.http.put<Data>(url, { slogan, description, mision, vision, logo})
     .pipe(
       catchError((error: HttpErrorResponse) => {
@@ -725,7 +716,7 @@ export class MainService{
   }
 
   updateMisionImages(visionImages: string[]): Observable<Data> {
-    const url = `${this.connectionUrl}data`;
+    const url = `${this.connectionUrl}data/vision-images`;
     return this.http.put<Data>(url, { visionImages })
     .pipe(
       catchError((error: HttpErrorResponse) => {
@@ -736,7 +727,7 @@ export class MainService{
     }
 
   updatePresentationImages(presentationImages: string[]): Observable<Data> {
-    const url = `${this.connectionUrl}data`;
+    const url = `${this.connectionUrl}data/presentation-images`;
     return this.http.put<Data>(url, { presentationImages })
     .pipe(
       catchError((error: HttpErrorResponse) => {
@@ -748,7 +739,7 @@ export class MainService{
 
   updateProductsServices(productsTitle: string, productsParagraph: string, servicesTitle: string,
     servicesParagraph: string): Observable<Data> {
-    const url = `${this.connectionUrl}data`;
+    const url = `${this.connectionUrl}data/products-services`;
     return this.http.put<Data>(url, {productsTitle, productsParagraph, servicesTitle, servicesParagraph})
     .pipe(
       catchError((error: HttpErrorResponse) => {
