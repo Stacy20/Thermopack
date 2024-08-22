@@ -41,20 +41,21 @@ export class ProductsComponent {
   public totalProducts: number = -1;
 
   async ngOnInit(): Promise<void> {
-    this.getData();
-    this.getAllTypes();
-    this.getAllBrands();
-    this.getAllCategories();
-    this.service.products$.subscribe(async response => {
-      // Actualizar los datos del componente con los datos del servicio
-      this.products = response.products;
-      this.totalProducts = response.totalCount;
-      if (await this.checkDataLoaded()) {
+    this.service.areProducts().subscribe(async (areProducts) => {
+      this.getData();
+      this.getAllTypes();
+      this.getAllBrands();
+      this.getAllCategories();
+      this.service.products$.subscribe(async response => {
+        this.products = response.products;
+        this.totalProducts = response.totalCount;
+        if (areProducts) {
+          while (response.totalCount === 0) { await new Promise(resolve => setTimeout(resolve, 100)); }
+        }
         this.loading = false;
-      }
+      });
+      this.service.filterProducts(this.limitProducts, this.offsetProducts);
     });
-    // Llamar al método getServices() una vez al inicio
-    this.service.filterProducts(this.limitProducts, this.offsetProducts);
   }
 
   getProducts(): void {
@@ -74,36 +75,24 @@ export class ProductsComponent {
       this.data = data[0];
       this.title = this.data.productsTitle;
       this.description = this.data.productsParagraph;
-      if (await this.checkDataLoaded()) {
-        this.loading = false;
-      }
     });
   }
 
   async getAllTypes(): Promise<void> {
     this.service.getAllTypes().subscribe(async (types) => {
       this.types = types;
-      if (await this.checkDataLoaded()) {
-        this.loading = false;
-      }
     });
   }
 
   async getAllBrands(): Promise<void> {
     this.service.getAllBrands().subscribe(async (brands) => {
       this.brands = brands;
-      if (await this.checkDataLoaded()) {
-        this.loading = false;
-      }
     });
   }
 
   async getAllCategories(): Promise<void> {
     this.service.getAllCategories().subscribe(async (categories) => {
       this.categories = categories;
-      if (await this.checkDataLoaded()) {
-        this.loading = false;
-      }
     });
   }
 
@@ -119,32 +108,4 @@ export class ProductsComponent {
     return description.replace(/\n/g, '<br>');
   }
 
-  async checkDataLoaded(): Promise<boolean> {
-    if (
-      this.title !== '' &&
-      this.description !== '' &&
-      this.categories.length > 0 &&
-      this.brands.length > 0 &&
-      this.types.length > 0 &&
-      this.data !== undefined &&
-      this.products.length === 0
-    ) {
-      await this.delay(3000);
-    }
-
-    return (
-      this.title !== '' &&
-      this.description !== '' &&
-      this.categories.length > 0 &&
-      this.brands.length > 0 &&
-      this.types.length > 0 &&
-      this.products.length >= 0 &&
-      this.data !== undefined &&
-      this.totalProducts >= 0
-    );
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 }

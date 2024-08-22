@@ -43,6 +43,19 @@ router.get('/', async (req, res) => {
                 });
 });
 
+// Revisa si hay minimo un producto
+router.get('/check/not_empty', async (req, res) => {
+    try {
+        const product = await ProductsModel.findOne();
+        const hasProducts = product !== null; 
+        res.status(200).json({ exists: hasProducts }); 
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 // Crea un nuevo producto
 router.post('/', async (req, res) => {
   await ProductsModel.create({
