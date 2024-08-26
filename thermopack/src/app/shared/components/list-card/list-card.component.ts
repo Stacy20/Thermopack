@@ -12,7 +12,7 @@ import { MainService } from '../../../services/service';
     imports: [CardComponent]
 })
 export class ListCardComponent {
-  public loading: boolean = true;
+  public loading: boolean = true ;
   public areItems: boolean = false;
 
   @Input()
