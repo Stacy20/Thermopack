@@ -219,6 +219,14 @@ export class MainService {
     );
   }
 
+  areServices(): Observable<boolean> {
+    const url = `${this.connectionUrl}services/check/not_empty`;
+    return this.http.get<{ exists: boolean }>(url).pipe(
+        map(response => response.exists),
+        catchError(() => of(false))
+    );
+  }
+
   // brands
 
   getAllBrands(): Observable<Brands[]> {

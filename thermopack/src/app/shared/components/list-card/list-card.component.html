@@ -1,49 +1,47 @@
 <div class="row">
+  @if(loading){
+    <div class="row justify-content-center align-items-center">
+      <div class="spinner-border mt-5 mb-2" role="status">
+        <span class="sr-only">Cargando...</span>
+      </div>
+      <h6 class="d-flex justify-content-center align-items-center">Cargando...</h6>
+    </div>
+  }
   @if (type==1) {
-    @if(products.length===0){
+    @if(products.length===0 && !loading){
       <p class="mt-4">No hay productos para mostrar.</p>
     }
-
-      @if (permissions==0) {
-        @for (product of products; track $index) {
+    @if (permissions==0) {
+      @for (product of products; track $index) {
         <div class="col-10 col-sm-8 col-md-5 col-lg-4 mt-4">
-          <!-- Quiere decir que cuando este en pantallas medianas ocupa 3 columnas y cuando este en peque;as 6 -->
-            <shared-card [permissions]="permissions" [type]="type" [id]="product.id" [title]="product.name"
+          <shared-card [permissions]="permissions" [type]="type" [id]="product.id" [title]="product.name"
             [text]="product.description" [src]="product.images[0]"></shared-card>
         </div>
       }
-      }@else{
-        @for (product of products; track $index) {
+    }@else{
+      @for (product of products; track $index) {
         <div class="col-12 col-sm-8 col-md-5 col-lg-4 mt-4">
-          <!-- Quiere decir que cuando este en pantallas medianas ocupa 3 columnas y cuando este en peque;as 6 -->
-            <shared-card [permissions]="permissions" [type]="type" [id]="product.id" [title]="product.name"
+          <shared-card [permissions]="permissions" [type]="type" [id]="product.id" [title]="product.name"
             [text]="product.description" [src]="product.images[0]"></shared-card>
         </div>
       }
-      }
-
-
-
+    }
   }@else {
-    @if(services.length===0){
+    @if(services.length===0 && !loading){
       <p>No hay servicios para mostrar.</p>
     }
     @if (permissions==0) {
-    @for (services of services; track $index) {
-      <div class="col-10 col-sm-8 col-md-5 col-lg-4 mt-4">
-        <!-- Quiere decir que cuando este en pantallas medianas ocupa 3 columnas y cuando este en peque;as 6 -->
-        <!-- todo: requiere las imagenes no olvidad -->
-          <shared-card [permissions]="permissions" [id]="services.id" [title]="services.name" [text]="services.description" [type]="type" [src]="services.images[0]"></shared-card>
-      </div>
+      @for (services of services; track $index) {
+        <div class="col-10 col-sm-8 col-md-5 col-lg-4 mt-4">
+            <shared-card [permissions]="permissions" [id]="services.id" [title]="services.name" [text]="services.description" [type]="type" [src]="services.images[0]"></shared-card>
+        </div>
+      }
+    }@else {
+      @for (services of services; track $index) {
+        <div class="col-12 col-sm-8 col-md-5 col-lg-4 mt-4">
+            <shared-card [permissions]="permissions" [id]="services.id" [title]="services.name" [text]="services.description" [type]="type" [src]="services.images[0]"></shared-card>
+        </div>
+      }
     }
-  }@else {
-    @for (services of services; track $index) {
-      <div class="col-12 col-sm-8 col-md-5 col-lg-4 mt-4">
-        <!-- Quiere decir que cuando este en pantallas medianas ocupa 3 columnas y cuando este en peque;as 6 -->
-        <!-- todo: requiere las imagenes no olvidad -->
-          <shared-card [permissions]="permissions" [id]="services.id" [title]="services.name" [text]="services.description" [type]="type" [src]="services.images[0]"></shared-card>
-      </div>
-    }
-  }
   }
 </div>

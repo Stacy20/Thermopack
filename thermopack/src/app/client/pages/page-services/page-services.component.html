@@ -4,16 +4,7 @@
 </div>
   <div class="container justify-content-center align-items-center" >
       <div class=" justify-content-center align-items-center">
-        @if (this.loading){
-          <div class="d-flex justify-content-center  mt-5 mb-2">
-            <div class="spinner-border" role="status">
-              <span class="sr-only">Loading...</span>
-            </div>
-          </div>
-          <h6 class="d-flex justify-content-center align-items-center">Cargando...</h6>
-        }@else{
-          <shared-list-card [services]="services"  [type]="0" [permissions]="0"></shared-list-card>
-        }
+        <shared-list-card [services]="services"  [type]="0" [permissions]="0"></shared-list-card>
       </div>
       <div class="mt-5 ">
         <shared-pagination [type]="'0'"></shared-pagination>

@@ -29,6 +29,17 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Revisa si hay minimo un servicio
+router.get('/check/not_empty', async (req, res) => {
+    try {
+        const service = await ServicesModel.findOne();
+        const hasService = service !== null; 
+        res.status(200).json({ exists: hasService }); 
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 // Obtiene un servicio por su nombre
 router.get('/:name', async (req, res) => {
