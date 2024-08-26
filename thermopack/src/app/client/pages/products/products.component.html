@@ -37,14 +37,7 @@
           <shared-search></shared-search>
         </div>
         <div class="row justify-content-center align-items-center">
-          @if (this.loading){
-            <div class="spinner-border mt-5 mb-2" role="status">
-              <span class="sr-only">Cargando...</span>
-            </div>
-            <h6 class="d-flex justify-content-center align-items-center">Cargando...</h6>
-          }@else{
-            <shared-list-card [type]="1" [products]="products" [permissions]="0"></shared-list-card>
-          }
+          <shared-list-card [type]="1" [products]="products" [permissions]="0"></shared-list-card>
         </div>
         <div class="mt-5 ">
           <shared-pagination [type]="'1'"></shared-pagination>

@@ -30,7 +30,6 @@ export class ProductsComponent {
     private service: MainService,
   ) {}
 
-  public loading: boolean = true;
   public title: string = 'Nuestros productos';
   public description: string = '';
   public categories: Categories[] = [];
@@ -41,21 +40,15 @@ export class ProductsComponent {
   public totalProducts: number = -1;
 
   async ngOnInit(): Promise<void> {
-    this.service.areProducts().subscribe(async (areProducts) => {
-      this.getData();
-      this.getAllTypes();
-      this.getAllBrands();
-      this.getAllCategories();
-      this.service.products$.subscribe(async response => {
-        this.products = response.products;
-        this.totalProducts = response.totalCount;
-        if (areProducts) {
-          while (response.totalCount === 0) { await new Promise(resolve => setTimeout(resolve, 100)); }
-        }
-        this.loading = false;
-      });
-      this.service.filterProducts(this.limitProducts, this.offsetProducts);
+    this.getData();
+    this.getAllTypes();
+    this.getAllBrands();
+    this.getAllCategories();
+    this.service.products$.subscribe(async response => {
+      this.products = response.products;
+      this.totalProducts = response.totalCount;
     });
+    this.service.filterProducts(this.limitProducts, this.offsetProducts);
   }
 
   getProducts(): void {
