@@ -1,3 +1,6 @@
+import 'dotenv/config';
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 import mongoose from 'mongoose';
 import express from 'express';
 const cors = require('cors');
@@ -16,7 +19,7 @@ import ContactRouter from './routes/contact.route';
 import * as bodyParser from 'body-parser';
 
 const app = express();
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
@@ -35,8 +38,10 @@ app.use('/server/users', UsersRouter);
 app.use('/server/contact', ContactRouter);
 
 
-const connectionString = 'mongodb+srv://thermopackdev:stacyalonsoyraquel123.@maincluster.xawfxad.mongodb.net/thermopack';
-
+const connectionString = process.env.MONGODB_URI;
+if (!connectionString) {
+    throw new Error('MONGODB_URI is not set. Copy server/.env.example to server/.env and set MONGODB_URI.');
+}
 
 const main = async () => {
     await mongoose.connect(connectionString);
