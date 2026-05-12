@@ -1,6 +1,9 @@
+import 'dotenv/config';
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 import mongoose from 'mongoose';
 import express from 'express';
-const cors = require('cors');
+import cors from 'cors';
 
 
 // Routes
@@ -13,13 +16,14 @@ import ServicesRouter from './routes/services.route';
 import TypesRouter from './routes/types.route';
 import UsersRouter from './routes/users.route';
 import ContactRouter from './routes/contact.route';
+import UploadRouter from './routes/upload.route';
 import * as bodyParser from 'body-parser';
 
 const app = express();
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({ limit: '1mb' }));
+app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
 app.use(express.json()); // <- Esta linea permite que se accese el body
 
 app.use(cors());
@@ -33,10 +37,13 @@ app.use('/server/services', ServicesRouter);
 app.use('/server/types', TypesRouter);
 app.use('/server/users', UsersRouter);
 app.use('/server/contact', ContactRouter);
+app.use('/server/upload', UploadRouter);
 
 
-const connectionString = 'mongodb+srv://thermopackdev:stacyalonsoyraquel123.@maincluster.xawfxad.mongodb.net/thermopack';
-
+const connectionString = process.env.MONGODB_URI;
+if (!connectionString) {
+    throw new Error('MONGODB_URI is not set. Copy server/.env.example to server/.env and set MONGODB_URI.');
+}
 
 const main = async () => {
     await mongoose.connect(connectionString);
