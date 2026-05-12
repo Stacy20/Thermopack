@@ -1,0 +1,135 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'sweetalert2/dist/sweetalert2.min.css';
+
+.primary-thermopack {
+  color: #1c53a8;
+}
+
+.secondary-thermopack {
+  color: #00b2cc;
+}
+
+.green-thermopack {
+  color: #37c132;
+}
+
+.bg-primary-thermopack {
+  background-color: #1c53a8;
+}
+
+.bg-secondary-thermopack {
+  background-color: #00b2cc;
+}
+
+.bg-green-thermopack {
+  background-color: #37c132;
+}
+
+.btn-primary-thermopack {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #1c53a8;
+  --bs-btn-border-color: #1c53a8;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #0b5ed7;
+  --bs-btn-hover-border-color: #0a58ca;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #0a58ca;
+  --bs-btn-active-border-color: #0a53be;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #1c53a8;
+  --bs-btn-disabled-border-color: #1c53a8;
+}
+
+.btn-secondary-thermopack {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #00b2cc;
+  --bs-btn-border-color: #00b2cc;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #00c7e6;
+  --bs-btn-hover-border-color: #20c1da;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #20c1da;
+  --bs-btn-active-border-color: #27e2ff;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #00b2cc;
+  --bs-btn-disabled-border-color: #00b2cc;
+}
+
+.btn-green-thermopack {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #37c132;
+  --bs-btn-border-color: #37c132;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #23d11d;
+  --bs-btn-hover-border-color: #64e760;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #64e760;
+  --bs-btn-active-border-color: #4ec94a;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #37c132;
+  --bs-btn-disabled-border-color: #37c132;
+}
+
+.my-custom-button {
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.mybackground {
+  background-color: rgba(28, 83, 168, 0.83);
+  border-radius: 10px;
+}
+
+.centrar-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 35%;
+  height: 400px;
+  overflow: hidden;
+}
+
+@media (max-width: 576px) {
+  .centrar-img {
+    height: 100%;
+  }
+}
+
+.centrar-img img {
+  width: 100%;
+  height: auto;
+}
+
+.dots-container {
+  background-image: radial-gradient(circle at 100% 0, #00bfff 10%, transparent 10%);
+  background-size: 11px 11px;
+}
+
+.container-spinner {
+  height: 40vh;
+  flex-direction: column;
+}
+
+.spinner {
+  height: 15vh;
+  width: 15vh;
+}
+
+.centered-image {
+  object-fit: cover;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+a.nav-link.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
