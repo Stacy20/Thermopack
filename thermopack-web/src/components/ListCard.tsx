@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { areProducts } from '../api/products'
-import { areServices as areServicesApi } from '../api/servicesApi'
+import { useProductsHasAny } from '../hooks/useProducts'
+import { useServicesHasAny } from '../hooks/useServices'
 import { Card } from './Card'
 import type { Products } from '../types/products'
 import type { Services } from '../types/services'
@@ -15,38 +14,14 @@ type Props = {
 }
 
 export function ListCard({ services, products, type, permissions }: Props) {
-  const [loading, setLoading] = useState(true)
-  const [areItems, setAreItems] = useState(false)
+  const { data: hasProducts, isLoading: loadingProducts } = useProductsHasAny()
+  const { data: hasServices, isLoading: loadingServices } = useServicesHasAny()
 
-  useEffect(() => {
-    let cancelled = false
-    const run = async () => {
-      if (type === 1) {
-        const v = await areProducts()
-        if (!cancelled) {
-          setAreItems(v)
-          if (!v) setLoading(false)
-        }
-      } else {
-        const v = await areServicesApi()
-        if (!cancelled) {
-          setAreItems(v)
-          if (!v) setLoading(false)
-        }
-      }
-    }
-    void run()
-    return () => {
-      cancelled = true
-    }
-  }, [type])
+  const isLoading = type === 1 ? loadingProducts : loadingServices
+  const hasItems = type === 1 ? hasProducts : hasServices
+  const isReady = !isLoading && (type === 1 ? products.length > 0 || !hasItems : services.length > 0 || !hasItems)
 
-  useEffect(() => {
-    if (type === 1 && areItems && products.length > 0) setLoading(false)
-    if (type !== 1 && areItems && services.length > 0) setLoading(false)
-  }, [type, areItems, products, services])
-
-  if (loading) {
+  if (!isReady) {
     return (
       <div className="row justify-content-center align-items-center">
         <div className="spinner-border mt-5 mb-2" role="status">

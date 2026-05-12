@@ -1,9 +1,8 @@
-import { useAuth } from '../auth/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
+import { useDeleteProduct } from '../hooks/useProducts'
+import { useDeleteService } from '../hooks/useServices'
 import { showAlert, showConfirmationAlert } from '../lib/sweetAlert'
-import { deleteProductByName } from '../api/products'
-import { deleteServiceByName } from '../api/servicesApi'
-import { useQueryClient } from '@tanstack/react-query'
 
 type Props = {
   title: string
@@ -17,13 +16,14 @@ type Props = {
 export function Card({ title, id, src, text, type, permissions }: Props) {
   const navigate = useNavigate()
   const { userLoggedIn } = useAuth()
-  const qc = useQueryClient()
+  const deleteProduct = useDeleteProduct()
+  const deleteService = useDeleteService()
 
   const gotoVerMas = () => {
     navigate(`/detalles/${type}/${encodeURIComponent(title)}`)
   }
 
-  const gotoEditProduct = () => {
+  const gotoEdit = () => {
     if (type === 1) navigate(`/admin/products/edit/${encodeURIComponent(title)}`)
     if (type === 2) navigate(`/admin/services/edit/${encodeURIComponent(title)}`)
   }
@@ -34,13 +34,12 @@ export function Card({ title, id, src, text, type, permissions }: Props) {
       'Confirmación',
       isProduct ? '¿Está seguro que desea eliminar el producto?' : '¿Está seguro que desea eliminar el servicio?',
       () => {
-        const p = isProduct
-          ? deleteProductByName(title)
-          : deleteServiceByName(title)
-        void p.then(() => {
-          void showAlert('Éxito', isProduct ? 'El producto se ha eliminado correctamente' : 'El servicio se ha eliminado correctamente', 'success')
-          void qc.invalidateQueries()
-          window.location.reload()
+        const mutation = isProduct ? deleteProduct : deleteService
+        mutation.mutate(title, {
+          onSuccess: () => {
+            void showAlert('Éxito', isProduct ? 'El producto se ha eliminado correctamente' : 'El servicio se ha eliminado correctamente', 'success')
+            window.location.reload()
+          },
         })
       }
     )
@@ -69,7 +68,7 @@ export function Card({ title, id, src, text, type, permissions }: Props) {
         ) : (
           <div className="d-flex justify-content-between">
             {canEdit && (
-              <button type="button" className="btn mt-4" style={{ backgroundColor: '#37C132', color: '#ffff' }} onClick={gotoEditProduct}>
+              <button type="button" className="btn mt-4" style={{ backgroundColor: '#37C132', color: '#ffff' }} onClick={gotoEdit}>
                 Editar
               </button>
             )}

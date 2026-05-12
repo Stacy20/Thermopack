@@ -1,37 +1,40 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getContactData, updateContactData, updateContactImages } from '../../api/contact'
-import { ConfigGallery } from '../../components/ConfigGallery'
+import { useContact, useUpdateContact, useUpdateContactImages } from '../../hooks/useContact'
+import { ConfigGallery, type GallerySlot } from '../../components/ConfigGallery'
 import { useAuth } from '../../auth/AuthContext'
 import { showAlert, showConfirmationAlert } from '../../lib/sweetAlert'
 
 export function AdminConfigContactPage() {
   const navigate = useNavigate()
   const { isLoggedIn, userLoggedIn } = useAuth()
+  const canEdit = userLoggedIn?.privileges?.[1] === 1
+  const { data: contactList } = useContact()
+  const updateContact = useUpdateContact()
+  const updateContactImages = useUpdateContactImages()
 
-  const [welcomeParagraph, setWelcome] = useState('')
+  const [welcomeParagraph, setWelcomeParagraph] = useState('')
   const [ubicationText, setUbicationText] = useState('')
-  const [ubicationGMLink, setGm] = useState('')
-  const [ubicationWazeLink, setWaze] = useState('')
-  const [telephoneNumbers, setPhones] = useState<string[]>([])
+  const [ubicationGMLink, setUbicationGMLink] = useState('')
+  const [ubicationWazeLink, setUbicationWazeLink] = useState('')
+  const [telephoneNumbers, setTelephoneNumbers] = useState<string[]>([])
   const [email, setEmail] = useState('')
-  const [whatsappLink, setWhatsapp] = useState('')
-  const [facebookLink, setFacebook] = useState('')
-  const [instagramLink, setInstagram] = useState('')
-  const [youtubeLink, setYoutube] = useState('')
-  const [images, setImages] = useState<string[]>(['', '', '', ''])
+  const [whatsappLink, setWhatsappLink] = useState('')
+  const [facebookLink, setFacebookLink] = useState('')
+  const [instagramLink, setInstagramLink] = useState('')
+  const [youtubeLink, setYoutubeLink] = useState('')
+  const [imageSlots, setImageSlots] = useState<GallerySlot[]>([])
 
-  const [welcomeParagraphPast, setWelcomePast] = useState('')
-  const [ubicationTextPast, setUbicationTextPast] = useState('')
-  const [ubicationGMLinkPast, setGmPast] = useState('')
-  const [ubicationWazeLinkPast, setWazePast] = useState('')
-  const [telephoneNumbersPast, setPhonesPast] = useState<string[]>([])
-  const [emailPast, setEmailPast] = useState('')
-  const [whatsappLinkPast, setWhatsappPast] = useState('')
-  const [facebookLinkPast, setFacebookPast] = useState('')
-  const [instagramLinkPast, setInstagramPast] = useState('')
-  const [youtubeLinkPast, setYoutubePast] = useState('')
-  const [imagesPast, setImagesPast] = useState<string[]>([])
+  const [savedWelcomeParagraph, setSavedWelcomeParagraph] = useState('')
+  const [savedUbicationText, setSavedUbicationText] = useState('')
+  const [savedUbicationGMLink, setSavedUbicationGMLink] = useState('')
+  const [savedUbicationWazeLink, setSavedUbicationWazeLink] = useState('')
+  const [savedTelephoneNumbers, setSavedTelephoneNumbers] = useState<string[]>([])
+  const [savedEmail, setSavedEmail] = useState('')
+  const [savedWhatsappLink, setSavedWhatsappLink] = useState('')
+  const [savedFacebookLink, setSavedFacebookLink] = useState('')
+  const [savedInstagramLink, setSavedInstagramLink] = useState('')
+  const [savedYoutubeLink, setSavedYoutubeLink] = useState('')
 
   const [newNumber, setNewNumber] = useState('')
   const [validNumber, setValidNumber] = useState(true)
@@ -43,153 +46,127 @@ export function AdminConfigContactPage() {
   }, [isLoggedIn, navigate])
 
   useEffect(() => {
-    void getContactData().then((c) => {
-      if (!c[0]) return
-      const x = c[0]
-      setWelcome(x.welcomeParagraph)
-      setUbicationText(x.ubicationText)
-      setGm(x.ubicationGMLink)
-      setWaze(x.ubicationWazeLink)
-      setPhones([...x.telephoneNumbers])
-      setEmail(x.email)
-      setWhatsapp(x.whatsappLink)
-      setFacebook(x.facebookLink)
-      setInstagram(x.instagramLink)
-      setYoutube(x.youtubeLink)
-      setImages([...(x.images ?? [])])
-      setWelcomePast(x.welcomeParagraph)
-      setUbicationTextPast(x.ubicationText)
-      setGmPast(x.ubicationGMLink)
-      setWazePast(x.ubicationWazeLink)
-      setPhonesPast([...x.telephoneNumbers])
-      setEmailPast(x.email)
-      setWhatsappPast(x.whatsappLink)
-      setFacebookPast(x.facebookLink)
-      setInstagramPast(x.instagramLink)
-      setYoutubePast(x.youtubeLink)
-      setImagesPast([...(x.images ?? [])])
-    })
-  }, [])
 
-  const validatePhoneNumber = (phoneNumber: string): boolean => {
-    if (phoneNumber.length !== 11) return false
-    if (!phoneNumber.startsWith('506')) return false
-    return /^\d+$/.test(phoneNumber.substring(3))
-  }
+    if (!contactList) return
+    setWelcomeParagraph(contactList.welcomeParagraph)
+    setSavedWelcomeParagraph(contactList.welcomeParagraph)
+    setUbicationText(contactList.ubicationText)
+    setSavedUbicationText(contactList.ubicationText)
+    setUbicationGMLink(contactList.ubicationGMLink)
+    setSavedUbicationGMLink(contactList.ubicationGMLink)
+    setUbicationWazeLink(contactList.ubicationWazeLink)
+    setSavedUbicationWazeLink(contactList.ubicationWazeLink)
+    setTelephoneNumbers([...contactList.telephoneNumbers])
+    setSavedTelephoneNumbers([...contactList.telephoneNumbers])
+    setEmail(contactList.email)
+    setSavedEmail(contactList.email)
+    setWhatsappLink(contactList.whatsappLink)
+    setSavedWhatsappLink(contactList.whatsappLink)
+    setFacebookLink(contactList.facebookLink)
+    setSavedFacebookLink(contactList.facebookLink)
+    setInstagramLink(contactList.instagramLink)
+    setSavedInstagramLink(contactList.instagramLink)
+    setYoutubeLink(contactList.youtubeLink)
+    setSavedYoutubeLink(contactList.youtubeLink)
+    setImageSlots((contactList.images ?? []).map((url): GallerySlot => ({ kind: 'existing', url })))
+  }, [contactList])
 
-  const validateNumber = () => {
-    setValidNumber(newNumber.trim() === '' || validatePhoneNumber(newNumber))
-  }
-
-  const validateWhatsApp = () => {
-    setValidWhatsapp(validatePhoneNumber(whatsappLink))
-  }
-
-  const validateEmailField = () => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    setEmailValid(emailRegex.test(email))
-  }
+  const validatePhoneNumber = (phone: string): boolean =>
+    phone.length === 11 && phone.startsWith('506') && /^\d+$/.test(phone.substring(3))
 
   const addNumber = () => {
     const ok = validatePhoneNumber(newNumber)
     setValidNumber(ok)
-    if (ok) {
-      setPhones((prev) => {
-        const next = [...prev]
-        if (next.length < 3) next.push(newNumber)
-        else {
-          next[2] = next[1]
-          next[1] = next[0]
-          next[0] = newNumber
-        }
-        return next
-      })
-      setNewNumber('')
-    }
+    if (!ok) return
+    setTelephoneNumbers((prev) => {
+      const next = [...prev]
+      if (next.length < 3) next.push(newNumber)
+      else {
+        next[2] = next[1]
+        next[1] = next[0]
+        next[0] = newNumber
+      }
+      return next
+    })
+    setNewNumber('')
   }
 
   const deleteNumber = (index: number) => {
-    setPhones((prev) => prev.filter((_, i) => i !== index))
+    setTelephoneNumbers((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const hasChangedHome = () =>
-    welcomeParagraph !== welcomeParagraphPast ||
-    ubicationText !== ubicationTextPast ||
-    ubicationGMLink !== ubicationGMLinkPast ||
-    ubicationWazeLink !== ubicationWazeLinkPast ||
-    JSON.stringify(telephoneNumbers) !== JSON.stringify(telephoneNumbersPast) ||
-    email !== emailPast ||
-    whatsappLink !== whatsappLinkPast ||
-    facebookLink !== facebookLinkPast ||
-    instagramLink !== instagramLinkPast ||
-    youtubeLink !== youtubeLinkPast
+  const hasChangedContact = () =>
+    welcomeParagraph !== savedWelcomeParagraph ||
+    ubicationText !== savedUbicationText ||
+    ubicationGMLink !== savedUbicationGMLink ||
+    ubicationWazeLink !== savedUbicationWazeLink ||
+    JSON.stringify(telephoneNumbers) !== JSON.stringify(savedTelephoneNumbers) ||
+    email !== savedEmail ||
+    whatsappLink !== savedWhatsappLink ||
+    facebookLink !== savedFacebookLink ||
+    instagramLink !== savedInstagramLink ||
+    youtubeLink !== savedYoutubeLink
 
-  const save = () => {
+  const saveContact = () => {
     if (
-      !welcomeParagraph ||
       welcomeParagraph.trim().length < 5 ||
-      !ubicationText ||
       ubicationText.trim().length < 5 ||
-      !ubicationGMLink ||
       ubicationGMLink.trim().length < 5 ||
-      !email ||
       email.trim().length < 5 ||
-      !whatsappLink ||
       whatsappLink.trim().length < 11 ||
-      !facebookLink ||
       facebookLink.trim().length < 5 ||
-      !instagramLink ||
       instagramLink.trim().length < 5 ||
-      !youtubeLink ||
       youtubeLink.trim().length < 5
     ) {
       showAlert('Error', 'Todos los campos son obligatorios', 'error')
       return
     }
-    if (!hasChangedHome()) {
+    if (!hasChangedContact()) {
       showAlert('Información', 'No se realizó ningún cambio, no hay nada que guardar', 'info')
       return
     }
     showConfirmationAlert('Confirmación', '¿Está seguro que desea realizar cambios?', () => {
-      void updateContactData(
-        welcomeParagraph,
-        ubicationText,
-        ubicationGMLink,
-        ubicationWazeLink,
-        telephoneNumbers,
-        email,
-        whatsappLink,
-        facebookLink,
-        instagramLink,
-        youtubeLink
-      ).then(() => showAlert('Éxito', 'Los datos se han guardado correctamente', 'success'))
+      updateContact.mutate(
+        {
+          welcomeParagraph,
+          ubicationText,
+          ubicationGMLink,
+          ubicationWazeLink,
+          telephoneNumbers,
+          email,
+          whatsappLink,
+          facebookLink,
+          instagramLink,
+          youtubeLink,
+        },
+        { onSuccess: () => showAlert('Éxito', 'Los datos se han guardado correctamente', 'success') }
+      )
     })
   }
 
-  const arraysAreEqual = (): boolean => {
-    let flag = 0
-    for (let i = 0; i < imagesPast.length; i++) {
-      if (imagesPast[i] !== images[i]) flag = 1
-    }
-    if (flag === 0) {
-      showAlert('Información', 'No se realizó ningún cambio, no hay nada que guardar', 'info')
-      return false
-    }
-    for (let i = 0; i < images.length; i++) {
-      if (images[i] === '') {
-        showAlert('Error', 'Todos las imagenes son obligatorias', 'error')
-        return false
-      }
-    }
-    return true
-  }
-
   const saveImages = () => {
-    if (!arraysAreEqual()) return
-    void updateContactImages(images).then(() => showAlert('Éxito', 'Los datos se han guardado correctamente', 'success'))
+    const savedUrls = (contactList?.[0]?.images ?? [])
+    const currentUrls = imageSlots.map((s) => (s.kind === 'existing' ? s.url : s.kind === 'new' ? s.preview : ''))
+    const changed = JSON.stringify(savedUrls) !== JSON.stringify(currentUrls)
+    if (!changed) {
+      showAlert('Información', 'No se realizó ningún cambio, no hay nada que guardar', 'info')
+      return
+    }
+    if (imageSlots.some((s) => s.kind === 'empty')) {
+      showAlert('Error', 'Todos las imagenes son obligatorias', 'error')
+      return
+    }
+    const existingImages = imageSlots
+      .filter((s) => s.kind === 'existing')
+      .map((s) => (s as { kind: 'existing'; url: string }).url)
+    const newImages = imageSlots
+      .filter((s) => s.kind === 'new')
+      .map((s) => (s as { kind: 'new'; file: File; preview: string }).file)
+    updateContactImages.mutate(
+      { newImages, existingImages },
+      { onSuccess: () => showAlert('Éxito', 'Los datos se han guardado correctamente', 'success') }
+    )
   }
-
-  const canEdit = userLoggedIn?.privileges?.[1] === 1
 
   return (
     <div className="container">
@@ -199,7 +176,7 @@ export function AdminConfigContactPage() {
         <div className="row mb-3">
           <div className="col-md-3">Párrafo de bienvenida</div>
           <div className="col-md-6">
-            <textarea className="form-control" value={welcomeParagraph} onChange={(e) => setWelcome(e.target.value)} />
+            <textarea className="form-control" value={welcomeParagraph} onChange={(e) => setWelcomeParagraph(e.target.value)} />
             {welcomeParagraph.trim().length < 5 && <div className="text-danger">Debe tener más de 5 caracteres</div>}
           </div>
         </div>
@@ -213,14 +190,14 @@ export function AdminConfigContactPage() {
         <div className="row mb-3">
           <div className="col-md-3">Enlace de Google Maps</div>
           <div className="col-md-6">
-            <input type="text" className="form-control" value={ubicationGMLink} onChange={(e) => setGm(e.target.value)} />
+            <input type="text" className="form-control" value={ubicationGMLink} onChange={(e) => setUbicationGMLink(e.target.value)} />
             {ubicationGMLink.trim().length < 5 && <div className="text-danger">Debe tener más de 5 caracteres</div>}
           </div>
         </div>
         <div className="row mb-3">
           <div className="col-md-3">Enlace de Waze</div>
           <div className="col-md-6">
-            <input type="text" className="form-control" value={ubicationWazeLink} onChange={(e) => setWaze(e.target.value)} />
+            <input type="text" className="form-control" value={ubicationWazeLink} onChange={(e) => setUbicationWazeLink(e.target.value)} />
             {ubicationWazeLink.trim().length < 5 && <div className="text-danger">Debe tener más de 5 caracteres</div>}
           </div>
         </div>
@@ -233,7 +210,7 @@ export function AdminConfigContactPage() {
               value={newNumber}
               onChange={(e) => {
                 setNewNumber(e.target.value)
-                validateNumber()
+                setValidNumber(e.target.value.trim() === '' || validatePhoneNumber(e.target.value))
               }}
             />
             <button type="button" className="btn btn-outline-secondary ms-2" onClick={addNumber}>
@@ -267,7 +244,7 @@ export function AdminConfigContactPage() {
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value)
-                validateEmailField()
+                setEmailValid(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value))
               }}
             />
             {(!emailValid || email.trim().length === 0) && <div className="text-danger">Por favor, ingrese un correo electrónico válido.</div>}
@@ -281,8 +258,8 @@ export function AdminConfigContactPage() {
               className="form-control"
               value={whatsappLink}
               onChange={(e) => {
-                setWhatsapp(e.target.value)
-                validateWhatsApp()
+                setWhatsappLink(e.target.value)
+                setValidWhatsapp(validatePhoneNumber(e.target.value))
               }}
             />
             {(!validWhatsapp || whatsappLink.trim().length === 0) && (
@@ -295,32 +272,32 @@ export function AdminConfigContactPage() {
         <div className="row mb-3">
           <div className="col-md-3">Enlace de Facebook</div>
           <div className="col-md-6">
-            <input type="text" className="form-control" value={facebookLink} onChange={(e) => setFacebook(e.target.value)} />
+            <input type="text" className="form-control" value={facebookLink} onChange={(e) => setFacebookLink(e.target.value)} />
             {facebookLink.trim().length < 5 && <div className="text-danger">Debe tener más de 5 caracteres</div>}
           </div>
         </div>
         <div className="row mb-3">
           <div className="col-md-3">Enlace de Instagram</div>
           <div className="col-md-6">
-            <input type="text" className="form-control" value={instagramLink} onChange={(e) => setInstagram(e.target.value)} />
+            <input type="text" className="form-control" value={instagramLink} onChange={(e) => setInstagramLink(e.target.value)} />
             {instagramLink.trim().length < 5 && <div className="text-danger">Debe tener más de 5 caracteres</div>}
           </div>
         </div>
         <div className="row mb-3">
           <div className="col-md-3">Enlace de Youtube</div>
           <div className="col-md-6">
-            <input type="text" className="form-control" value={youtubeLink} onChange={(e) => setYoutube(e.target.value)} />
+            <input type="text" className="form-control" value={youtubeLink} onChange={(e) => setYoutubeLink(e.target.value)} />
             {youtubeLink.trim().length < 5 && <div className="text-danger">Debe tener más de 5 caracteres</div>}
           </div>
         </div>
         {canEdit && (
-          <button type="button" className="btn btn-success mb-4" onClick={save}>
+          <button type="button" className="btn btn-success mb-4" onClick={saveContact}>
             Guardar datos
           </button>
         )}
 
         <h3>Imágenes de contacto</h3>
-        <ConfigGallery images={images} identifier="c" onImagesChange={(imgs) => setImages(imgs)} />
+        <ConfigGallery slots={imageSlots} identifier="c" onSlotsChange={(s) => setImageSlots(s)} />
         {canEdit && (
           <button type="button" className="btn btn-success" onClick={saveImages}>
             Guardar imágenes

@@ -1,23 +1,31 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getServiceByName, updateServiceByName } from '../../api/servicesApi'
+import { useServiceByName, useUpdateService } from '../../hooks/useServices'
+import apiClient from '../../api/client'
 import { useAuth } from '../../auth/AuthContext'
 import { showAlert, showConfirmationAlert } from '../../lib/sweetAlert'
+import type { Services } from '../../types/services'
 
 export function EditServicePage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { isLoggedIn, userCanEdit } = useAuth()
 
+  const serviceName = id ? decodeURIComponent(id) : ''
+  const { data: serviceData } = useServiceByName(serviceName)
+  const updateService = useUpdateService()
+
   const [originalName, setOriginalName] = useState('')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState(0)
-  const [images, setImages] = useState<string[]>([])
+  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([])
+  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([])
 
-  const [descriptionPast, setDescriptionPast] = useState('')
-  const [pricePast, setPricePast] = useState(0)
-  const [imagesPast, setImagesPast] = useState<string[]>([])
+  const [savedDescription, setSavedDescription] = useState('')
+  const [savedPrice, setSavedPrice] = useState(0)
+  const [savedExistingImages, setSavedExistingImages] = useState<string[]>([])
 
   useEffect(() => {
     if (!isLoggedIn) navigate('/login')
@@ -27,42 +35,78 @@ export function EditServicePage() {
   }, [isLoggedIn, navigate, userCanEdit])
 
   useEffect(() => {
-    const title = id ? decodeURIComponent(id) : ''
-    if (!title) return
-    void getServiceByName(title).then((service) => {
-      if (!service.name) return
-      setOriginalName(service.name)
-      setName(service.name)
-      setDescription(service.description)
-      setDescriptionPast(service.description)
-      setPrice(service.price)
-      setPricePast(service.price)
-      setImages([...service.images])
-      setImagesPast([...service.images])
-    })
-  }, [id])
+    if (!serviceData?.name) return
+    setOriginalName(serviceData.name)
+    setName(serviceData.name)
+    setDescription(serviceData.description)
+    setSavedDescription(serviceData.description)
+    setPrice(serviceData.price)
+    setSavedPrice(serviceData.price)
+    setExistingImages([...serviceData.images])
+    setSavedExistingImages([...serviceData.images])
+  }, [serviceData])
 
-  const hasChanged = () =>
-    name !== originalName || description !== descriptionPast || price !== pricePast || JSON.stringify(images) !== JSON.stringify(imagesPast)
-
-  const doUpdate = () => {
-    void getServiceByName(name).then((service) => {
-      if (name !== originalName && service.name && Object.keys(service).length !== 0) {
-        showAlert('Error', 'Ya existe un servicio llamado' + service.name, 'error')
-        return
-      }
-      void updateServiceByName(originalName, name.trim(), description.trim(), price, images).then(() => {
-        showAlert('Éxito', 'Los datos se han guardado correctamente', 'success')
-      })
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
+    setNewImageFiles((prev) => [...prev, ...files])
+    files.forEach((file) => {
+      const reader = new FileReader()
+      reader.onload = () => setNewImagePreviews((prev) => [...prev, String(reader.result ?? '')])
+      reader.readAsDataURL(file)
     })
   }
 
+  const removeExistingImage = (index: number) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const removeNewImage = (index: number) => {
+    setNewImageFiles((prev) => prev.filter((_, i) => i !== index))
+    setNewImagePreviews((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const hasChanged = () =>
+    name !== originalName ||
+    description !== savedDescription ||
+    price !== savedPrice ||
+    JSON.stringify(existingImages) !== JSON.stringify(savedExistingImages) ||
+    newImageFiles.length > 0
+
+  const doUpdate = async () => {
+    try {
+      if (name !== originalName) {
+        const existing = await apiClient
+          .get<Services>(`services/${encodeURIComponent(name.trim())}`)
+          .then((r) => r.data)
+          .catch(() => null)
+        if (existing?.name) {
+          showAlert('Error', 'Ya existe un servicio llamado ' + existing.name, 'error')
+          return
+        }
+      }
+      updateService.mutate(
+        {
+          originalName,
+          name: name.trim(),
+          description: description.trim(),
+          price,
+          newImages: newImageFiles,
+          existingImages,
+        },
+        { onSuccess: () => showAlert('Éxito', 'Los datos se han guardado correctamente', 'success') }
+      )
+    } catch {
+      showAlert('Error', 'Ocurrió un error al guardar', 'error')
+    }
+  }
+
   const update = () => {
-    if (!name || name.trim().length < 3 || !description || description.trim().length < 5) {
+    if (name.trim().length < 3 || description.trim().length < 5) {
       showAlert('Error', 'Todos los campos son obligatorios', 'error')
       return
     }
-    if (images.filter(Boolean).length < 1) {
+    if (existingImages.length + newImageFiles.length < 1) {
       showAlert('Error', 'Debe seleccionar una o más imagenes', 'error')
       return
     }
@@ -70,17 +114,7 @@ export function EditServicePage() {
       showAlert('Información', 'No se realizó ningún cambio, no hay nada que guardar', 'info')
       return
     }
-    showConfirmationAlert('Confirmación', '¿Está seguro que desea realizar cambios?', doUpdate)
-  }
-
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files) return
-    for (let i = 0; i < files.length; i++) {
-      const reader = new FileReader()
-      reader.onload = () => setImages((prev) => [...prev, String(reader.result ?? '')])
-      reader.readAsDataURL(files[i])
-    }
+    showConfirmationAlert('Confirmación', '¿Está seguro que desea realizar cambios?', () => void doUpdate())
   }
 
   return (
@@ -107,7 +141,20 @@ export function EditServicePage() {
           </div>
         </div>
         <div className="row mb-3">
-          <div className="col-md-3">Imágenes</div>
+          <div className="col-md-3">Imágenes actuales</div>
+          <div className="col-md-6">
+            {existingImages.map((url, i) => (
+              <span key={i} className="me-2">
+                <img src={url} alt="" style={{ maxHeight: 50 }} />
+                <button type="button" className="btn btn-link" onClick={() => removeExistingImage(i)}>
+                  <i className="fas fa-trash-alt" />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="row mb-3">
+          <div className="col-md-3">Agregar imágenes</div>
           <div className="col-md-6">
             <div className="input-group mb-3">
               <input type="file" multiple accept="image/*" className="form-control" id="editSvcFiles" onChange={handleFiles} />
@@ -115,16 +162,14 @@ export function EditServicePage() {
                 Agregar
               </label>
             </div>
-            {images.map((im, i) =>
-              im ? (
-                <span key={i} className="me-2">
-                  <img src={im} alt="" style={{ maxHeight: 50 }} />
-                  <button type="button" className="btn btn-link" onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}>
-                    <i className="fas fa-trash-alt" />
-                  </button>
-                </span>
-              ) : null
-            )}
+            {newImagePreviews.map((preview, i) => (
+              <span key={i} className="me-2">
+                <img src={preview} alt="" style={{ maxHeight: 50 }} />
+                <button type="button" className="btn btn-link" onClick={() => removeNewImage(i)}>
+                  <i className="fas fa-trash-alt" />
+                </button>
+              </span>
+            ))}
           </div>
         </div>
         <button type="button" className="btn btn-success" onClick={update}>

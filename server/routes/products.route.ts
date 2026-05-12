@@ -1,54 +1,52 @@
 import { Router } from "express";
 import ProductsModel from '../collections/products.collection';
+import { upload, handleMulterError } from '../middleware/upload.middleware';
+import { uploadImage, deleteImageAllVariants, sanitizeFolder, urlToKey } from '../services/s3.service';
 
 const router = Router();
 
+const PRODUCTS_FOLDER = sanitizeFolder('products');
 
-
-// Obtiene un producto por su nombre
 router.get('/:name', async (req, res) => {
     const { name } = req.params;
-    const productWithName = await ProductsModel.find({ name }).lean().exec();
-
-    if (productWithName.length === 0) {
+    const product = await ProductsModel.findOne({ name }).lean().exec();
+    if (!product) {
         res.status(404).json({ message: `No records with ${name} name` });
     } else {
-        res.status(200).json(productWithName[0]);
+        res.status(200).json(product);
     }
 });
 
 router.get('/', async (req, res) => {
-    const { limit, offset, brandId , categoryId, typeId, name } = req.query;
+    const { limit, offset, brandId, categoryId, typeId, name } = req.query;
 
-    // Definir un tipo para el objeto de filtro
     interface Filter {
-        brandId ?: string;
+        brandId?: string;
         categoryId?: string;
         typeId?: string;
         name?: { $regex: string, $options: string };
     }
 
-    // Crear un objeto de filtro basado en los parámetros recibidos
     const filter: Filter = {};
-    if (brandId ) filter.brandId  = brandId  as string;
+    if (brandId) filter.brandId = brandId as string;
     if (categoryId) filter.categoryId = categoryId as string;
     if (typeId) filter.typeId = typeId as string;
     if (name) filter.name = { $regex: name as string, $options: 'i' };
 
-    const products = await ProductsModel.find(filter).skip(parseInt(offset as string)).limit(parseInt(limit as string)).lean().exec();
-    const totalCount =  await ProductsModel.countDocuments(filter);
-    res.status(200).json({
-                    products: products,
-                    totalCount: totalCount
-                });
+    const products = await ProductsModel.find(filter)
+        .skip(parseInt(offset as string))
+        .limit(parseInt(limit as string))
+        .lean()
+        .exec();
+    const totalCount = await ProductsModel.countDocuments(filter);
+    res.status(200).json({ products, totalCount });
 });
 
-// Revisa si hay minimo un producto
-router.get('/check/not_empty', async (req, res) => {
+
+router.get('/check/not_empty', async (_req, res) => {
     try {
         const product = await ProductsModel.findOne();
-        const hasProducts = product !== null; 
-        res.status(200).json({ exists: hasProducts }); 
+        res.status(200).json({ exists: product !== null });
     } catch (error) {
         console.error('Error fetching product:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -56,52 +54,102 @@ router.get('/check/not_empty', async (req, res) => {
 });
 
 
-// Crea un nuevo producto
-router.post('/', async (req, res) => {
-  await ProductsModel.create({
-      name: req.body.name,
-      description: req.body.description,
-      brandId: req.body.brandId,
-      typeId: req.body.typeId,
-      price: req.body.price,
-      categoryId: req.body.categoryId,
-      subcategoryId: req.body.subcategoryId,
-      images: req.body.images,
-  });
-  res.status(201).json({ message: 'Successfully created' });
-});
+router.post('/', upload.array('images', 10), async (req, res) => {
+    try {
+        const files = (req.files as Express.Multer.File[]) ?? [];
+        const imageUrls: string[] = [];
 
-// Modifica un producto por su nombre
-router.put('/:name', async (req, res) => {
-    const { name } = req.params;
-    const productWithName = await ProductsModel.find({ name }).lean().exec();
-    if (productWithName.length === 0) {
-        res.status(404).json({ message: `No records with ${name} name` });
-        return;
+        for (const file of files) {
+            const result = await uploadImage(file, PRODUCTS_FOLDER);
+            imageUrls.push(result.card.url);
+        }
+
+        await ProductsModel.create({
+            name: req.body.name,
+            description: req.body.description,
+            brandId: req.body.brandId,
+            typeId: req.body.typeId,
+            price: req.body.price != null ? Number(req.body.price) : undefined,
+            categoryId: req.body.categoryId,
+            subcategoryId: req.body.subcategoryId,
+            images: imageUrls,
+        });
+
+        res.status(201).json({ message: 'Successfully created' });
+    } catch (error) {
+        console.error('Error creating product:', error);
+        res.status(500).json({ message: 'Error al crear el producto' });
     }
-  await ProductsModel.updateOne({ name: req.params.name }, { $set: {
-      name: req.body.name,
-      description: req.body.description,
-      brandId: req.body.brandId,
-      typeId: req.body.typeId,
-      price: req.body.price,
-      categoryId: req.body.categoryId,
-      subcategoryId: req.body.subcategoryId,
-      images: req.body.images,
-  } });
-  res.status(202).json({ message: 'Successfully modified' });
 });
 
-// Elimina un producto por su nombre
+
+router.put('/:name', upload.array('images', 10), async (req, res) => {
+    try {
+        const { name } = req.params;
+        const product = await ProductsModel.findOne({ name }).lean().exec();
+
+        if (!product) {
+            res.status(404).json({ message: `No records with ${name} name` });
+            return;
+        }
+
+        let existingImages: string[] = [];
+        try {
+            existingImages = JSON.parse(req.body.existingImages ?? '[]');
+        } catch {
+            existingImages = [];
+        }
+
+        const oldImages: string[] = product.images ?? [];
+        const toDelete = oldImages.filter(url => !existingImages.includes(url));
+        await Promise.all(toDelete.map(url => deleteImageAllVariants(urlToKey(url)).catch(() => {})));
+
+        const files = (req.files as Express.Multer.File[]) ?? [];
+        const newImageUrls: string[] = [];
+        for (const file of files) {
+            const result = await uploadImage(file, PRODUCTS_FOLDER);
+            newImageUrls.push(result.card.url);
+        }
+
+        await ProductsModel.updateOne({ name }, { $set: {
+            name: req.body.name,
+            description: req.body.description,
+            brandId: req.body.brandId,
+            typeId: req.body.typeId,
+            price: req.body.price != null ? Number(req.body.price) : undefined,
+            categoryId: req.body.categoryId,
+            subcategoryId: req.body.subcategoryId,
+            images: [...existingImages, ...newImageUrls],
+        }});
+
+        res.status(202).json({ message: 'Successfully modified' });
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ message: 'Error al actualizar el producto' });
+    }
+});
+
 router.delete('/:name', async (req, res) => {
-    const { name } = req.params;
-    const productWithName = await ProductsModel.find({ name }).lean().exec();
-    if (productWithName.length === 0) {
-        res.status(404).json({ message: `No records with ${name} name` });
-        return;
+    try {
+        const { name } = req.params;
+        const product = await ProductsModel.findOne({ name }).lean().exec();
+
+        if (!product) {
+            res.status(404).json({ message: `No records with ${name} name` });
+            return;
+        }
+
+        const images: string[] = product.images ?? [];
+        await Promise.all(images.map(url => deleteImageAllVariants(urlToKey(url)).catch(() => {})));
+
+        await ProductsModel.deleteOne({ name });
+        res.status(202).json({ message: 'Successfully deleted' });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).json({ message: 'Error al eliminar el producto' });
     }
-    await ProductsModel.deleteOne({ name: req.params.name });
-    res.status(202).json({ message: 'Successfully deleted' });
 });
+
+router.use(handleMulterError);
 
 export default router;

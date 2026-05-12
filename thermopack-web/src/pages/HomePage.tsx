@@ -1,75 +1,31 @@
-import { useEffect, useState } from 'react'
-import { getTextData, getLogo, getVisionImages, getPresentationImages } from '../api/data'
+import { useTextData, useLogo, useVisionImages, usePresentationImages } from '../hooks/useData'
 import { Carousel } from '../components/Carousel'
 import { formatDescription } from '../utils/text'
 
 export function HomePage() {
-  const [loading, setLoading] = useState(true)
-  const [srcLogo, setSrcLogo] = useState('')
-  const [slogan, setSlogan] = useState('')
-  const [companyDescription, setCompanyDescription] = useState('')
-  const [descriptionMission, setDescriptionMission] = useState('')
-  const [descriptionVision, setDescriptionVision] = useState('')
-  const [srcMission1, setSrcMission1] = useState('')
-  const [srcMission2, setSrcMission2] = useState('')
-  const [srcVision1, setSrcVision1] = useState('')
-  const [srcVision2, setSrcVision2] = useState('')
-  const [carouselImages, setCarouselImages] = useState<string[]>([])
+  const { data: textData } = useTextData()
+  const { data: logoData } = useLogo()
+  const { data: visionData } = useVisionImages()
+  const { data: presentationData } = usePresentationImages()
+  console.log(textData)
+  const slogan = String(textData?.slogan ?? '')
+  const companyDescription = String(textData?.description ?? '')
+  const descriptionMission = String(textData?.mision ?? '')
+  const descriptionVision = String(textData?.vision ?? '')
+  const srcLogo = logoData?.logo ?? ''
+  const visionImages = visionData?.visionImages ?? []
+  const carouselImages = (presentationData?.presentationImages ?? []).filter(Boolean)
 
-  useEffect(() => {
-    let cancelled = false
-    const run = async () => {
-      try {
-        const data = await getTextData()
-        if (data && !cancelled) {
-          setSlogan(String(data.slogan ?? ''))
-          setCompanyDescription(String(data.description ?? ''))
-          setDescriptionMission(String(data.mision ?? ''))
-          setDescriptionVision(String(data.vision ?? ''))
-        }
-        const logo = await getLogo()
-        if (logo && !cancelled) setSrcLogo(logo.logo ?? '')
-        const visionImages = await getVisionImages()
-        if (visionImages?.visionImages && !cancelled) {
-          const vi = visionImages.visionImages
-          setSrcMission1(vi[0] ?? '')
-          setSrcMission2(vi[1] ?? '')
-          setSrcVision1(vi[2] ?? '')
-          setSrcVision2(vi[3] ?? '')
-        }
-        const presentationImages = await getPresentationImages()
-        if (presentationImages?.presentationImages && !cancelled) {
-          setCarouselImages(
-            presentationImages.presentationImages.filter((s: string) => s !== '')
-          )
-        }
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    void run()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  const checkDataLoaded =
-    srcLogo !== '' &&
+  const isLoaded =
     slogan !== '' &&
     companyDescription !== '' &&
     descriptionMission !== '' &&
     descriptionVision !== '' &&
-    srcMission1 !== '' &&
-    srcMission2 !== '' &&
-    srcVision1 !== '' &&
-    srcVision2 !== '' &&
-    carouselImages.length > 0
-
-  const showContent = checkDataLoaded && !loading
-
+    srcLogo !== ''
+  console.log(isLoaded)
   return (
     <div className="row">
-      {!showContent ? (
+      {isLoaded ? (
         <div className="d-flex justify-content-center align-items-center container-spinner flex-column">
           <div className="spinner-border spinner" role="status">
             <span className="visually-hidden">Cargando...</span>
@@ -105,10 +61,10 @@ export function HomePage() {
               <div className="col-12 col-lg-6 col-md-6 col-sm-12 mt-5 dots-container">
                 <div className="row">
                   <div className="container centrar-img col-5 myborder me-0">
-                    <img src={srcMission1} className="d-block w-100" alt="" />
+                    <img src={visionImages[0]} className="d-block w-100" alt="" />
                   </div>
                   <div className="container centrar-img col-5 mt-5 myborder">
-                    <img src={srcMission2} className="d-block w-100" alt="" />
+                    <img src={visionImages[1]} className="d-block w-100" alt="" />
                   </div>
                 </div>
               </div>
@@ -119,10 +75,10 @@ export function HomePage() {
               <div className="col-12 col-lg-6 col-md-6 col-sm-12 mt-5 dots-container">
                 <div className="row">
                   <div className="container centrar-img col-5 myborder me-0">
-                    <img src={srcVision1} className="d-block w-100" alt="" />
+                    <img src={visionImages[2]} className="d-block w-100" alt="" />
                   </div>
                   <div className="container centrar-img col-5 mt-5 myborder">
-                    <img src={srcVision2} className="d-block w-100" alt="" />
+                    <img src={visionImages[3]} className="d-block w-100" alt="" />
                   </div>
                 </div>
               </div>

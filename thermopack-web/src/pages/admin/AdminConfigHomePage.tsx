@@ -1,76 +1,69 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  getData,
-  updateMainPage,
-  updateMisionImages,
-  updatePresentationImages,
-  updateProductsServices,
-} from '../../api/data'
-import { ConfigGallery } from '../../components/ConfigGallery'
+import { useData, useUpdateMainPage, useUpdateVisionImages, useUpdatePresentationImages, useUpdateProductsServices } from '../../hooks/useData'
+import { ConfigGallery, type GallerySlot } from '../../components/ConfigGallery'
 import { useAuth } from '../../auth/AuthContext'
 import { showAlert, showConfirmationAlert } from '../../lib/sweetAlert'
 
 export function AdminConfigHomePage() {
   const navigate = useNavigate()
   const { isLoggedIn, userLoggedIn } = useAuth()
+  const canEdit = userLoggedIn?.privileges?.[1] === 1
 
-  const [eslogan, setEslogan] = useState('')
+  const { data: siteData } = useData()
+  const updateMainPage = useUpdateMainPage()
+  const updateVisionImages = useUpdateVisionImages()
+  const updatePresentationImages = useUpdatePresentationImages()
+  const updateProductsServices = useUpdateProductsServices()
+
+  const [slogan, setSlogan] = useState('')
   const [description, setDescription] = useState('')
   const [mision, setMision] = useState('')
   const [vision, setVision] = useState('')
-  const [logo, setLogo] = useState('')
-  const [visionImages, setVisionImages] = useState<string[]>(['', '', '', ''])
-  const [presentationImages, setPresentationImages] = useState<string[]>(['', '', '', ''])
-  const [productosTitle, setProductosTitle] = useState('')
-  const [productosText, setProductosText] = useState('')
+  const [logoUrl, setLogoUrl] = useState('')
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [visionSlots, setVisionSlots] = useState<GallerySlot[]>([])
+  const [presentationSlots, setPresentationSlots] = useState<GallerySlot[]>([])
+  const [productsTitle, setProductsTitle] = useState('')
+  const [productsParagraph, setProductsParagraph] = useState('')
   const [servicesTitle, setServicesTitle] = useState('')
-  const [servicesText, setServicesText] = useState('')
+  const [servicesParagraph, setServicesParagraph] = useState('')
 
-  const [esloganPast, setEsloganPast] = useState('')
-  const [descriptionPast, setDescriptionPast] = useState('')
-  const [misionPast, setMisionPast] = useState('')
-  const [visionPast, setVisionPast] = useState('')
-  const [logoPast, setLogoPast] = useState('')
-  const [visionImagesPast, setVisionImagesPast] = useState<string[]>([])
-  const [presentationImagesPast, setPresentationImagesPast] = useState<string[]>([])
-  const [productosTitlePast, setProductosTitlePast] = useState('')
-  const [productosTextPast, setProductosTextPast] = useState('')
-  const [servicesTitlePast, setServicesTitlePast] = useState('')
-  const [servicesTextPast, setServicesTextPast] = useState('')
+  const [sloganSaved, setSloganSaved] = useState('')
+  const [descriptionSaved, setDescriptionSaved] = useState('')
+  const [misionSaved, setMisionSaved] = useState('')
+  const [visionSaved, setVisionSaved] = useState('')
+  const [productsTitleSaved, setProductsTitleSaved] = useState('')
+  const [productsParagraphSaved, setProductsParagraphSaved] = useState('')
+  const [servicesTitleSaved, setServicesTitleSaved] = useState('')
+  const [servicesParagraphSaved, setServicesParagraphSaved] = useState('')
 
   useEffect(() => {
     if (!isLoggedIn) navigate('/login')
   }, [isLoggedIn, navigate])
 
   useEffect(() => {
-    void getData().then((rows) => {
-      const d = rows[0]
-      if (!d) return
-      setEslogan(d.slogan)
-      setEsloganPast(d.slogan)
-      setDescription(d.description)
-      setDescriptionPast(d.description)
-      setMision(d.mision)
-      setMisionPast(d.mision)
-      setVision(d.vision)
-      setVisionPast(d.vision)
-      setLogo(d.logo)
-      setLogoPast(d.logo)
-      setVisionImages([...(d.visionImages ?? [])])
-      setVisionImagesPast([...(d.visionImages ?? [])])
-      setPresentationImages([...(d.presentationImages ?? [])])
-      setPresentationImagesPast([...(d.presentationImages ?? [])])
-      setProductosTitle(d.productsTitle)
-      setProductosTitlePast(d.productsTitle)
-      setProductosText(d.productsParagraph)
-      setProductosTextPast(d.productsParagraph)
-      setServicesTitle(d.servicesTitle)
-      setServicesTitlePast(d.servicesTitle)
-      setServicesText(d.servicesParagraph)
-      setServicesTextPast(d.servicesParagraph)
-    })
-  }, [])
+    if (!siteData) return
+    setSlogan(siteData.slogan)
+    setSloganSaved(siteData.slogan)
+    setDescription(siteData.description)
+    setDescriptionSaved(siteData.description)
+    setMision(siteData.mision)
+    setMisionSaved(siteData.mision)
+    setVision(siteData.vision)
+    setVisionSaved(siteData.vision)
+    setLogoUrl(siteData.logo ?? '')
+    setVisionSlots((siteData.visionImages ?? []).map((url): GallerySlot => ({ kind: 'existing', url })))
+    setPresentationSlots((siteData.presentationImages ?? []).map((url): GallerySlot => ({ kind: 'existing', url })))
+    setProductsTitle(siteData.productsTitle)
+    setProductsTitleSaved(siteData.productsTitle)
+    setProductsParagraph(siteData.productsParagraph)
+    setProductsParagraphSaved(siteData.productsParagraph)
+    setServicesTitle(siteData.servicesTitle)
+    setServicesTitleSaved(siteData.servicesTitle)
+    setServicesParagraph(siteData.servicesParagraph)
+    setServicesParagraphSaved(siteData.servicesParagraph)
+  }, [siteData])
 
   const handleLogoFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -78,114 +71,94 @@ export function AdminConfigHomePage() {
       showAlert('Error', 'Debe seleccionar un archivo', 'error')
       return
     }
-    const reader = new FileReader()
-    reader.onload = () => setLogo(String(reader.result ?? ''))
-    reader.readAsDataURL(file)
+    setLogoFile(file)
+    setLogoUrl(URL.createObjectURL(file))
   }
 
-  const hasChangedHome = () =>
-    eslogan !== esloganPast ||
-    description !== descriptionPast ||
-    mision !== misionPast ||
-    vision !== visionPast ||
-    logo !== logoPast
+  const hasChangedMain = () =>
+    slogan !== sloganSaved ||
+    description !== descriptionSaved ||
+    mision !== misionSaved ||
+    vision !== visionSaved ||
+    logoFile !== null
 
   const saveMain = () => {
     if (
-      !eslogan ||
-      eslogan.trim().length < 5 ||
-      !description ||
+      slogan.trim().length < 5 ||
       description.trim().length < 5 ||
-      !mision ||
       mision.trim().length < 5 ||
-      !vision ||
-      vision.trim().length < 5 ||
-      !logo
+      vision.trim().length < 5
     ) {
       showAlert('Error', 'Todos los campos son obligatorios', 'error')
       return
     }
-    if (!hasChangedHome()) {
+    if (!hasChangedMain()) {
       showAlert('Información', 'No se realizó ningún cambio, no hay nada que guardar', 'info')
       return
     }
     showConfirmationAlert('Confirmación', '¿Está seguro que desea realizar cambios?', () => {
-      void updateMainPage(eslogan, description, mision, vision, logo).then(() => {
-        showAlert('Éxito', 'Los datos se han guardado correctamente', 'success')
-      })
+      updateMainPage.mutate(
+        { slogan, description, mision, vision, logo: logoFile ?? undefined },
+        {
+          onSuccess: () => {
+            setLogoFile(null)
+            showAlert('Éxito', 'Los datos se han guardado correctamente', 'success')
+          },
+        }
+      )
     })
-  }
-
-  const arraysAreEqualVision = (): boolean => {
-    let flag = 0
-    for (let i = 0; i < visionImagesPast.length; i++) {
-      if (visionImagesPast[i] !== visionImages[i]) flag = 1
-    }
-    if (flag === 0) {
-      showAlert('Información', 'No se realizó ningún cambio, no hay nada que guardar', 'info')
-      return false
-    }
-    for (let i = 0; i < visionImages.length; i++) {
-      if (visionImages[i] === '') {
-        showAlert('Error', 'Todos las imagenes son obligatorias', 'error')
-        return false
-      }
-    }
-    return true
   }
 
   const saveVisionImages = () => {
-    if (!arraysAreEqualVision()) return
+    if (visionSlots.some((s) => s.kind === 'empty')) {
+      showAlert('Error', 'Todos las imagenes son obligatorias', 'error')
+      return
+    }
     showConfirmationAlert('Confirmación', '¿Está seguro que desea realizar cambios?', () => {
-      void updateMisionImages(visionImages).then(() => {
-        showAlert('Éxito', 'Las imágenes se han guardado correctamente', 'success')
-      })
+      const existingImages = visionSlots
+        .filter((s) => s.kind === 'existing')
+        .map((s) => (s as { kind: 'existing'; url: string }).url)
+      const newImages = visionSlots
+        .filter((s) => s.kind === 'new')
+        .map((s) => (s as { kind: 'new'; file: File; preview: string }).file)
+      updateVisionImages.mutate(
+        { newImages, existingImages },
+        { onSuccess: () => showAlert('Éxito', 'Las imágenes se han guardado correctamente', 'success') }
+      )
     })
   }
 
-  const arraysAreEqualPresentation = (): boolean => {
-    let flag = 0
-    for (let i = 0; i < presentationImagesPast.length; i++) {
-      if (presentationImagesPast[i] !== presentationImages[i]) flag = 1
-    }
-    if (flag === 0) {
-      showAlert('Información', 'No se realizó ningún cambio, no hay nada que guardar', 'info')
-      return false
-    }
-    for (let i = 0; i < presentationImages.length; i++) {
-      if (presentationImages[i] === '') {
-        showAlert('Error', 'Todos las imagenes son obligatorias', 'error')
-        return false
-      }
-    }
-    return true
-  }
-
   const savePresentationImages = () => {
-    if (!arraysAreEqualPresentation()) return
+    if (presentationSlots.some((s) => s.kind === 'empty')) {
+      showAlert('Error', 'Todos las imagenes son obligatorias', 'error')
+      return
+    }
     showConfirmationAlert('Confirmación', '¿Está seguro que desea realizar cambios?', () => {
-      void updatePresentationImages(presentationImages).then(() => {
-        showAlert('Éxito', 'Las imágenes se han guardado correctamente', 'success')
-      })
+      const existingImages = presentationSlots
+        .filter((s) => s.kind === 'existing')
+        .map((s) => (s as { kind: 'existing'; url: string }).url)
+      const newImages = presentationSlots
+        .filter((s) => s.kind === 'new')
+        .map((s) => (s as { kind: 'new'; file: File; preview: string }).file)
+      updatePresentationImages.mutate(
+        { newImages, existingImages },
+        { onSuccess: () => showAlert('Éxito', 'Las imágenes se han guardado correctamente', 'success') }
+      )
     })
   }
 
   const hasChangedProductsServices = () =>
-    productosTitle !== productosTitlePast ||
-    productosText !== productosTextPast ||
-    servicesTitle !== servicesTitlePast ||
-    servicesText !== servicesTextPast
+    productsTitle !== productsTitleSaved ||
+    productsParagraph !== productsParagraphSaved ||
+    servicesTitle !== servicesTitleSaved ||
+    servicesParagraph !== servicesParagraphSaved
 
   const saveProductsServices = () => {
     if (
-      !productosTitle ||
-      productosTitle.trim().length < 5 ||
-      !productosText ||
-      productosText.trim().length < 5 ||
-      !servicesTitle ||
+      productsTitle.trim().length < 5 ||
+      productsParagraph.trim().length < 5 ||
       servicesTitle.trim().length < 5 ||
-      !servicesText ||
-      servicesText.trim().length < 5
+      servicesParagraph.trim().length < 5
     ) {
       showAlert('Error', 'Todos los campos son obligatorios', 'error')
       return
@@ -195,18 +168,12 @@ export function AdminConfigHomePage() {
       return
     }
     showConfirmationAlert('Confirmación', '¿Está seguro que desea realizar cambios?', () => {
-      void updateProductsServices(productosTitle, productosText, servicesTitle, servicesText).then(() => {
-        showAlert('Éxito', 'Los datos se han guardado correctamente', 'success')
-      })
+      updateProductsServices.mutate(
+        { productsTitle, productsParagraph, servicesTitle, servicesParagraph },
+        { onSuccess: () => showAlert('Éxito', 'Los datos se han guardado correctamente', 'success') }
+      )
     })
   }
-
-  const updateImages = (images: string[], identifier: string) => {
-    if (identifier === '1') setVisionImages(images)
-    if (identifier === '2') setPresentationImages(images)
-  }
-
-  const canEdit = userLoggedIn?.privileges?.[1] === 1
 
   return (
     <div className="container">
@@ -219,8 +186,8 @@ export function AdminConfigHomePage() {
               <p className="text-md-end">Eslogan</p>
             </div>
             <div className="col-md-6">
-              <textarea className="form-control" value={eslogan} onChange={(e) => setEslogan(e.target.value)} />
-              {eslogan.trim().length < 5 && <div className="text-danger">Debe tener al menos 5 caracteres</div>}
+              <textarea className="form-control" value={slogan} onChange={(e) => setSlogan(e.target.value)} />
+              {/* {slogan.trim().length < 5 && <div className="text-danger">Debe tener al menos 5 caracteres</div>} */}
             </div>
           </div>
           <div className="row mb-3">
@@ -261,7 +228,7 @@ export function AdminConfigHomePage() {
                   Seleccionar archivo
                 </label>
               </div>
-              {logo ? <img src={logo} alt="Logo" style={{ maxWidth: 300 }} /> : null}
+              {logoUrl ? <img src={logoUrl} alt="Logo" style={{ maxWidth: 300 }} /> : null}
             </div>
           </div>
           <div className="row mb-4">
@@ -282,7 +249,7 @@ export function AdminConfigHomePage() {
           <hr />
           <h4>Misión y Visión</h4>
           <p>Seleccione una imagen para cambiarla.</p>
-          <ConfigGallery images={visionImages} identifier="1" onImagesChange={updateImages} />
+          <ConfigGallery slots={visionSlots} identifier="1" onSlotsChange={setVisionSlots} />
           <div className="row my-4">
             <div className="col-md-6">
               {canEdit && (
@@ -294,7 +261,7 @@ export function AdminConfigHomePage() {
           </div>
           <h4 className="mt-4">Presentación</h4>
           <p>Seleccione una imagen para cambiarla o borrarla.</p>
-          <ConfigGallery images={presentationImages} identifier="2" onImagesChange={updateImages} />
+          <ConfigGallery slots={presentationSlots} identifier="2" onSlotsChange={setPresentationSlots} />
           <div className="row my-4">
             <div className="col-md-6">
               {canEdit && (
@@ -316,7 +283,7 @@ export function AdminConfigHomePage() {
               <p className="text-md-end">Título de Productos</p>
             </div>
             <div className="col-md-6">
-              <input type="text" className="form-control" value={productosTitle} onChange={(e) => setProductosTitle(e.target.value)} />
+              <input type="text" className="form-control" value={productsTitle} onChange={(e) => setProductsTitle(e.target.value)} />
             </div>
           </div>
           <div className="row mb-3">
@@ -324,7 +291,7 @@ export function AdminConfigHomePage() {
               <p className="text-md-end">Párrafo de Productos</p>
             </div>
             <div className="col-md-6">
-              <textarea className="form-control" value={productosText} onChange={(e) => setProductosText(e.target.value)} />
+              <textarea className="form-control" value={productsParagraph} onChange={(e) => setProductsParagraph(e.target.value)} />
             </div>
           </div>
           <div className="row mb-3">
@@ -340,7 +307,7 @@ export function AdminConfigHomePage() {
               <p className="text-md-end">Párrafo de Servicios</p>
             </div>
             <div className="col-md-6">
-              <textarea className="form-control" value={servicesText} onChange={(e) => setServicesText(e.target.value)} />
+              <textarea className="form-control" value={servicesParagraph} onChange={(e) => setServicesParagraph(e.target.value)} />
             </div>
           </div>
           <div className="row mb-4">

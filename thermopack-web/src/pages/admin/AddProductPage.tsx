@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getAllTypes, createType } from '../../api/typesApi'
-import { getAllBrands, createBrand } from '../../api/brands'
-import { getAllCategories, createCategory } from '../../api/categories'
-import { createProduct, getProductByName } from '../../api/products'
+import { useAllTypes, useCreateType } from '../../hooks/useTypes'
+import { useAllBrands, useCreateBrand } from '../../hooks/useBrands'
+import { useAllCategories, useCreateCategory } from '../../hooks/useCategories'
+import { useCreateProduct } from '../../hooks/useProducts'
+import apiClient from '../../api/client'
 import { CreatableIdSelect, type Opt } from '../../components/CreatableIdSelect'
 import { useAuth } from '../../auth/AuthContext'
 import { showAlert } from '../../lib/sweetAlert'
+import type { Products } from '../../types/products'
 
 export function AddProductPage() {
   const navigate = useNavigate()
@@ -15,16 +17,25 @@ export function AddProductPage() {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState(0)
-  const [images, setImages] = useState<string[]>([])
-
-  const [typeOptions, setTypeOptions] = useState<Opt[]>([])
-  const [brandOptions, setBrandOptions] = useState<Opt[]>([])
-  const [categoryOptions, setCategoryOptions] = useState<Opt[]>([])
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [imagePreviews, setImagePreviews] = useState<string[]>([])
 
   const [selectedType, setSelectedType] = useState<Opt | null>(null)
   const [selectedBrand, setSelectedBrand] = useState<Opt | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<Opt | null>(null)
   const [selectedSubCategory, setSelectedSubCategory] = useState<Opt | null>(null)
+
+  const { data: types = [] } = useAllTypes()
+  const { data: brands = [] } = useAllBrands()
+  const { data: categories = [] } = useAllCategories()
+  const createType = useCreateType()
+  const createBrand = useCreateBrand()
+  const createCategory = useCreateCategory()
+  const createProduct = useCreateProduct()
+
+  const typeOptions: Opt[] = types.map((t) => ({ value: t._id ?? '', label: t.name }))
+  const brandOptions: Opt[] = brands.map((b) => ({ value: b._id ?? '', label: b.name }))
+  const categoryOptions: Opt[] = categories.map((c) => ({ value: c._id ?? '', label: c.name }))
 
   useEffect(() => {
     if (!isLoggedIn) navigate('/login')
@@ -33,51 +44,41 @@ export function AddProductPage() {
     })
   }, [isLoggedIn, navigate, userCanAdd])
 
-  useEffect(() => {
-    void getAllTypes().then((types) => setTypeOptions(types.map((t) => ({ value: t._id, label: t.name }))))
-    void getAllBrands().then((b) => setBrandOptions(b.map((x) => ({ value: x._id, label: x.name }))))
-    void getAllCategories().then((c) => setCategoryOptions(c.map((x) => ({ value: x._id, label: x.name }))))
-  }, [])
-
-  const ensureCreated = async (opt: Opt | null, createFn: (name: string) => Promise<{ _id?: string }>): Promise<Opt | null> => {
+  // Función para asegurar que se crea un tipo, marca, categoría o subcategoría si no existe
+  const ensureCreated = async (
+    opt: Opt | null,
+    mutateAsync: (name: string) => Promise<{ _id?: string }>
+  ): Promise<Opt | null> => {
     if (!opt) return null
     if (opt.value === opt.label) {
-      const r = await createFn(opt.label)
-      if (r._id) return { value: r._id, label: opt.label }
+      const created = await mutateAsync(opt.label)
+      if (created._id) return { value: created._id, label: opt.label }
     }
     return opt
   }
 
-  const onTypeChange = async (opt: Opt | null) => {
-    setSelectedType(await ensureCreated(opt, createType))
-  }
-  const onBrandChange = async (opt: Opt | null) => {
-    setSelectedBrand(await ensureCreated(opt, createBrand))
-  }
-  const onCategoryChange = async (opt: Opt | null) => {
-    setSelectedCategory(await ensureCreated(opt, createCategory))
-  }
-  const onSubCategoryChange = async (opt: Opt | null) => {
-    setSelectedSubCategory(await ensureCreated(opt, createCategory))
-  }
-
   const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files) return
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
+    setImageFiles((prev) => [...prev, ...files])
+    files.forEach((file) => {
       const reader = new FileReader()
-      reader.onload = () => setImages((prev) => [...prev, String(reader.result ?? '')])
+      reader.onload = () => setImagePreviews((prev) => [...prev, String(reader.result ?? '')])
       reader.readAsDataURL(file)
-    }
+    })
   }
 
-  const save = () => {
-    if (!name || name.trim().length < 3 || !description || description.trim().length < 5) {
+  const removeImage = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index))
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const save = async () => {
+    if (name.trim().length < 3 || description.trim().length < 5) {
       showAlert('Error', 'Todos los campos son obligatorios', 'error')
       return
     }
-    if (images.filter(Boolean).length < 1) {
+    if (imageFiles.length < 1) {
       showAlert('Error', 'Debe seleccionar una o más imagenes', 'error')
       return
     }
@@ -85,24 +86,33 @@ export function AddProductPage() {
       showAlert('Error', 'Seleccione marca, tipo, categoría y subcategoría', 'error')
       return
     }
-    void getProductByName(name.trim()).then((product) => {
-      if (product && Object.keys(product).length !== 0) {
-        showAlert('Error', 'Ya existe un producto llamado ' + product.name, 'error')
+    try {
+      const existing = await apiClient.get<Products>(`products/${encodeURIComponent(name.trim())}`).then((r) => r.data).catch(() => null)
+      if (existing?.name) {
+        showAlert('Error', 'Ya existe un producto llamado ' + existing.name, 'error')
         return
       }
-      void createProduct(
-        name.trim(),
-        description.trim(),
-        selectedBrand.value,
-        selectedType.value,
-        price,
-        selectedCategory.value,
-        selectedSubCategory.value,
-        images
-      ).then(() => {
-        showAlert('Éxito', 'Los datos se han guardado correctamente', 'success')
-      })
-    })
+      const brand = await ensureCreated(selectedBrand, (n) => createBrand.mutateAsync(n))
+      const type = await ensureCreated(selectedType, (n) => createType.mutateAsync(n))
+      const category = await ensureCreated(selectedCategory, (n) => createCategory.mutateAsync(n))
+      const subCategory = await ensureCreated(selectedSubCategory, (n) => createCategory.mutateAsync(n))
+      if (!brand?.value || !type?.value || !category?.value || !subCategory?.value) return
+      createProduct.mutate(
+        {
+          name: name.trim(),
+          description: description.trim(),
+          brandId: brand.value,
+          typeId: type.value,
+          price,
+          categoryId: category.value,
+          subcategoryId: subCategory.value,
+          newImages: imageFiles,
+        },
+        { onSuccess: () => showAlert('Éxito', 'Los datos se han guardado correctamente', 'success') }
+      )
+    } catch {
+      showAlert('Error', 'Ocurrió un error al guardar', 'error')
+    }
   }
 
   return (
@@ -133,34 +143,32 @@ export function AddProductPage() {
                 className="form-control"
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
-                onKeyDown={(e) => {
-                  if (e.key === '-') e.preventDefault()
-                }}
+                onKeyDown={(e) => { if (e.key === '-') e.preventDefault() }}
               />
             </div>
           </div>
           <div className="row mb-3">
             <div className="col-md-3">Marca</div>
             <div className="col-md-6">
-              <CreatableIdSelect options={brandOptions} value={selectedBrand} onChange={(v) => void onBrandChange(v)} aria-label="Marca" />
+              <CreatableIdSelect options={brandOptions} value={selectedBrand} onChange={(v) => void ensureCreated(v, (n) => createBrand.mutateAsync(n)).then(setSelectedBrand)} aria-label="Marca" />
             </div>
           </div>
           <div className="row mb-3">
             <div className="col-md-3">Tipo</div>
             <div className="col-md-6">
-              <CreatableIdSelect options={typeOptions} value={selectedType} onChange={(v) => void onTypeChange(v)} aria-label="Tipo" />
+              <CreatableIdSelect options={typeOptions} value={selectedType} onChange={(v) => void ensureCreated(v, (n) => createType.mutateAsync(n)).then(setSelectedType)} aria-label="Tipo" />
             </div>
           </div>
           <div className="row mb-3">
             <div className="col-md-3">Categoría</div>
             <div className="col-md-6">
-              <CreatableIdSelect options={categoryOptions} value={selectedCategory} onChange={(v) => void onCategoryChange(v)} aria-label="Categoría" />
+              <CreatableIdSelect options={categoryOptions} value={selectedCategory} onChange={(v) => void ensureCreated(v, (n) => createCategory.mutateAsync(n)).then(setSelectedCategory)} aria-label="Categoría" />
             </div>
           </div>
           <div className="row mb-3">
             <div className="col-md-3">Subcategoría</div>
             <div className="col-md-6">
-              <CreatableIdSelect options={categoryOptions} value={selectedSubCategory} onChange={(v) => void onSubCategoryChange(v)} aria-label="Subcategoría" />
+              <CreatableIdSelect options={categoryOptions} value={selectedSubCategory} onChange={(v) => void ensureCreated(v, (n) => createCategory.mutateAsync(n)).then(setSelectedSubCategory)} aria-label="Subcategoría" />
             </div>
           </div>
           <div className="row mb-3">
@@ -173,20 +181,18 @@ export function AddProductPage() {
                 </label>
               </div>
               <div>
-                {images.map((image, i) =>
-                  image ? (
-                    <span key={i} className="me-2">
-                      <img src={image} alt="" style={{ maxHeight: 50 }} />
-                      <button type="button" className="btn btn-link" onClick={() => setImages((prev) => prev.map((x, j) => (j === i ? '' : x)))}>
-                        <i className="fas fa-trash-alt" />
-                      </button>
-                    </span>
-                  ) : null
-                )}
+                {imagePreviews.map((preview, i) => (
+                  <span key={i} className="me-2">
+                    <img src={preview} alt="" style={{ maxHeight: 50 }} />
+                    <button type="button" className="btn btn-link" onClick={() => removeImage(i)}>
+                      <i className="fas fa-trash-alt" />
+                    </button>
+                  </span>
+                ))}
               </div>
             </div>
           </div>
-          <button type="button" className="btn btn-success" onClick={save}>
+          <button type="button" className="btn btn-success" onClick={() => void save()}>
             Guardar
           </button>
         </div>

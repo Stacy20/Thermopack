@@ -143,3 +143,12 @@ export function getImageUrl(key: string): string {
   if (S3_PUBLIC_BASE_URL) return `${S3_PUBLIC_BASE_URL}/${key}`;
   return `https://${S3_BUCKET}.s3.${awsRegion}.amazonaws.com/${key}`;
 }
+
+/** Extrae la S3 key de una URL pública generada por getImageUrl. */
+export function urlToKey(url: string): string {
+  if (S3_PUBLIC_BASE_URL && url.startsWith(`${S3_PUBLIC_BASE_URL}/`)) {
+    return url.slice(S3_PUBLIC_BASE_URL.length + 1);
+  }
+  const match = url.match(/amazonaws\.com\/(.+)$/);
+  return match ? match[1] : url;
+}

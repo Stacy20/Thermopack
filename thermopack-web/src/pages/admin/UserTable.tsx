@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react'
-import { createUser, deleteUserByEmail, getAllUsers, updateUserByEmail } from '../../api/users'
+import { useState } from 'react'
+import { useAllUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../../hooks/useUsers'
 import { showAlert, showConfirmationAlert } from '../../lib/sweetAlert'
 
 export type UsersTableRow = {
@@ -15,147 +15,148 @@ function yn(v: boolean) {
   return v ? 'Sí' : 'No'
 }
 
+function toTableRow(user: { email: string; privileges: number[]; password: string }): UsersTableRow {
+  return {
+    userEmail: user.email,
+    privAddItems: user.privileges[0] === 1,
+    privEditItems: user.privileges[1] === 1,
+    privDelItems: user.privileges[2] === 1,
+    privCreateUsers: user.privileges[3] === 1,
+    editable: false,
+  }
+}
+
 export function UserTable() {
-  const [users, setUsers] = useState<UsersTableRow[]>([])
+  const { data: usersData = [], refetch } = useAllUsers()
+  const createUser = useCreateUser()
+  const updateUser = useUpdateUser()
+  const deleteUser = useDeleteUser()
+
+  const [rows, setRows] = useState<UsersTableRow[]>([])
   const [selectedUser, setSelectedUser] = useState<UsersTableRow | null>(null)
-  const [email, setEmail] = useState('')
-  const [privileges, setPrivileges] = useState([false, false, false, false])
-  const [checkedPriv, setCheckedPriv] = useState([false, false, false, false])
+  const [newEmail, setNewEmail] = useState('')
+  const [newPrivileges, setNewPrivileges] = useState([false, false, false, false])
 
-  const load = useCallback(() => {
-    void getAllUsers().then((list) => {
-      setUsers(
-        list.map((u) => ({
-          userEmail: u.email,
-          privAddItems: u.privileges[0] === 1,
-          privEditItems: u.privileges[1] === 1,
-          privDelItems: u.privileges[2] === 1,
-          privCreateUsers: u.privileges[3] === 1,
-          editable: false,
-        }))
-      )
-    })
-  }, [])
+  const dbUsers = usersData as Array<{ email: string; privileges: number[]; password: string }>
 
-  useEffect(() => {
-    load()
-  }, [load])
+  if (rows.length === 0 && dbUsers.length > 0) {
+    setRows(dbUsers.map(toTableRow))
+  }
 
   const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
 
-  const reloadForm = () => {
-    setEmail('')
-    setPrivileges([false, false, false, false])
-    setCheckedPriv([false, false, false, false])
-    load()
+  const existSuperAdminWithout = (user: UsersTableRow): boolean => {
+    const others = rows.filter((u) => u !== user)
+    const hasSuperAdmin = others.some(
+      (u) => u.privCreateUsers && u.privAddItems && u.privDelItems && u.privEditItems
+    )
+    if (!hasSuperAdmin) {
+      showAlert('Error', 'Debe existir un usuario super administrador', 'error')
+    }
+    return hasSuperAdmin
   }
 
   const addUser = () => {
-    for (const u of users) {
-      if (u.userEmail === email || !isEmail(email)) {
-        showAlert('Error', 'Ya existe un usuario con el mismo correo, por favor cambiarlo', 'error')
+    if (rows.some((u) => u.userEmail === newEmail) || !isEmail(newEmail)) {
+      showAlert('Error', 'Ya existe un usuario con el mismo correo, por favor cambiarlo', 'error')
+      return
+    }
+    const privileges = newPrivileges.map((p) => (p ? 1 : 0))
+    createUser.mutate(
+      { email: newEmail, privileges },
+      {
+        onSuccess: (user) => {
+          if ((user as { email?: string }).email === newEmail) {
+            showAlert('Éxito', 'Los datos se han guardado correctamente', 'success')
+            setNewEmail('')
+            setNewPrivileges([false, false, false, false])
+            void refetch().then((result) => {
+              if (result.data) setRows((result.data as typeof dbUsers).map(toTableRow))
+            })
+          }
+        },
+      }
+    )
+  }
+
+  const saveUser = (row: UsersTableRow, index: number) => {
+    for (let i = 0; i < rows.length; i++) {
+      if (!isEmail(row.userEmail) || (rows[i].userEmail === row.userEmail && i !== index)) {
+        showAlert('Error', 'El email está repetido o es inválido', 'error')
         return
       }
     }
-    const privilegesAsNumbers = privileges.map((p) => (p ? 1 : 0))
-    void createUser(email, privilegesAsNumbers).then((user) => {
-      if (user.email === email) {
-        showAlert('Éxito', 'Los datos se han guardado correctamente', 'success')
-        reloadForm()
-      }
-    })
-  }
-
-  const existSuperAdminWithout = (user: UsersTableRow): boolean => {
-    const index = users.indexOf(user)
-    const others = [...users.slice(0, index), ...users.slice(index + 1)]
-    for (const item of others) {
-      if (item.privCreateUsers && item.privAddItems && item.privDelItems && item.privEditItems) {
-        return true
-      }
-    }
-    showAlert('Error', 'Debe existir un usuario super administrador', 'error')
-    return false
-  }
-
-  const saveUser = (user: UsersTableRow, index: number) => {
-    for (let i = 0; i < users.length; i++) {
-      if (!isEmail(user.userEmail) || (users[i].userEmail === user.userEmail && i !== index)) {
-        showAlert('Error', 'El email  esta repetido o es invalido', 'error')
-        return
-      }
-    }
-    if (!existSuperAdminWithout(user)) {
-      if (!user.privAddItems || !user.privCreateUsers || !user.privDelItems || !user.privEditItems) {
+    if (!existSuperAdminWithout(row)) {
+      if (!row.privAddItems || !row.privCreateUsers || !row.privDelItems || !row.privEditItems) {
         showAlert('Error', 'Para realizar cambios ocupa ser usuario super administrador', 'error')
         return
       }
     }
     showConfirmationAlert('Confirmación', '¿Está seguro que desea realizar cambios?', () => {
-      void getAllUsers().then((all) => {
-        const dbUser = all[index]
-        if (!dbUser) return
-        const privilegesAsNumbers = [
-          user.privAddItems ? 1 : 0,
-          user.privEditItems ? 1 : 0,
-          user.privDelItems ? 1 : 0,
-          user.privCreateUsers ? 1 : 0,
-        ]
-        void updateUserByEmail(dbUser.email, user.userEmail, dbUser.password, privilegesAsNumbers).then((response) => {
-          if (response.message === 'Successfully modified') {
-            setUsers((prev) =>
-              prev.map((u) => (u === user ? { ...u, editable: false } : u))
-            )
-            setSelectedUser(null)
-            showAlert('Éxito', 'El usuario se ha actualizado correctamente', 'success')
-            window.location.reload()
-          } else {
-            showAlert('Error', 'No se puedo actualizar correctamente', 'error')
-          }
-        })
-      })
+      const dbUser = dbUsers[index]
+      if (!dbUser) return
+      const privileges = [
+        row.privAddItems ? 1 : 0,
+        row.privEditItems ? 1 : 0,
+        row.privDelItems ? 1 : 0,
+        row.privCreateUsers ? 1 : 0,
+      ]
+      updateUser.mutate(
+        { email: dbUser.email, newEmail: row.userEmail, password: dbUser.password, privileges },
+        {
+          onSuccess: (response) => {
+            if ((response as { message?: string }).message === 'Successfully modified') {
+              setRows((prev) => prev.map((u) => (u === row ? { ...u, editable: false } : u)))
+              setSelectedUser(null)
+              showAlert('Éxito', 'El usuario se ha actualizado correctamente', 'success')
+              window.location.reload()
+            } else {
+              showAlert('Error', 'No se pudo actualizar correctamente', 'error')
+            }
+          },
+        }
+      )
     })
   }
 
-  const deleteUser = (user: UsersTableRow) => {
+  const handleDeleteUser = (row: UsersTableRow) => {
     setSelectedUser(null)
-    if (!existSuperAdminWithout(user)) return
-    void deleteUserByEmail(user.userEmail).then((response) => {
-      if (response.message === 'Successfully deleted') {
-        showAlert('Éxito', 'El usuario se ha eliminado correctamente', 'success')
-        setUsers((prev) => prev.filter((u) => u !== user))
-      } else {
-        showAlert('Error', 'No se ha podido eliminar correctamente el usuario', 'error')
-      }
+    if (!existSuperAdminWithout(row)) return
+    deleteUser.mutate(row.userEmail, {
+      onSuccess: (response) => {
+        if ((response as { message?: string }).message === 'Successfully deleted') {
+          showAlert('Éxito', 'El usuario se ha eliminado correctamente', 'success')
+          setRows((prev) => prev.filter((u) => u !== row))
+        } else {
+          showAlert('Error', 'No se ha podido eliminar correctamente el usuario', 'error')
+        }
+      },
     })
   }
 
-  const resetUser = (user: UsersTableRow, index: number) => {
-    user.editable = false
+  const resetRow = (row: UsersTableRow, index: number) => {
+    const db = dbUsers[index]
+    if (!db) return
+    setRows((prev) =>
+      prev.map((u) =>
+        u === row
+          ? {
+              ...u,
+              editable: false,
+              userEmail: db.email,
+              privAddItems: db.privileges[0] === 1,
+              privEditItems: db.privileges[1] === 1,
+              privDelItems: db.privileges[2] === 1,
+              privCreateUsers: db.privileges[3] === 1,
+            }
+          : u
+      )
+    )
     setSelectedUser(null)
-    void getAllUsers().then((all) => {
-      const db = all[index]
-      if (!db) return
-      user.userEmail = db.email
-      user.privAddItems = db.privileges[0] === 1
-      user.privEditItems = db.privileges[1] === 1
-      user.privDelItems = db.privileges[2] === 1
-      user.privCreateUsers = db.privileges[3] === 1
-      setUsers([...users])
-    })
   }
 
-  const togglePriv = (idx: number) => {
-    setPrivileges((p) => {
-      const n = [...p]
-      n[idx] = !n[idx]
-      return n
-    })
-    setCheckedPriv((p) => {
-      const n = [...p]
-      n[idx] = !n[idx]
-      return n
-    })
+  const toggleNewPriv = (idx: number) => {
+    setNewPrivileges((prev) => prev.map((v, i) => (i === idx ? !v : v)))
   }
 
   return (
@@ -173,97 +174,92 @@ export function UserTable() {
       <tbody>
         <tr className="align-middle">
           <td>
-            <input type="text" className="border-0 bg-transparent" value={email} placeholder="Agregar un correo" onChange={(e) => setEmail(e.target.value)} />
+            <input
+              type="text"
+              className="border-0 bg-transparent"
+              value={newEmail}
+              placeholder="Agregar un correo"
+              onChange={(e) => setNewEmail(e.target.value)}
+            />
           </td>
           {[0, 1, 2, 3].map((idx) => (
             <td key={idx}>
-              <span className={`badge py-2 px-3 w-100 ${checkedPriv[idx] ? 'text-bg-success' : 'text-bg-danger'}`}>
-                <input type="checkbox" checked={checkedPriv[idx]} onChange={() => togglePriv(idx)} />
-                <label className="form-check-label ms-2">{yn(checkedPriv[idx])}</label>
+              <span className={`badge py-2 px-3 w-100 ${newPrivileges[idx] ? 'text-bg-success' : 'text-bg-danger'}`}>
+                <input type="checkbox" checked={newPrivileges[idx]} onChange={() => toggleNewPriv(idx)} />
+                <label className="form-check-label ms-2">{yn(newPrivileges[idx])}</label>
               </span>
             </td>
           ))}
           <td className="w-25">
-            <button
-              type="button"
-              className="btn btn-info text-light"
-              onClick={() => {
-                setSelectedUser(null)
-                addUser()
-              }}
-            >
+            <button type="button" className="btn btn-info text-light" onClick={() => { setSelectedUser(null); addUser() }}>
               <img src="/assets/icons/remove_person_icon.svg" alt="" className="me-1" />
               Agregar
             </button>
           </td>
         </tr>
-        {users.map((user, index) => (
+        {rows.map((row, index) => (
           <tr
-            key={user.userEmail}
-            className={'align-middle' + (user === selectedUser ? ' table-primary' : '')}
-            onClick={() => setSelectedUser(user)}
+            key={row.userEmail}
+            className={'align-middle' + (row === selectedUser ? ' table-primary' : '')}
+            onClick={() => setSelectedUser(row)}
           >
             <td>
               <input
                 type="text"
                 className="border-0 bg-transparent"
-                style={{ width: `${Math.max(user.userEmail.length, 12)}ch` }}
-                value={user.userEmail}
-                disabled={!user.editable}
+                style={{ width: `${Math.max(row.userEmail.length, 12)}ch` }}
+                value={row.userEmail}
+                disabled={!row.editable}
                 onChange={(e) => {
                   const v = e.target.value
-                  setUsers((prev) => prev.map((u) => (u === user ? { ...u, userEmail: v } : u)))
+                  setRows((prev) => prev.map((u) => (u === row ? { ...u, userEmail: v } : u)))
                 }}
                 onClick={(e) => e.stopPropagation()}
               />
             </td>
             {(['privAddItems', 'privEditItems', 'privDelItems', 'privCreateUsers'] as const).map((field) => (
               <td key={field}>
-                <span className={`badge py-2 px-3 w-100 ${user[field] ? 'text-bg-success' : 'text-bg-danger'}`}>
+                <span className={`badge py-2 px-3 w-100 ${row[field] ? 'text-bg-success' : 'text-bg-danger'}`}>
                   <input
                     type="checkbox"
-                    disabled={!user.editable}
-                    checked={user[field]}
+                    disabled={!row.editable}
+                    checked={row[field]}
                     onChange={(e) => {
                       e.stopPropagation()
-                      setUsers((prev) =>
-                        prev.map((u) => (u === user ? { ...u, [field]: !u[field] } : u))
-                      )
+                      setRows((prev) => prev.map((u) => (u === row ? { ...u, [field]: !u[field] } : u)))
                     }}
                   />
-                  <label className="form-check-label ms-2">{yn(user[field])}</label>
+                  <label className="form-check-label ms-2">{yn(row[field])}</label>
                 </span>
               </td>
             ))}
             <td className="w-25">
-              {selectedUser === user && !user.editable && (
+              {selectedUser === row && !row.editable && (
                 <>
                   <button
                     type="button"
                     className="btn btn-primary me-2"
                     onClick={(e) => {
                       e.stopPropagation()
-                      setUsers((prev) =>
-                        prev.map((u) => (u === user ? { ...u, editable: true } : u))
-                      )
+                      setRows((prev) => prev.map((u) => (u === row ? { ...u, editable: true } : u)))
                     }}
                   >
                     <img src="/assets/icons/edit_note_icon.svg" alt="" className="me-1" />
                     Editar
                   </button>
-                  <button type="button" className="btn btn-danger" onClick={(e) => { e.stopPropagation(); deleteUser(user) }}>
+                  <button type="button" className="btn btn-danger" onClick={(e) => { e.stopPropagation(); handleDeleteUser(row) }}>
                     <img src="/assets/icons/remove_person_icon.svg" alt="" className="me-1" />
                     Eliminar
                   </button>
                 </>
               )}
-              {selectedUser === user && user.editable && (
+              {selectedUser === row && row.editable && (
                 <>
-                  <button type="button" className="btn btn-info text-light me-2" onClick={(e) => { e.stopPropagation(); saveUser(user, index) }}>
+                  <button type="button" className="btn btn-info text-light me-2" onClick={(e) => { e.stopPropagation(); saveUser(row, index) }}>
                     <img src="/assets/icons/check_circle_icon.svg" alt="" className="me-1" />
                     Guardar
                   </button>
-                  <button type="button" className="btn btn-secondary" onClick={(e) => { e.stopPropagation(); resetUser(user, index) }}>
+                  <button type="button" className="btn btn-secondary" onClick={(e) => { e.stopPropagation(); resetRow(row, index) }}>
                     <img src="/assets/icons/cancel_close_icon.svg" alt="" className="me-1" />
                     Cancelar
                   </button>

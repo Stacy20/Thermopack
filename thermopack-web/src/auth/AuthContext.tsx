@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react'
 import type { Users } from '../types/users'
-import { getUserByEmail } from '../api/users'
+import apiClient from '../api/client'
 
 const LS_LOGGED = 'isLoggedIn'
 const LS_EMAIL = 'userLoggedIn'
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoggedIn(false)
       return
     }
-    getUserByEmail(email).then((u) => {
+    apiClient.get<Users>(`users/${encodeURIComponent(email)}`).then((r) => r.data).then((u) => {
       if (u && u.email) {
         setUserLoggedIn(u)
         setIsLoggedIn(true)

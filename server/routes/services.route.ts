@@ -1,98 +1,134 @@
 import { Router } from "express";
 import ServicesModel from '../collections/services.collection';
+import { upload, handleMulterError } from '../middleware/upload.middleware';
+import { uploadImage, deleteImageAllVariants, sanitizeFolder, urlToKey } from '../services/s3.service';
 
 const router = Router();
 
+const SERVICES_FOLDER = sanitizeFolder('services');
+
 router.get('/', async (req, res) => {
     const { limit, offset } = req.query;
-    const limitValue: number = limit ? parseInt(limit.toString()) : 10;
-    const offsetValue: number = offset ? parseInt(offset.toString()) : 0;
+    const limitValue = limit ? parseInt(limit.toString()) : 10;
+    const offsetValue = offset ? parseInt(offset.toString()) : 0;
 
     try {
-        // Consulta para obtener la lista de servicios paginada
-        const services = await ServicesModel.find({})
-            .skip(offsetValue)
-            .limit(limitValue)
-            .lean()
-            .exec();
-
-        // Consulta para obtener el número total de servicios
+        const services = await ServicesModel.find({}).skip(offsetValue).limit(limitValue).lean().exec();
         const totalCount = await ServicesModel.countDocuments();
-
-        // Enviar la respuesta con la lista de servicios y el total de servicios
-        res.status(200).json({
-            services: services,
-            totalCount: totalCount
-        });
-    } catch (error) {
+        res.status(200).json({ services, totalCount });
+    } catch {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 });
 
-// Revisa si hay minimo un servicio
-router.get('/check/not_empty', async (req, res) => {
+router.get('/check/not_empty', async (_req, res) => {
     try {
         const service = await ServicesModel.findOne();
-        const hasService = service !== null; 
-        res.status(200).json({ exists: hasService }); 
+        res.status(200).json({ exists: service !== null });
     } catch (error) {
-        console.error('Error fetching product:', error);
+        console.error('Error fetching service:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
-// Obtiene un servicio por su nombre
 router.get('/:name', async (req, res) => {
     const { name } = req.params;
-    const serviceWithName = await ServicesModel.find({ name }).lean().exec();
-
-    if (serviceWithName.length === 0) {
+    const service = await ServicesModel.findOne({ name }).lean().exec();
+    if (!service) {
         res.status(404).json({ message: `No records with ${name} name` });
     } else {
-        res.status(200).json(serviceWithName[0]);
+        res.status(200).json(service);
     }
 });
 
-// Crea un nuevo servicio
-router.post('/', async (req, res) => {
-    const service = await ServicesModel.create({
-        name: req.body.name,
-        description: req.body.description,
-        price: req.body.price,
-        images: req.body.images,
-    });
-    res.status(201).json(service);
+router.post('/', upload.array('images', 10), async (req, res) => {
+    try {
+        const files = (req.files as Express.Multer.File[]) ?? [];
+        const imageUrls: string[] = [];
+
+        for (const file of files) {
+            const result = await uploadImage(file, SERVICES_FOLDER);
+            imageUrls.push(result.card.url);
+        }
+
+        const service = await ServicesModel.create({
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price != null ? Number(req.body.price) : undefined,
+            images: imageUrls,
+        });
+
+        res.status(201).json(service);
+    } catch (error) {
+        console.error('Error creating service:', error);
+        res.status(500).json({ message: 'Error al crear el servicio' });
+    }
 });
 
-// Modifica un servicio por su nombre
-router.put('/:name', async (req, res) => {
-    const { name } = req.params;
-    const serviceWithName = await ServicesModel.find({ name }).lean().exec();
 
-    if (serviceWithName.length === 0) {
-        res.status(404).json({ message: `No records with ${name} name` });
-        return;
-    } 
-    await ServicesModel.updateOne({ name: req.params.name }, { $set: {
-      name: req.body.name,
-      description: req.body.description,
-      price: req.body.price,
-      images: req.body.images,
-    } });
-    res.status(202).json({ message: 'Successfully modified' });
+router.put('/:name', upload.array('images', 10), async (req, res) => {
+    try {
+        const { name } = req.params;
+        const service = await ServicesModel.findOne({ name }).lean().exec();
+
+        if (!service) {
+            res.status(404).json({ message: `No records with ${name} name` });
+            return;
+        }
+
+        let existingImages: string[] = [];
+        try {
+            existingImages = JSON.parse(req.body.existingImages ?? '[]');
+        } catch {
+            existingImages = [];
+        }
+
+        const oldImages: string[] = service.images ?? [];
+        const toDelete = oldImages.filter(url => !existingImages.includes(url));
+        await Promise.all(toDelete.map(url => deleteImageAllVariants(urlToKey(url)).catch(() => {})));
+
+        const files = (req.files as Express.Multer.File[]) ?? [];
+        const newImageUrls: string[] = [];
+        for (const file of files) {
+            const result = await uploadImage(file, SERVICES_FOLDER);
+            newImageUrls.push(result.card.url);
+        }
+
+        await ServicesModel.updateOne({ name }, { $set: {
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price != null ? Number(req.body.price) : undefined,
+            images: [...existingImages, ...newImageUrls],
+        }});
+
+        res.status(202).json({ message: 'Successfully modified' });
+    } catch (error) {
+        console.error('Error updating service:', error);
+        res.status(500).json({ message: 'Error al actualizar el servicio' });
+    }
 });
 
-// Elimina un servicio por su nombre
 router.delete('/:name', async (req, res) => {
-    const { name } = req.params;
-    const serviceWithName = await ServicesModel.find({ name }).lean().exec();
+    try {
+        const { name } = req.params;
+        const service = await ServicesModel.findOne({ name }).lean().exec();
 
-    if (serviceWithName.length === 0) {
-        res.status(404).json({ message: `No records with ${name} name` });
-        return;
-    } 
-    await ServicesModel.deleteOne({ name: req.params.name });
-    res.status(202).json({ message: 'Successfully deleted' });
+        if (!service) {
+            res.status(404).json({ message: `No records with ${name} name` });
+            return;
+        }
+
+        const images: string[] = service.images ?? [];
+        await Promise.all(images.map(url => deleteImageAllVariants(urlToKey(url)).catch(() => {})));
+
+        await ServicesModel.deleteOne({ name });
+        res.status(202).json({ message: 'Successfully deleted' });
+    } catch (error) {
+        console.error('Error deleting service:', error);
+        res.status(500).json({ message: 'Error al eliminar el servicio' });
+    }
 });
+
+router.use(handleMulterError);
 
 export default router;

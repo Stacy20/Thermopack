@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getContactData } from '../api/contact'
-import { getProductByName } from '../api/products'
-import { getServiceByName } from '../api/servicesApi'
+import { useContact } from '../hooks/useContact'
+import { useProductByName } from '../hooks/useProducts'
+import { useServiceByName } from '../hooks/useServices'
 import { GalleryLightbox } from '../components/GalleryLightbox'
 import { formatColon, formatDescription } from '../utils/text'
 
@@ -11,42 +10,21 @@ export function DetailPage() {
   const typeNum = parseInt(type ?? '1', 10)
   const name = id ? decodeURIComponent(id) : ''
 
-  const [title, setTitle] = useState('Producto/Servicio')
-  const [description, setDescription] = useState('')
-  const [price, setPrice] = useState(0)
-  const [images, setImages] = useState<string[]>([])
-  const [whatsappLink, setWhatsapp] = useState('')
+  const { data: contactList } = useContact()
+  const { data: product } = useProductByName(typeNum === 1 ? name : '')
+  const { data: service } = useServiceByName(typeNum !== 1 ? name : '')
 
-  useEffect(() => {
-    void getContactData().then((contact) => {
-      if (!contact[0]) return
-      const currentPageUrl = window.location.href
-      setWhatsapp(
-        `https://wa.me/${contact[0].whatsappLink}?text=${encodeURIComponent('Estoy interesado en lo siguiente:\n\n' + currentPageUrl)}`
-      )
-    })
-  }, [])
+  const item = typeNum === 1 ? product : service
+  const title = item?.name ?? 'Producto/Servicio'
+  const description = item?.description ?? ''
+  const price = item?.price ?? 0
+  const images = item?.images ?? []
 
-  useEffect(() => {
-    if (!name) return
-    if (typeNum === 1) {
-      void getProductByName(name).then((product) => {
-        if (!product.name) return
-        setTitle(product.name)
-        setDescription(product.description)
-        setPrice(product.price)
-        setImages(product.images ?? [])
-      })
-    } else {
-      void getServiceByName(name).then((service) => {
-        if (!service.name) return
-        setTitle(service.name)
-        setDescription(service.description)
-        setPrice(service.price)
-        setImages(service.images ?? [])
-      })
-    }
-  }, [name, typeNum])
+  const contact = contactList?.[0]
+  const currentPageUrl = window.location.href
+  const whatsappLink = contact
+    ? `https://wa.me/${contact.whatsappLink}?text=${encodeURIComponent('Estoy interesado en lo siguiente:\n\n' + currentPageUrl)}`
+    : ''
 
   return (
     <div className="container py-4">

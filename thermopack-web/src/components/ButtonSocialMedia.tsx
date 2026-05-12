@@ -1,24 +1,16 @@
-import { useEffect, useState, useRef } from 'react'
-import { getContactData } from '../api/contact'
+import { useRef, useEffect, useState } from 'react'
+import { useContact } from '../hooks/useContact'
 
 export function ButtonSocialMedia() {
+  const { data: contactList } = useContact()
+  const contact = contactList?.[0]
   const [open, setOpen] = useState(false)
-  const [facebookLink, setFacebook] = useState('#')
-  const [youtubeLink, setYoutube] = useState('#')
-  const [whatsappLink, setWhatsapp] = useState('#')
-  const [instagramLink, setInstagram] = useState('#')
   const btnsRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    getContactData().then((c) => {
-      if (c[0]) {
-        setFacebook(c[0].facebookLink || '#')
-        setYoutube(c[0].youtubeLink || '#')
-        setWhatsapp(`https://wa.me/${c[0].whatsappLink}`)
-        setInstagram(c[0].instagramLink || '#')
-      }
-    })
-  }, [])
+  const facebookLink = contact?.facebookLink || '#'
+  const youtubeLink = contact?.youtubeLink || '#'
+  const instagramLink = contact?.instagramLink || '#'
+  const whatsappLink = contact ? `https://wa.me/${contact.whatsappLink}` : '#'
 
   useEffect(() => {
     if (!btnsRef.current) return

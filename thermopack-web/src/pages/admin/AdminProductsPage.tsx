@@ -1,9 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchProductsPage } from '../../api/products'
-import { getAllBrands } from '../../api/brands'
-import { getAllTypes } from '../../api/typesApi'
+import { useProductsPage } from '../../hooks/useProducts'
+import { useAllBrands } from '../../hooks/useBrands'
+import { useAllTypes } from '../../hooks/useTypes'
 import { BrandSelect } from '../../components/BrandSelect'
 import { TypeSelect } from '../../components/TypeSelect'
 import { SearchBar } from '../../components/SearchBar'
@@ -12,8 +11,6 @@ import { Pagination } from '../../components/Pagination'
 import { useCatalogStore } from '../../stores/catalogStore'
 import { LIMIT_PRODUCTS } from '../../stores/limits'
 import { useAuth } from '../../auth/AuthContext'
-import type { Brands } from '../../types/brands'
-import type { Types } from '../../types/types'
 
 export function AdminProductsPage() {
   const navigate = useNavigate()
@@ -27,31 +24,24 @@ export function AdminProductsPage() {
   const setBrandFilter = useCatalogStore((s) => s.setBrandFilter)
   const setTypeFilter = useCatalogStore((s) => s.setTypeFilter)
 
-  const [brands, setBrands] = useState<Brands[]>([])
-  const [types, setTypes] = useState<Types[]>([])
-
   useEffect(() => {
     if (!isLoggedIn) navigate('/login')
   }, [isLoggedIn, navigate])
 
-  useEffect(() => {
-    void getAllTypes().then(setTypes)
-    void getAllBrands().then(setBrands)
-  }, [])
+  const { data: pageData } = useProductsPage(
+    {
+      limit: LIMIT_PRODUCTS,
+      offset: offsetProducts,
+      brandId: idSelectBrand,
+      categoryId: idCategory,
+      typeId: idSelectType,
+      name: termSearch,
+    },
+    isLoggedIn
+  )
 
-  const { data: pageData } = useQuery({
-    queryKey: ['productsPage', offsetProducts, idSelectBrand, idCategory, idSelectType, termSearch],
-    queryFn: () =>
-      fetchProductsPage({
-        limit: LIMIT_PRODUCTS,
-        offset: offsetProducts,
-        brandId: idSelectBrand,
-        categoryId: idCategory,
-        typeId: idSelectType,
-        name: termSearch,
-      }),
-    enabled: isLoggedIn,
-  })
+  const { data: brands = [] } = useAllBrands()
+  const { data: types = [] } = useAllTypes()
 
   const products = pageData?.products ?? []
   const totalProducts = pageData?.totalCount ?? 0

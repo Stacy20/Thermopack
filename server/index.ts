@@ -17,14 +17,12 @@ import TypesRouter from './routes/types.route';
 import UsersRouter from './routes/users.route';
 import ContactRouter from './routes/contact.route';
 import UploadRouter from './routes/upload.route';
-import * as bodyParser from 'body-parser';
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 
-app.use(bodyParser.json({ limit: '1mb' }));
-app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
-app.use(express.json()); // <- Esta linea permite que se accese el body
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 

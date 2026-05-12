@@ -1,7 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { fetchServicesPage } from '../api/servicesApi'
-import { getData } from '../api/data'
+import { useData } from '../hooks/useData'
+import { useServicesPage } from '../hooks/useServices'
 import { ListCard } from '../components/ListCard'
 import { Pagination } from '../components/Pagination'
 import { useCatalogStore } from '../stores/catalogStore'
@@ -11,30 +9,17 @@ import { formatDescription } from '../utils/text'
 export function ServicesPage() {
   const offsetServices = useCatalogStore((s) => s.offsetServices)
 
-  const [title, setTitle] = useState('Nuestros servicios')
-  const [description, setDescription] = useState('')
-
-  const { data, isLoading } = useQuery({
-    queryKey: ['servicesPage', offsetServices],
-    queryFn: () => fetchServicesPage(LIMIT_SERVICE, offsetServices),
-  })
-
-  useEffect(() => {
-    void getData().then((d) => {
-      if (d[0]) {
-        setTitle(d[0].servicesTitle)
-        setDescription(d[0].servicesParagraph)
-      }
-    })
-  }, [])
+  const { data, isLoading } = useServicesPage(LIMIT_SERVICE, offsetServices)
+  const { data: siteData } = useData()
 
   const services = data?.services ?? []
   const totalServices = data?.totalCount ?? 0
-  const loading = isLoading && title === '' && description === ''
+  const title = siteData?.servicesTitle ?? 'Nuestros servicios'
+  const description = siteData?.servicesParagraph ?? ''
 
   return (
     <div className="container">
-      {loading ? (
+      {isLoading && !siteData ? (
         <div className="text-center py-5">
           <div className="spinner-border" role="status" />
           <p>Cargando...</p>

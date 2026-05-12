@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createService, getServiceByName } from '../../api/servicesApi'
+import { useCreateService } from '../../hooks/useServices'
+import apiClient from '../../api/client'
 import { useAuth } from '../../auth/AuthContext'
 import { showAlert } from '../../lib/sweetAlert'
+import type { Services } from '../../types/services'
 
 export function AddServicePage() {
   const navigate = useNavigate()
   const { isLoggedIn, userCanAdd } = useAuth()
+
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState(0)
-  const [images, setImages] = useState<string[]>([])
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [imagePreviews, setImagePreviews] = useState<string[]>([])
+
+  const createService = useCreateService()
 
   useEffect(() => {
     if (!isLoggedIn) navigate('/login')
@@ -20,33 +26,46 @@ export function AddServicePage() {
   }, [isLoggedIn, navigate, userCanAdd])
 
   const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files) return
-    for (let i = 0; i < files.length; i++) {
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
+    setImageFiles((prev) => [...prev, ...files])
+    files.forEach((file) => {
       const reader = new FileReader()
-      reader.onload = () => setImages((prev) => [...prev, String(reader.result ?? '')])
-      reader.readAsDataURL(files[i])
-    }
+      reader.onload = () => setImagePreviews((prev) => [...prev, String(reader.result ?? '')])
+      reader.readAsDataURL(file)
+    })
   }
 
-  const insert = () => {
-    if (!name || name.trim().length < 3 || !description || description.trim().length < 5) {
+  const removeImage = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index))
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const insert = async () => {
+    if (name.trim().length < 3 || description.trim().length < 5) {
       showAlert('Error', 'Todos los campos son obligatorios', 'error')
       return
     }
-    if (images.filter(Boolean).length < 1) {
+    if (imageFiles.length < 1) {
       showAlert('Error', 'Debe seleccionar una o más imagenes', 'error')
       return
     }
-    void getServiceByName(name).then((service) => {
-      if (name !== service.name && service.name && Object.keys(service).length !== 0) {
-        showAlert('Error', 'Ya existe un servicio llamado' + service.name, 'error')
+    try {
+      const existing = await apiClient
+        .get<Services>(`services/${encodeURIComponent(name.trim())}`)
+        .then((r) => r.data)
+        .catch(() => null)
+      if (existing?.name) {
+        showAlert('Error', 'Ya existe un servicio llamado ' + existing.name, 'error')
         return
       }
-      void createService(name, description, price, images).then(() => {
-        showAlert('Éxito', 'Los datos se han guardado correctamente', 'success')
-      })
-    })
+      createService.mutate(
+        { name: name.trim(), description: description.trim(), price, newImages: imageFiles },
+        { onSuccess: () => showAlert('Éxito', 'Los datos se han guardado correctamente', 'success') }
+      )
+    } catch {
+      showAlert('Error', 'Ocurrió un error al guardar', 'error')
+    }
   }
 
   return (
@@ -81,19 +100,17 @@ export function AddServicePage() {
                 Seleccionar archivo
               </label>
             </div>
-            {images.map((im, i) =>
-              im ? (
-                <span key={i} className="me-2">
-                  <img src={im} alt="" style={{ maxHeight: 50 }} />
-                  <button type="button" className="btn btn-link" onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}>
-                    <i className="fas fa-trash-alt" />
-                  </button>
-                </span>
-              ) : null
-            )}
+            {imagePreviews.map((preview, i) => (
+              <span key={i} className="me-2">
+                <img src={preview} alt="" style={{ maxHeight: 50 }} />
+                <button type="button" className="btn btn-link" onClick={() => removeImage(i)}>
+                  <i className="fas fa-trash-alt" />
+                </button>
+              </span>
+            ))}
           </div>
         </div>
-        <button type="button" className="btn btn-success" onClick={insert}>
+        <button type="button" className="btn btn-success" onClick={() => void insert()}>
           Guardar
         </button>
       </div>

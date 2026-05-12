@@ -1,7 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchServicesPage } from '../../api/servicesApi'
+import { useServicesPage } from '../../hooks/useServices'
 import { ListCard } from '../../components/ListCard'
 import { Pagination } from '../../components/Pagination'
 import { useCatalogStore } from '../../stores/catalogStore'
@@ -17,11 +16,7 @@ export function AdminServicesPage() {
     if (!isLoggedIn) navigate('/login')
   }, [isLoggedIn, navigate])
 
-  const { data } = useQuery({
-    queryKey: ['servicesPage', offsetServices],
-    queryFn: () => fetchServicesPage(LIMIT_SERVICE, offsetServices),
-    enabled: isLoggedIn,
-  })
+  const { data } = useServicesPage(LIMIT_SERVICE, offsetServices, isLoggedIn)
 
   const services = data?.services ?? []
   const totalServices = data?.totalCount ?? 0

@@ -1,10 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { fetchProductsPage } from '../api/products'
-import { getData } from '../api/data'
-import { getAllBrands } from '../api/brands'
-import { getAllCategories } from '../api/categories'
-import { getAllTypes } from '../api/typesApi'
+import { useData } from '../hooks/useData'
+import { useAllBrands } from '../hooks/useBrands'
+import { useAllCategories } from '../hooks/useCategories'
+import { useAllTypes } from '../hooks/useTypes'
+import { useProductsPage } from '../hooks/useProducts'
 import { BrandSelect } from '../components/BrandSelect'
 import { TypeSelect } from '../components/TypeSelect'
 import { Sidebar } from '../components/Sidebar'
@@ -14,9 +12,6 @@ import { Pagination } from '../components/Pagination'
 import { useCatalogStore } from '../stores/catalogStore'
 import { LIMIT_PRODUCTS } from '../stores/limits'
 import { formatDescription } from '../utils/text'
-import type { Brands } from '../types/brands'
-import type { Categories } from '../types/categories'
-import type { Types } from '../types/types'
 
 export function ProductsPage() {
   const offsetProducts = useCatalogStore((s) => s.offsetProducts)
@@ -28,39 +23,24 @@ export function ProductsPage() {
   const setBrandFilter = useCatalogStore((s) => s.setBrandFilter)
   const setTypeFilter = useCatalogStore((s) => s.setTypeFilter)
 
-  const [title, setTitle] = useState('Nuestros productos')
-  const [description, setDescription] = useState('')
-  const [categories, setCategories] = useState<Categories[]>([])
-  const [brands, setBrands] = useState<Brands[]>([])
-  const [types, setTypes] = useState<Types[]>([])
-
-  const { data: pageData } = useQuery({
-    queryKey: ['productsPage', offsetProducts, idSelectBrand, idCategory, idSelectType, termSearch],
-    queryFn: () =>
-      fetchProductsPage({
-        limit: LIMIT_PRODUCTS,
-        offset: offsetProducts,
-        brandId: idSelectBrand,
-        categoryId: idCategory,
-        typeId: idSelectType,
-        name: termSearch,
-      }),
+  const { data: pageData } = useProductsPage({
+    limit: LIMIT_PRODUCTS,
+    offset: offsetProducts,
+    brandId: idSelectBrand,
+    categoryId: idCategory,
+    typeId: idSelectType,
+    name: termSearch,
   })
 
-  useEffect(() => {
-    void getData().then((d) => {
-      if (d[0]) {
-        setTitle(d[0].productsTitle)
-        setDescription(d[0].productsParagraph)
-      }
-    })
-    void getAllTypes().then(setTypes)
-    void getAllBrands().then(setBrands)
-    void getAllCategories().then(setCategories)
-  }, [])
+  const { data: siteData } = useData()
+  const { data: brands = [] } = useAllBrands()
+  const { data: categories = [] } = useAllCategories()
+  const { data: types = [] } = useAllTypes()
 
   const products = pageData?.products ?? []
   const totalProducts = pageData?.totalCount ?? 0
+  const title = siteData?.productsTitle ?? 'Nuestros productos'
+  const description = siteData?.productsParagraph ?? ''
 
   return (
     <div className="container">
