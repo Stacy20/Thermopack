@@ -136,6 +136,36 @@ router.put('/presentation-images', upload.array('images', 10), async (req, res) 
     }
 });
 
+router.get('/nosotros', async (_req, res) => {
+    const data = await DataModel.findOne(
+        {},
+        'nosotrosDescription historiaList valoresList nosotrosPage mision vision visionImages presentationImages'
+    ).lean().exec();
+    res.status(200).json(data ?? null);
+});
+
+router.get('/products-services', async (_req, res) => {
+    const data = await DataModel.findOne(
+        {},
+        'productsTitle productsParagraph servicesTitle servicesParagraph'
+    ).lean().exec();
+    res.status(200).json(data ?? {});
+});
+
+router.put('/nosotros', async (req, res) => {
+    const update: Record<string, unknown> = {
+        nosotrosDescription: req.body.nosotrosDescription,
+        historiaList: req.body.historiaList,
+        valoresList: req.body.valoresList,
+    };
+    if (req.body.nosotrosPage !== undefined) {
+        update.nosotrosPage = req.body.nosotrosPage;
+    }
+    const data = await DataModel.findOneAndUpdate({}, { $set: update }, { new: true });
+    if (!data) { return res.status(404).json({ message: 'No records found' }); }
+    return res.status(202).json({ message: 'Successfully modified', data });
+});
+
 router.put('/products-services', async (req, res) => {
     const data = await DataModel.findOneAndUpdate({}, { $set: {
         productsTitle: req.body.productsTitle,
@@ -145,6 +175,29 @@ router.put('/products-services', async (req, res) => {
     }}, { new: true });
     if (!data) { return res.status(404).json({ message: 'No records found' }); }
     return res.status(202).json({ message: 'Successfully modified', data });
+});
+
+router.put('/home-hero', async (req, res) => {
+    try {
+        const homeHero = req.body;
+        if (homeHero == null || typeof homeHero !== 'object') {
+            res.status(400).json({ message: 'Cuerpo inválido' });
+            return;
+        }
+        const data = await DataModel.findOneAndUpdate(
+            {},
+            { $set: { homeHero } },
+            { new: true, lean: true }
+        );
+        if (!data) {
+            res.status(404).json({ message: 'No records found' });
+            return;
+        }
+        res.status(202).json({ message: 'Successfully modified', data });
+    } catch (error) {
+        console.error('Error updating home-hero:', error);
+        res.status(500).json({ message: 'Error al guardar el hero del inicio' });
+    }
 });
 
 router.use(handleMulterError);

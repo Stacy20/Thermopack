@@ -24,13 +24,20 @@ export const QUERY_KEYS = {
   },
   data: {
     full: ['data'] as const,
+    /** Títulos/párrafos páginas productos y servicios (GET proyección mínima) */
+    catalogPageCopy: ['data', 'catalog-page-copy'] as const,
     text: ['data', 'text'] as const,
     logo: ['data', 'logo'] as const,
     visionImages: ['data', 'visionImages'] as const,
     presentationImages: ['data', 'presentationImages'] as const,
+    nosotros: ['data', 'nosotros'] as const,
+  },
+  home: {
+    public: ['home', 'public'] as const,
   },
   contact: {
     all: ['contact'] as const,
+    whatsapp: ['contact', 'whatsapp'] as const,
   },
   users: {
     all: ['users'] as const,

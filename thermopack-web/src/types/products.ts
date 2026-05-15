@@ -3,12 +3,19 @@ export interface Products {
   _id?: string
   name: string
   description: string
-  brandId: string
-  typeId: string
+  brand: string
+  type: string
   price: number
-  categoryId: string
-  subcategoryId: string
+  category: string
+  subcategory: string
   images: string[]
+  brandId?: string
+  typeId?: string
+  categoryId?: string
+  subcategoryId?: string
+  listPrice?: number
+  rating?: number
+  features?: string[]
 }
 
 export function productId(p: Products): string {

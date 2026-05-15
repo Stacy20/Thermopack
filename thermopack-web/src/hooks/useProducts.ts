@@ -28,6 +28,9 @@ export type CreateProductParams = {
   categoryId: string
   subcategoryId: string
   newImages: File[]
+  rating?: number
+  listPrice?: number
+  features?: string[]
 }
 
 export type UpdateProductParams = {
@@ -41,6 +44,9 @@ export type UpdateProductParams = {
   subcategoryId: string
   newImages: File[]
   existingImages: string[]
+  rating?: number
+  listPrice?: number
+  features?: string[]
 }
 
 function fetchProductsPage(params: ProductsPageParams): Promise<ProductsPageResult> {
@@ -71,6 +77,9 @@ function createProduct(params: CreateProductParams): Promise<Products> {
   form.append('price', String(params.price))
   form.append('categoryId', params.categoryId)
   form.append('subcategoryId', params.subcategoryId)
+  if (params.rating != null && !Number.isNaN(params.rating)) form.append('rating', String(params.rating))
+  form.append('listPrice', params.listPrice != null && !Number.isNaN(params.listPrice) ? String(params.listPrice) : '')
+  form.append('features', JSON.stringify(params.features ?? []))
   params.newImages.forEach((file) => form.append('images', file))
   return apiClient.post<Products>(ENDPOINT, form).then((r) => r.data)
 }
@@ -84,6 +93,9 @@ function updateProduct(params: UpdateProductParams): Promise<Products> {
   form.append('price', String(params.price))
   form.append('categoryId', params.categoryId)
   form.append('subcategoryId', params.subcategoryId)
+  if (params.rating != null && !Number.isNaN(params.rating)) form.append('rating', String(params.rating))
+  form.append('listPrice', params.listPrice != null && !Number.isNaN(params.listPrice) ? String(params.listPrice) : '')
+  form.append('features', JSON.stringify(params.features ?? []))
   form.append('existingImages', JSON.stringify(params.existingImages))
   params.newImages.forEach((file) => form.append('images', file))
   return apiClient
@@ -122,7 +134,10 @@ export function useCreateProduct() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (params: CreateProductParams) => createProduct(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.home.public })
+    },
   })
 }
 
@@ -130,7 +145,10 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (params: UpdateProductParams) => updateProduct(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.home.public })
+    },
   })
 }
 
@@ -138,6 +156,9 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (name: string) => deleteProduct(name),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.home.public })
+    },
   })
 }

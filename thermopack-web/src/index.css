@@ -1,135 +1,80 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
+@import "tailwindcss";
+@import './styles/client.css';
 @import 'sweetalert2/dist/sweetalert2.min.css';
 
-.primary-thermopack {
-  color: #1c53a8;
-}
+/* ── Tailwind v4 theme ── */
+@theme {
+  /* Brand palette */
+  --color-brand-900: #0a1f5c;
+  --color-brand-800: #0d2c6e;
+  --color-brand-700: #1a3e8f;
+  --color-brand-600: #1a4baa;
+  --color-brand-500: #2563eb;
+  --color-brand-400: #3b82f6;
+  --color-brand-100: #dbeafe;
+  --color-brand-50:  #eff6ff;
 
-.secondary-thermopack {
-  color: #00b2cc;
-}
+  /* Green CTA (no conflict with shadcn's accent) */
+  --color-brand-green:      #22c55e;
+  --color-brand-green-dark: #16a34a;
 
-.green-thermopack {
-  color: #37c132;
-}
+  /* Gold */
+  --color-gold: #f59e0b;
 
-.bg-primary-thermopack {
-  background-color: #1c53a8;
-}
+  /* shadcn semantic colors (references CSS vars below) */
+  --color-background:          hsl(var(--background));
+  --color-foreground:          hsl(var(--foreground));
+  --color-card:                hsl(var(--card));
+  --color-card-foreground:     hsl(var(--card-foreground));
+  --color-popover:             hsl(var(--popover));
+  --color-popover-foreground:  hsl(var(--popover-foreground));
+  --color-primary:             hsl(var(--primary));
+  --color-primary-foreground:  hsl(var(--primary-foreground));
+  --color-secondary:           hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted:               hsl(var(--muted));
+  --color-muted-foreground:    hsl(var(--muted-foreground));
+  --color-destructive:         hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border:              hsl(var(--border));
+  --color-input:               hsl(var(--input));
+  --color-ring:                hsl(var(--ring));
 
-.bg-secondary-thermopack {
-  background-color: #00b2cc;
-}
+  /* Fonts */
+  --font-display: 'Inter', sans-serif;
+  --font-body:    'Inter', sans-serif;
 
-.bg-green-thermopack {
-  background-color: #37c132;
-}
+  /* Border radius */
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
 
-.btn-primary-thermopack {
-  --bs-btn-color: #fff;
-  --bs-btn-bg: #1c53a8;
-  --bs-btn-border-color: #1c53a8;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #0b5ed7;
-  --bs-btn-hover-border-color: #0a58ca;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #0a58ca;
-  --bs-btn-active-border-color: #0a53be;
-  --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #1c53a8;
-  --bs-btn-disabled-border-color: #1c53a8;
-}
+  /* Animations */
+  --animate-pulse2: pulse2 2s infinite;
 
-.btn-secondary-thermopack {
-  --bs-btn-color: #fff;
-  --bs-btn-bg: #00b2cc;
-  --bs-btn-border-color: #00b2cc;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #00c7e6;
-  --bs-btn-hover-border-color: #20c1da;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #20c1da;
-  --bs-btn-active-border-color: #27e2ff;
-  --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #00b2cc;
-  --bs-btn-disabled-border-color: #00b2cc;
-}
-
-.btn-green-thermopack {
-  --bs-btn-color: #fff;
-  --bs-btn-bg: #37c132;
-  --bs-btn-border-color: #37c132;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #23d11d;
-  --bs-btn-hover-border-color: #64e760;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #64e760;
-  --bs-btn-active-border-color: #4ec94a;
-  --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #37c132;
-  --bs-btn-disabled-border-color: #37c132;
-}
-
-.my-custom-button {
-  padding: 10px 20px;
-  background-color: #ffffff;
-  color: #000000;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.mybackground {
-  background-color: rgba(28, 83, 168, 0.83);
-  border-radius: 10px;
-}
-
-.centrar-img {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 35%;
-  height: 400px;
-  overflow: hidden;
-}
-
-@media (max-width: 576px) {
-  .centrar-img {
-    height: 100%;
+  @keyframes pulse2 {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+    50%       { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
   }
 }
 
-.centrar-img img {
-  width: 100%;
-  height: auto;
-}
-
-.dots-container {
-  background-image: radial-gradient(circle at 100% 0, #00bfff 10%, transparent 10%);
-  background-size: 11px 11px;
-}
-
-.container-spinner {
-  height: 40vh;
-  flex-direction: column;
-}
-
-.spinner {
-  height: 15vh;
-  width: 15vh;
-}
-
-.centered-image {
-  object-fit: cover;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-}
-
-a.nav-link.active {
-  font-weight: bold;
-  text-decoration: underline;
+/* ── shadcn CSS variables (HSL channels) ── */
+:root {
+  --background:           0 0% 100%;
+  --foreground:           222.2 84% 4.9%;
+  --card:                 0 0% 100%;
+  --card-foreground:      222.2 84% 4.9%;
+  --popover:              0 0% 100%;
+  --popover-foreground:   222.2 84% 4.9%;
+  --primary:              221.2 83.2% 53.3%;
+  --primary-foreground:   210 40% 98%;
+  --secondary:            210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted:                210 40% 96.1%;
+  --muted-foreground:     215.4 16.3% 46.9%;
+  --destructive:          0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border:               214.3 31.8% 91.4%;
+  --input:                214.3 31.8% 91.4%;
+  --ring:                 221.2 83.2% 53.3%;
+  --radius:               0.5rem;
 }

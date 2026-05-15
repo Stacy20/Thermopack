@@ -17,6 +17,7 @@ import TypesRouter from './routes/types.route';
 import UsersRouter from './routes/users.route';
 import ContactRouter from './routes/contact.route';
 import UploadRouter from './routes/upload.route';
+import HomeRouter from './routes/home.route';
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
+app.use('/server/home', HomeRouter);
 app.use('/server/brands', BrandsRouter);
 app.use('/server/categories', CategoriesRouter);
 app.use('/server/data', DataRouter);

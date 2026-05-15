@@ -1,0 +1,117 @@
+/* Reset en @layer base para que las utilidades Tailwind (pt-*, pb-*, etc.) ganen siempre */
+@layer base {
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; background: #fff; overflow-x: hidden; }
+}
+
+/* ===== NAV backdrop ===== */
+.nav-blur {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ===== HERO GRADIENT ===== */
+.hero-gradient {
+  background: linear-gradient(135deg, #0a1f5c 0%, #112373 40%, #1d3bb8 100%);
+}
+/* Full-bleed color wash on hero (decorative rings live in JSX to avoid ::before clashes) */
+.hero-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 65% 50%, rgba(59,130,246,.18) 0%, transparent 55%),
+    radial-gradient(circle at 15% 80%, rgba(34,197,94,.1) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* ===== BADGE PULSE ===== */
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+}
+.badge-pulse { animation: badgePulse 2s infinite; }
+
+/* ===== SECTION WAVE ===== */
+.wave-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 80px;
+  background: #fff;
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+.wave-bottom-gray::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 60px;
+  background: #f8fafc;
+  clip-path: ellipse(60% 100% at 50% 100%);
+}
+
+/* ===== SOCIAL FLOAT ===== */
+.sf-items {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1), opacity .3s;
+}
+.sf-items.open {
+  max-height: 300px;
+  opacity: 1;
+}
+.sf-item-label {
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity .2s, transform .2s;
+}
+.sf-items.open .sf-item-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ===== MODAL ANIMATION ===== */
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.9) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-in { animation: modalIn .3s cubic-bezier(.34,1.56,.64,1); }
+
+/* ===== TIMELINE LINE ===== */
+.timeline-line::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 0; bottom: 0;
+  width: 2px;
+  background: #e2e8f0;
+  transform: translateX(-50%);
+}
+
+/* ===== PROD CARD IMAGE BG ===== */
+.prod-img-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: .08;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ===== INSTAGRAM GRADIENT ===== */
+.ig-gradient {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+}
+
+/* ===== PROCESS STEP ARROW ===== */
+.step-item:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -14px; top: 24px;
+  font-size: 1.2rem;
+  color: #cbd5e1;
+}

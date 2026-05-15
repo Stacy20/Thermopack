@@ -41,6 +41,7 @@ function pollPrivilege(
 }
 
 type AuthContextValue = {
+  authReady: boolean
   isLoggedIn: boolean
   userLoggedIn: Users | null
   login: (user: Users) => void
@@ -54,6 +55,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [authReady, setAuthReady] = useState(false)
   const [userLoggedIn, setUserLoggedIn] = useState<Users | null>(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const userRef = useRef<Users | null>(null)
@@ -62,29 +64,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [userLoggedIn])
 
   useEffect(() => {
-    let logged = localStorage.getItem(LS_LOGGED) === 'true'
-    const last = localStorage.getItem(LS_LAST)
-    if (!last || !dayHasntPassed(last)) logged = false
-    if (!logged) {
-      setIsLoggedIn(false)
-      setUserLoggedIn(null)
-      return
-    }
-    const email = localStorage.getItem(LS_EMAIL)
-    if (!email) {
-      setIsLoggedIn(false)
-      return
-    }
-    apiClient.get<Users>(`users/${encodeURIComponent(email)}`).then((r) => r.data).then((u) => {
-      if (u && u.email) {
-        setUserLoggedIn(u)
-        setIsLoggedIn(true)
-      } else {
-        setIsLoggedIn(false)
-        setUserLoggedIn(null)
-        localStorage.setItem(LS_LOGGED, 'false')
+    let cancelled = false
+
+    const restore = async () => {
+      try {
+        let logged = localStorage.getItem(LS_LOGGED) === 'true'
+        const last = localStorage.getItem(LS_LAST)
+        if (!last || !dayHasntPassed(last)) logged = false
+        if (!logged) {
+          if (!cancelled) {
+            setIsLoggedIn(false)
+            setUserLoggedIn(null)
+          }
+          return
+        }
+        const email = localStorage.getItem(LS_EMAIL)
+        if (!email) {
+          if (!cancelled) setIsLoggedIn(false)
+          return
+        }
+        const { data: u } = await apiClient.get<Users>(`users/${encodeURIComponent(email)}`)
+        if (cancelled) return
+        if (u?.email) {
+          setUserLoggedIn(u)
+          setIsLoggedIn(true)
+          localStorage.setItem(LS_LAST, new Date().toISOString())
+        } else {
+          setIsLoggedIn(false)
+          setUserLoggedIn(null)
+          localStorage.setItem(LS_LOGGED, 'false')
+        }
+      } catch {
+        if (!cancelled) {
+          setIsLoggedIn(false)
+          setUserLoggedIn(null)
+          localStorage.setItem(LS_LOGGED, 'false')
+        }
+      } finally {
+        if (!cancelled) setAuthReady(true)
       }
-    })
+    }
+
+    void restore()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const login = useCallback((user: Users) => {
@@ -121,6 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
+      authReady,
       isLoggedIn,
       userLoggedIn,
       login,
@@ -131,6 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       userCanCreateUsers,
     }),
     [
+      authReady,
       isLoggedIn,
       userLoggedIn,
       login,

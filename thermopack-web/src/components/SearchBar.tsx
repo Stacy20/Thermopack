@@ -1,28 +1,33 @@
+import { useEffect, useState } from 'react'
 import { useCatalogStore } from '../stores/catalogStore'
+import { Input } from './ui/input'
+import { Button } from './ui/button'
 
 export function SearchBar() {
-  const { setSearchTerm } = useCatalogStore()
+  const termSearch = useCatalogStore((s) => s.termSearch)
+  const setSearchTerm = useCatalogStore((s) => s.setSearchTerm)
+  const [draft, setDraft] = useState(() => termSearch ?? '')
 
-  const search = (query: string) => {
-    setSearchTerm(query || undefined)
-  }
+  useEffect(() => {
+    setDraft(termSearch ?? '')
+  }, [termSearch])
+
+  const search = (query: string) => setSearchTerm(query.trim() || undefined)
 
   return (
-    <div className="input-group mb-3">
-      <input
+    <div className="flex gap-2 mb-4">
+      <Input
         type="search"
-        className="form-control"
         placeholder="Buscar productos..."
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') search((e.target as HTMLInputElement).value)
         }}
       />
-      <button className="btn btn-outline-secondary" type="button" onClick={(e) => {
-        const input = (e.currentTarget.previousSibling as HTMLInputElement)
-        search(input?.value ?? '')
-      }}>
+      <Button variant="outline" onClick={() => search(draft)}>
         Buscar
-      </button>
+      </Button>
     </div>
   )
 }

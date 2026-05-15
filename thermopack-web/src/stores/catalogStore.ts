@@ -50,6 +50,8 @@ export const useCatalogStore = create<CatalogState>((set, get) => ({
 
   cleanfilter: () => {
     set({
+      offsetProducts: 0,
+      offsetServices: 0,
       idSelectBrand: undefined,
       idCategory: undefined,
       idSelectType: undefined,

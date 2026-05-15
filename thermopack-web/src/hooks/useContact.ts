@@ -27,6 +27,10 @@ function fetchContact(): Promise<Contact> {
   return apiClient.get<Contact>(ENDPOINT).then((r) => r.data)
 }
 
+function fetchContactWhatsapp(): Promise<{ whatsappLink: string }> {
+  return apiClient.get<{ whatsappLink: string }>(`${ENDPOINT}/whatsapp`).then((r) => r.data)
+}
+
 function updateContact(params: UpdateContactParams): Promise<Contact> {
   return apiClient.put<Contact>(ENDPOINT, params).then((r) => r.data)
 }
@@ -45,11 +49,22 @@ export function useContact() {
   })
 }
 
+export function useContactWhatsapp() {
+  return useQuery({
+    queryKey: QUERY_KEYS.contact.whatsapp,
+    queryFn: fetchContactWhatsapp,
+  })
+}
+
 export function useUpdateContact() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (params: UpdateContactParams) => updateContact(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.contact.all }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.contact.all })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.contact.whatsapp })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.home.public })
+    },
   })
 }
 
@@ -57,6 +72,10 @@ export function useUpdateContactImages() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (params: UpdateContactImagesParams) => updateContactImages(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.contact.all }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.contact.all })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.contact.whatsapp })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.home.public })
+    },
   })
 }

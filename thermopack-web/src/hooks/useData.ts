@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import apiClient from '../api/client'
 import { QUERY_KEYS } from '../api/queryKeys'
-import type { Data } from '../types/data'
+import type { Data, HistoriaItem, ValorItem } from '../types/data'
+import type { HomeHeroConfig } from '../types/home'
 
 const ENDPOINT = 'data'
 
@@ -26,8 +27,28 @@ export type UpdateProductsServicesParams = {
   servicesParagraph: string
 }
 
+export type CatalogPageCopy = {
+  productsTitle?: string
+  productsParagraph?: string
+  servicesTitle?: string
+  servicesParagraph?: string
+}
+
+export type NosotrosData = {
+  nosotrosDescription?: string
+  historiaList?: HistoriaItem[]
+  valoresList?: ValorItem[]
+  nosotrosPage?: unknown
+  mision?: string
+  vision?: string
+  visionImages?: string[]
+  presentationImages?: string[]
+}
+
+export type UpdateNosotrosParams = NosotrosData
+
 function fetchData(): Promise<Data> {
-  return apiClient.get<Data>(ENDPOINT).then((r) => r.data[0])
+  return apiClient.get<Data[]>(ENDPOINT).then((r) => r.data[0])
 }
 
 function fetchTextData(): Promise<Record<string, string>> {
@@ -80,6 +101,24 @@ function updateProductsServices(params: UpdateProductsServicesParams): Promise<D
   return apiClient.put<Data>(`${ENDPOINT}/products-services`, params).then((r) => r.data)
 }
 
+function fetchCatalogPageCopy(): Promise<CatalogPageCopy> {
+  return apiClient.get<CatalogPageCopy>(`${ENDPOINT}/products-services`).then((r) => r.data)
+}
+
+function updateHomeHero(homeHero: HomeHeroConfig): Promise<Data> {
+  return apiClient
+    .put<{ message: string; data: Data }>(`${ENDPOINT}/home-hero`, homeHero)
+    .then((r) => r.data.data)
+}
+
+function fetchNosotrosData(): Promise<NosotrosData> {
+  return apiClient.get<NosotrosData>(`${ENDPOINT}/nosotros`).then((r) => r.data)
+}
+
+function updateNosotros(params: UpdateNosotrosParams): Promise<Data> {
+  return apiClient.put<Data>(`${ENDPOINT}/nosotros`, params).then((r) => r.data)
+}
+
 export function useData() {
   return useQuery({
     queryKey: QUERY_KEYS.data.full,
@@ -91,6 +130,14 @@ export function useTextData() {
   return useQuery({
     queryKey: QUERY_KEYS.data.text,
     queryFn: fetchTextData,
+  })
+}
+
+/** Títulos y textos de las páginas Productos / Servicios sin cargar GET /data completo */
+export function useCatalogPageCopy() {
+  return useQuery({
+    queryKey: QUERY_KEYS.data.catalogPageCopy,
+    queryFn: fetchCatalogPageCopy,
   })
 }
 
@@ -119,7 +166,11 @@ export function useUpdateMainPage() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (params: UpdateMainPageParams) => updateMainPage(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.home.public })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.nosotros })
+    },
   })
 }
 
@@ -130,6 +181,7 @@ export function useUpdateVisionImages() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.visionImages })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.nosotros })
     },
   })
 }
@@ -141,6 +193,7 @@ export function useUpdatePresentationImages() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.presentationImages })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.nosotros })
     },
   })
 }
@@ -149,6 +202,38 @@ export function useUpdateProductsServices() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (params: UpdateProductsServicesParams) => updateProductsServices(params),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.catalogPageCopy })
+    },
+  })
+}
+
+export function useNosotrosData() {
+  return useQuery({
+    queryKey: QUERY_KEYS.data.nosotros,
+    queryFn: fetchNosotrosData,
+  })
+}
+
+export function useUpdateNosotros() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (params: UpdateNosotrosParams) => updateNosotros(params),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.nosotros })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full })
+    },
+  })
+}
+
+export function useUpdateHomeHero() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (homeHero: HomeHeroConfig) => updateHomeHero(homeHero),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.home.public })
+    },
   })
 }

@@ -6,15 +6,18 @@ import { Pagination } from '../../components/Pagination'
 import { useCatalogStore } from '../../stores/catalogStore'
 import { LIMIT_SERVICE } from '../../stores/limits'
 import { useAuth } from '../../auth/AuthContext'
+import { Button } from '../../components/ui/button'
+import { Separator } from '../../components/ui/separator'
 
 export function AdminServicesPage() {
   const navigate = useNavigate()
-  const { isLoggedIn, userLoggedIn } = useAuth()
+  const { isLoggedIn, userLoggedIn, authReady } = useAuth()
   const offsetServices = useCatalogStore((s) => s.offsetServices)
 
   useEffect(() => {
+    if (!authReady) return
     if (!isLoggedIn) navigate('/login')
-  }, [isLoggedIn, navigate])
+  }, [authReady, isLoggedIn, navigate])
 
   const { data } = useServicesPage(LIMIT_SERVICE, offsetServices, isLoggedIn)
 
@@ -22,22 +25,18 @@ export function AdminServicesPage() {
   const totalServices = data?.totalCount ?? 0
 
   return (
-    <div className="container justify-content-center align-items-center">
-      <div className="d-flex flex-wrap justify-content-between align-items-center">
-        <h2 className="col-10 col-lg-6 col-md-6">Administrar Servicios</h2>
+    <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">Administrar Servicios</h2>
         {userLoggedIn?.privileges?.[0] === 1 && (
-          <div className="mb-3 col-10 col-lg-6 col-md-6">
-            <button type="button" className="my-custom-button w-100 w-md-auto" onClick={() => navigate('/admin/services/add')}>
-              <i className="fa-solid fa-plus" /> Agregar servicios
-            </button>
-          </div>
+          <Button className="bg-brand-800 hover:bg-brand-700 text-white" onClick={() => navigate('/admin/services/add')}>
+            + Agregar servicios
+          </Button>
         )}
       </div>
-      <hr />
-      <div className="justify-content-center align-items-center">
-        <ListCard type={2} products={[]} services={services} permissions={1} />
-      </div>
-      <div className="mt-5">
+      <Separator className="mb-6" />
+      <ListCard type={2} products={[]} services={services} permissions={1} isLoading={false} />
+      <div className="mt-8">
         <Pagination type="0" totalServices={totalServices} totalProducts={0} />
       </div>
     </div>

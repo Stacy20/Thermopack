@@ -12,6 +12,17 @@ const dataSchema = new mongoose.Schema({
     productsParagraph: { type: String },
     servicesTitle: { type: String },
     servicesParagraph: { type: String },
+    nosotrosDescription: { type: String },
+    historiaList: {
+        type: [{ year: String, title: String, desc: String }],
+        default: [],
+    },
+    valoresList: {
+        type: [{ icon: String, title: String, desc: String }],
+        default: [],
+    },
+    nosotrosPage: { type: mongoose.Schema.Types.Mixed, default: undefined },
+    homeHero: { type: mongoose.Schema.Types.Mixed, default: undefined },
 });
 
 export default mongoose.model('Data', dataSchema);

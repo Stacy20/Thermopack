@@ -4,13 +4,15 @@ import { useAuth } from '../../auth/AuthContext'
 import { AdminNavbar } from '../../components/AdminNavbar'
 
 export function AdminLayout() {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, authReady } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
+    if (!authReady) return
     if (!isLoggedIn) navigate('/login', { replace: true })
-  }, [isLoggedIn, navigate])
+  }, [authReady, isLoggedIn, navigate])
 
+  if (!authReady) return null
   if (!isLoggedIn) return null
 
   return (

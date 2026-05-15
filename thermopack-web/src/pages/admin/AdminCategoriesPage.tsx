@@ -22,13 +22,14 @@ export function AdminCategoriesPage() {
 
   const brandItems: ListItem[] = brands.map((b) => ({ _id: b._id, name: b.name }))
   const typeItems: ListItem[] = types.map((t) => ({ _id: t._id, name: t.name }))
-  const categoryItems: ListItem[] = categories.map((c) => ({ _id: c._id, name: c.name }))
+  const categoryItems: ListItem[] = categories.map((c) => ({ _id: c._id, name: c.name, productCount: c.productCount }))
 
   const editBrand = (brand: ListItem) => {
     if (brand._id.trim() === '') {
       showAlert('Error', 'No puede registrar una marca vacía.', 'error')
       return
     }
+    if (brand._id.trim() === brand.name.trim()) return
     apiClient.get<Brands>(`brands/${encodeURIComponent(brand._id)}`).then((r) => {
       if (r.data._id !== undefined) {
         showAlert('Atención', 'Esta marca ya está registrada.', 'info')
@@ -68,6 +69,7 @@ export function AdminCategoriesPage() {
       showAlert('Error', 'No puede registrar un tipo vacío.', 'error')
       return
     }
+    if (type._id.trim() === type.name.trim()) return
     apiClient.get<Types>(`types/${encodeURIComponent(type._id)}`).then((r) => {
       if (r.data._id !== undefined) {
         showAlert('Atención', 'Este tipo ya está registrado.', 'info')
@@ -107,6 +109,7 @@ export function AdminCategoriesPage() {
       showAlert('Error', 'No puede registrar una categoría vacía.', 'error')
       return
     }
+    if (category._id.trim() === category.name.trim()) return
     apiClient.get<Categories>(`categories/${encodeURIComponent(category._id)}`).then((r) => {
       if (r.data._id !== undefined) {
         showAlert('Atención', 'Esta categoría ya está registrada.', 'info')
@@ -142,13 +145,13 @@ export function AdminCategoriesPage() {
   }
 
   return (
-    <div className="container py-3">
-      <h2>Marcas</h2>
+    <div className="max-w-5xl mx-auto px-6 py-6">
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">Marcas</h2>
       <EditList items={brandItems} onEdit={editBrand} onDelete={handleDeleteBrand} />
-      <h2 className="mt-5">Tipos</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-2">Tipos</h2>
       <EditList items={typeItems} onEdit={editType} onDelete={handleDeleteType} />
-      <h2 className="mt-5">Categorías</h2>
-      <EditList items={categoryItems} onEdit={editCategory} onDelete={handleDeleteCategory} />
+      <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-2">Categorías</h2>
+      <EditList items={categoryItems} onEdit={editCategory} onDelete={handleDeleteCategory} showCount />
     </div>
   )
 }

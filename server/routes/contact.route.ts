@@ -7,6 +7,11 @@ const router = Router();
 
 const CONTACT_FOLDER = sanitizeFolder('contact');
 
+router.get('/whatsapp', async (_req, res) => {
+    const doc = await ContactModel.findOne({}, 'whatsappLink').lean().exec();
+    res.status(200).json({ whatsappLink: doc?.whatsappLink ?? '' });
+});
+
 router.get('/', async (_req, res) => {
     const contactData = await ContactModel.findOne({}).lean().exec();
     res.status(200).json(contactData ?? null);

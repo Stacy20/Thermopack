@@ -1,12 +1,23 @@
 import { Router } from "express";
 import CategoryModel from '../collections/categories.collection';
+import ProductsModel from '../collections/products.collection';
 
 const router = Router();
 
-// Obtiene todas las categorías
+// Obtiene todas las categorías con conteo de productos
 router.get('/', async (req, res) => {
     const allCategories = await CategoryModel.find({}).lean().exec();
-    res.status(200).json(allCategories);
+    const counts = await ProductsModel.aggregate([
+        { $group: { _id: '$categoryId', count: { $sum: 1 } } }
+    ]);
+    const countMap: Record<string, number> = Object.fromEntries(
+        counts.map((c: { _id: string; count: number }) => [String(c._id), c.count])
+    );
+    const result = allCategories.map((cat) => ({
+        ...cat,
+        productCount: countMap[String(cat._id)] ?? 0,
+    }));
+    res.status(200).json(result);
 });
 
 // Obtiene una categoría por su nombre

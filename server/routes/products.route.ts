@@ -2,20 +2,30 @@ import { Router } from "express";
 import ProductsModel from '../collections/products.collection';
 import { upload, handleMulterError } from '../middleware/upload.middleware';
 import { uploadImage, deleteImageAllVariants, sanitizeFolder, urlToKey } from '../services/s3.service';
+import { listEnrichedProducts, getEnrichedProductByName } from '../services/enrichedProducts.service';
 
 const router = Router();
 
 const PRODUCTS_FOLDER = sanitizeFolder('products');
 
-router.get('/:name', async (req, res) => {
-    const { name } = req.params;
-    const product = await ProductsModel.findOne({ name }).lean().exec();
-    if (!product) {
-        res.status(404).json({ message: `No records with ${name} name` });
-    } else {
-        res.status(200).json(product);
+function parseFeatures(raw: unknown): string[] {
+    if (Array.isArray(raw)) return raw.filter((x) => typeof x === 'string' && x.trim().length > 0).map((s) => s.trim())
+    if (typeof raw === 'string') {
+        try {
+            const j = JSON.parse(raw) as unknown
+            if (Array.isArray(j)) return j.filter((x) => typeof x === 'string' && x.trim().length > 0).map((s) => s.trim())
+        } catch {
+            /* ignore */
+        }
     }
-});
+    return []
+}
+
+function parseOptionalNumber(v: unknown): number | undefined {
+    if (v === undefined || v === null || v === '') return undefined
+    const n = Number(v)
+    return Number.isFinite(n) ? n : undefined
+}
 
 router.get('/', async (req, res) => {
     const { limit, offset, brandId, categoryId, typeId, name } = req.query;
@@ -33,13 +43,16 @@ router.get('/', async (req, res) => {
     if (typeId) filter.typeId = typeId as string;
     if (name) filter.name = { $regex: name as string, $options: 'i' };
 
-    const products = await ProductsModel.find(filter)
-        .skip(parseInt(offset as string))
-        .limit(parseInt(limit as string))
-        .lean()
-        .exec();
-    const totalCount = await ProductsModel.countDocuments(filter);
-    res.status(200).json({ products, totalCount });
+    const skip = parseInt(offset as string) || 0;
+    const lim = parseInt(limit as string) || 10;
+
+    try {
+        const { products, totalCount } = await listEnrichedProducts(filter, skip, lim);
+        res.status(200).json({ products, totalCount });
+    } catch (error) {
+        console.error('Error listing products:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 
@@ -54,6 +67,20 @@ router.get('/check/not_empty', async (_req, res) => {
 });
 
 
+router.get('/:name', async (req, res) => {
+    const { name } = req.params;
+    try {
+        const product = await getEnrichedProductByName(name);
+        if (!product) {
+            res.status(404).json({ message: `No records with ${name} name` });
+        } else {
+            res.status(200).json(product);
+        }
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 router.post('/', upload.array('images', 10), async (req, res) => {
     try {
         const files = (req.files as Express.Multer.File[]) ?? [];
@@ -64,12 +91,19 @@ router.post('/', upload.array('images', 10), async (req, res) => {
             imageUrls.push(result.card.url);
         }
 
+        const listPrice = parseOptionalNumber(req.body.listPrice)
+        const rating = parseOptionalNumber(req.body.rating)
+        const features = parseFeatures(req.body.features)
+
         await ProductsModel.create({
             name: req.body.name,
             description: req.body.description,
             brandId: req.body.brandId,
             typeId: req.body.typeId,
             price: req.body.price != null ? Number(req.body.price) : undefined,
+            ...(listPrice != null ? { listPrice } : {}),
+            ...(rating != null && Number.isFinite(rating) ? { rating: Math.min(5, Math.max(0, rating)) } : {}),
+            features,
             categoryId: req.body.categoryId,
             subcategoryId: req.body.subcategoryId,
             images: imageUrls,
@@ -111,12 +145,22 @@ router.put('/:name', upload.array('images', 10), async (req, res) => {
             newImageUrls.push(result.card.url);
         }
 
+        const listPrice =
+            req.body.listPrice === '' || req.body.listPrice === undefined
+                ? null
+                : (parseOptionalNumber(req.body.listPrice) ?? null)
+        const rating = parseOptionalNumber(req.body.rating)
+        const features = parseFeatures(req.body.features)
+
         await ProductsModel.updateOne({ name }, { $set: {
             name: req.body.name,
             description: req.body.description,
             brandId: req.body.brandId,
             typeId: req.body.typeId,
             price: req.body.price != null ? Number(req.body.price) : undefined,
+            listPrice: listPrice,
+            ...(rating === undefined ? {} : { rating: Math.min(5, Math.max(0, rating)) }),
+            features,
             categoryId: req.body.categoryId,
             subcategoryId: req.body.subcategoryId,
             images: [...existingImages, ...newImageUrls],

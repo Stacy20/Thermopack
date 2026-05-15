@@ -1,5 +1,3 @@
-import { useProductsHasAny } from '../hooks/useProducts'
-import { useServicesHasAny } from '../hooks/useServices'
 import { Card } from './Card'
 import type { Products } from '../types/products'
 import type { Services } from '../types/services'
@@ -11,54 +9,57 @@ type Props = {
   products: Products[]
   type: number
   permissions: number
+  isLoading: boolean
+  onViewDetail?: (product: Products) => void
 }
 
-export function ListCard({ services, products, type, permissions }: Props) {
-  const { data: hasProducts, isLoading: loadingProducts } = useProductsHasAny()
-  const { data: hasServices, isLoading: loadingServices } = useServicesHasAny()
+export function ListCard({ services, products, type, permissions, isLoading, onViewDetail }: Props) {
 
-  const isLoading = type === 1 ? loadingProducts : loadingServices
-  const hasItems = type === 1 ? hasProducts : hasServices
-  const isReady = !isLoading && (type === 1 ? products.length > 0 || !hasItems : services.length > 0 || !hasItems)
-
-  if (!isReady) {
+  if (isLoading) {
     return (
-      <div className="row justify-content-center align-items-center">
-        <div className="spinner-border mt-5 mb-2" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-        <h6 className="d-flex justify-content-center align-items-center">Cargando...</h6>
+      <div className="flex flex-col items-center justify-center py-16 gap-3">
+        <div className="animate-spin h-10 w-10 border-4 border-brand-800 border-t-transparent rounded-full" />
+        <p className="text-gray-500 text-sm">Cargando...</p>
       </div>
     )
   }
 
   if (type === 1) {
     return (
-      <div className="row">
-        {products.length === 0 && <p className="mt-4">No hay productos para mostrar.</p>}
+      <div className="grid w-full grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {products.length === 0 && <p className="col-span-full text-gray-500 text-sm mt-4">No hay productos para mostrar.</p>}
         {products.map((product) => (
-          <div key={productId(product)} className={permissions === 0 ? 'col-10 col-sm-8 col-md-5 col-lg-4 mt-4' : 'col-12 col-sm-8 col-md-5 col-lg-4 mt-4'}>
-            <Card
-              permissions={permissions}
-              type={type}
-              id={productId(product)}
-              title={product.name}
-              text={product.description}
-              src={product.images?.[0] ?? ''}
-            />
-          </div>
+          <Card
+            key={productId(product)}
+            id={product._id}
+            permissions={permissions}
+            type={type}
+            category={product.category}
+            title={product.name}
+            text={product.description}
+            brand={product.brand}
+            src={product.images?.[0] ?? ''}
+            price={product.price}
+            onViewDetail={onViewDetail ? () => onViewDetail(product) : undefined}
+          />
         ))}
       </div>
     )
   }
 
   return (
-    <div className="row">
-      {services.length === 0 && <p>No hay servicios para mostrar.</p>}
+    <div className="grid w-full grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {services.length === 0 && <p className="col-span-full text-gray-500 text-sm">No hay servicios para mostrar.</p>}
       {services.map((s) => (
-        <div key={serviceId(s)} className={permissions === 0 ? 'col-10 col-sm-8 col-md-5 col-lg-4 mt-4' : 'col-12 col-sm-8 col-md-5 col-lg-4 mt-4'}>
-          <Card permissions={permissions} id={serviceId(s)} title={s.name} text={s.description} type={2} src={s.images?.[0] ?? ''} />
-        </div>
+        <Card
+          key={serviceId(s)}
+          permissions={permissions}
+          id={serviceId(s)}
+          title={s.name}
+          text={s.description}
+          type={2}
+          src={s.images?.[0] ?? ''}
+        />
       ))}
     </div>
   )

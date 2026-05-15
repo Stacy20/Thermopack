@@ -5,11 +5,13 @@ import { ProductsPage } from './pages/ProductsPage'
 import { ServicesPage } from './pages/ServicesPage'
 import { ContactPage } from './pages/ContactPage'
 import { DetailPage } from './pages/DetailPage'
+import { NosotrosPage } from './pages/NosotrosPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { LoginPage } from './pages/LoginPage'
 import { AdminLayout } from './pages/admin/AdminLayout'
 import { AdminConfigHomePage } from './pages/admin/AdminConfigHomePage'
 import { AdminConfigContactPage } from './pages/admin/AdminConfigContactPage'
+import { AdminConfigNosotrosPage } from './pages/admin/AdminConfigNosotrosPage'
 import { AdminProductsPage } from './pages/admin/AdminProductsPage'
 import { AdminServicesPage } from './pages/admin/AdminServicesPage'
 import { AddProductPage } from './pages/admin/AddProductPage'
@@ -28,6 +30,7 @@ export default function App() {
         <Route path="productos" element={<ProductsPage />} />
         <Route path="servicios" element={<ServicesPage />} />
         <Route path="contactenos" element={<ContactPage />} />
+        <Route path="nosotros" element={<NosotrosPage />} />
         <Route path="detalles/:type/:id" element={<DetailPage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
@@ -37,6 +40,7 @@ export default function App() {
           <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<AdminConfigHomePage />} />
           <Route path="contact" element={<AdminConfigContactPage />} />
+          <Route path="nosotros" element={<AdminConfigNosotrosPage />} />
         </Route>
         <Route path="products">
           <Route index element={<AdminProductsPage />} />
