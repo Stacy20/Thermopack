@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { X, ShoppingCart, FileText, Plus, Minus, Star, Check } from 'lucide-react'
+import { useEffect } from 'react'
+import { X, FileText, Check } from 'lucide-react'
 import { GalleryLightbox } from './GalleryLightbox'
 import { formatColon, formatDescription } from '../utils/text'
 import type { Products } from '../types/products'

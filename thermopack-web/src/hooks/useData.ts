@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import apiClient from '../api/client'
 import { QUERY_KEYS } from '../api/queryKeys'
-import type { Data, HistoriaItem, ValorItem } from '../types/data'
+import type { Data, HistoriaItem, ValorItem, ServicesPageConfig } from '../types/data'
 import type { HomeHeroConfig } from '../types/home'
 
 const ENDPOINT = 'data'
@@ -11,6 +11,7 @@ export type UpdateMainPageParams = {
   description: string
   mision: string
   vision: string
+  footerAbout: string
   logo?: File
   removeLogo?: boolean
 }
@@ -25,6 +26,7 @@ export type UpdateProductsServicesParams = {
   productsParagraph: string
   servicesTitle: string
   servicesParagraph: string
+  servicesPage?: ServicesPageConfig
 }
 
 export type CatalogPageCopy = {
@@ -32,6 +34,7 @@ export type CatalogPageCopy = {
   productsParagraph?: string
   servicesTitle?: string
   servicesParagraph?: string
+  servicesPage?: ServicesPageConfig
 }
 
 export type NosotrosData = {
@@ -51,8 +54,23 @@ function fetchData(): Promise<Data> {
   return apiClient.get<Data[]>(ENDPOINT).then((r) => r.data[0])
 }
 
-function fetchTextData(): Promise<Record<string, string>> {
-  return apiClient.get<Record<string, string>>(`${ENDPOINT}/text`).then((r) => r.data)
+export type TextDataResponse = Partial<
+  Pick<
+    Data,
+    | 'slogan'
+    | 'description'
+    | 'mision'
+    | 'vision'
+    | 'productsTitle'
+    | 'productsParagraph'
+    | 'servicesTitle'
+    | 'servicesParagraph'
+    | 'footerAbout'
+  >
+>
+
+function fetchTextData(): Promise<TextDataResponse> {
+  return apiClient.get<TextDataResponse>(`${ENDPOINT}/text`).then((r) => r.data)
 }
 
 function fetchLogo(): Promise<{ logo: string | null }> {
@@ -75,6 +93,7 @@ function updateMainPage(params: UpdateMainPageParams): Promise<Data> {
   form.append('description', params.description)
   form.append('mision', params.mision)
   form.append('vision', params.vision)
+  form.append('footerAbout', params.footerAbout)
   if (params.removeLogo) {
     form.append('removeLogo', 'true')
   } else if (params.logo) {
@@ -170,6 +189,7 @@ export function useUpdateMainPage() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.full })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.home.public })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.nosotros })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.data.text })
     },
   })
 }

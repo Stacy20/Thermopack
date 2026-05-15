@@ -13,7 +13,7 @@ export type HomeHeroConfig = {
 
 import type { Products } from './products'
 
-/** Respuesta de GET /home/public */
+
 export type HomePublicPayload = {
   slogan: string
   description: string

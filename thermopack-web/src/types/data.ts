@@ -1,5 +1,12 @@
 import type { HomeHeroConfig } from './home'
 
+export type ServiceProcessStep = { step: string; title: string; desc: string }
+
+export type ServicesPageConfig = {
+  cardGradients: string[]
+  processSteps: ServiceProcessStep[]
+}
+
 export interface HistoriaItem {
   year: string
   title: string
@@ -26,6 +33,8 @@ export interface Data {
   productsParagraph: string
   servicesTitle: string
   servicesParagraph: string
+  footerAbout?: string
+  servicesPage?: ServicesPageConfig
   nosotrosDescription?: string
   historiaList?: HistoriaItem[]
   valoresList?: ValorItem[]

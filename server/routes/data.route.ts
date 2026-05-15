@@ -13,7 +13,7 @@ router.get('/', async (_req, res) => {
 });
 
 router.get('/text', async (_req, res) => {
-    const data = await DataModel.findOne({}, 'slogan description mision vision productsTitle productsParagraph servicesTitle servicesParagraph').lean().exec();
+    const data = await DataModel.findOne({}, 'slogan description mision vision productsTitle productsParagraph servicesTitle servicesParagraph footerAbout').lean().exec();
     res.status(200).json(data);
 });
 
@@ -40,6 +40,7 @@ router.put('/main-page', upload.single('logo'), async (req, res) => {
             description: req.body.description,
             mision: req.body.mision,
             vision: req.body.vision,
+            footerAbout: req.body.footerAbout,
         };
 
         if (req.body.removeLogo === 'true') {
@@ -147,7 +148,7 @@ router.get('/nosotros', async (_req, res) => {
 router.get('/products-services', async (_req, res) => {
     const data = await DataModel.findOne(
         {},
-        'productsTitle productsParagraph servicesTitle servicesParagraph'
+        'productsTitle productsParagraph servicesTitle servicesParagraph servicesPage'
     ).lean().exec();
     res.status(200).json(data ?? {});
 });
@@ -167,12 +168,16 @@ router.put('/nosotros', async (req, res) => {
 });
 
 router.put('/products-services', async (req, res) => {
-    const data = await DataModel.findOneAndUpdate({}, { $set: {
+    const update: Record<string, unknown> = {
         productsTitle: req.body.productsTitle,
         productsParagraph: req.body.productsParagraph,
         servicesTitle: req.body.servicesTitle,
         servicesParagraph: req.body.servicesParagraph,
-    }}, { new: true });
+    };
+    if (req.body.servicesPage !== undefined) {
+        update.servicesPage = req.body.servicesPage;
+    }
+    const data = await DataModel.findOneAndUpdate({}, { $set: update }, { new: true });
     if (!data) { return res.status(404).json({ message: 'No records found' }); }
     return res.status(202).json({ message: 'Successfully modified', data });
 });

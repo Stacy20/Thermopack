@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useHomePublic } from '../hooks/useHomePublic'
 import { ProductDetailModal } from '../components/ProductDetailModal'
 import { formatDescription } from '../utils/text'
-import { DEFAULT_SLOGAN, mergeHomeHero } from '../constants/homeDefaults'
+import { DEFAULT_SLOGAN, mergeHomeHero } from '../lib/mergeHomeHero'
 import type { Products } from '../types/products'
 import { ListCard } from '@/components/ListCard'
 

@@ -1,182 +1,200 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../auth/AuthContext'
+import { EDIT_LIST_ROWS_PER_PAGE } from '../constants/editListLayout'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Badge } from './ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 
-export type ListItem = { _id: string; name: string }
+export type ListItem = { _id: string; name: string; productCount?: number }
 
 type Props = {
   items: ListItem[]
   onEdit: (item: ListItem) => void
   onDelete: (item: ListItem) => void
+  showCount?: boolean
 }
 
-const limitRows = 5
-
-export function EditList({ items: itemsProp, onEdit, onDelete }: Props) {
+export function EditList({ items: itemsProp, onEdit, onDelete, showCount = false }: Props) {
   const { userLoggedIn } = useAuth()
   const [offset, setOffset] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
-  const [query, setQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   const [items, setItems] = useState<ListItem[]>(itemsProp)
 
   useEffect(() => {
     setItems(itemsProp)
   }, [itemsProp])
 
-  const filtered = useMemo(() => {
-    if (query.trim() === '') return items
-    return items.filter((item) => item.name.toLowerCase().startsWith(query.toLowerCase()))
-  }, [items, query])
-
-  const renderItems = useMemo(
-    () => filtered.slice(offset, offset + limitRows),
-    [filtered, offset]
+  const filteredItems = useMemo(
+    () =>
+      searchQuery.trim() === ''
+        ? items
+        : items.filter((listItem) => listItem.name.toLowerCase().startsWith(searchQuery.toLowerCase())),
+    [items, searchQuery]
   )
 
-  const totalRows = filtered.length
-  const totalPages = Math.max(1, Math.ceil(totalRows / limitRows))
+  const visibleRows = useMemo(
+    () => filteredItems.slice(offset, offset + EDIT_LIST_ROWS_PER_PAGE),
+    [filteredItems, offset]
+  )
+  const totalRows = filteredItems.length
+  const totalPages = Math.max(1, Math.ceil(totalRows / EDIT_LIST_ROWS_PER_PAGE))
 
   useEffect(() => {
-    setOffset((currentPage - 1) * limitRows)
+    setOffset((currentPage - 1) * EDIT_LIST_ROWS_PER_PAGE)
   }, [currentPage])
 
-  const search = (q: string) => {
-    setQuery(q)
+  const applySearch = (query: string) => {
+    setSearchQuery(query)
     setOffset(0)
     setCurrentPage(1)
   }
 
   const editItem = (item: ListItem) => {
-    const safeId = item._id.replace(/"/g, '\\"')
-    const element = document.querySelector(`[data-index="${safeId}"]`)
-    if (element instanceof HTMLElement) {
-      const newItem = element.innerText
-      onEdit({ _id: newItem, name: item.name })
-      if (items.find((i) => i.name === newItem) || newItem.trim() === '') {
-        element.innerText = item.name
+    const cell = document.querySelector(`[data-index="${item._id.replace(/"/g, '\\"')}"]`)
+    if (cell instanceof HTMLElement) {
+      const newName = cell.innerText
+      onEdit({ _id: newName, name: item.name })
+      if (items.find((listItem) => listItem.name === newName) || newName.trim() === '') {
+        cell.innerText = item.name
       } else {
-        setItems((prev) => prev.map((i) => (i._id === item._id ? { ...i, name: newItem } : i)))
+        setItems((previous) =>
+          previous.map((listItem) => (listItem._id === item._id ? { ...listItem, name: newName } : listItem))
+        )
       }
     }
   }
 
   const deleteItem = (item: ListItem) => {
     onDelete(item)
-    setItems((prev) => prev.filter((i) => i._id !== item._id))
+    setItems((previous) => previous.filter((listItem) => listItem._id !== item._id))
   }
 
-  const generatePagination = useCallback((): number[] => {
-    let startPage = 1
-    const paginationItems: number[] = []
+  const buildPaginationWindow = useCallback((): number[] => {
+    let windowStart = 1
     if (totalPages > 3) {
-      if (currentPage > 1 && currentPage < totalPages) startPage = currentPage - 1
-      else if (currentPage === totalPages) startPage = totalPages - 2
+      if (currentPage > 1 && currentPage < totalPages) windowStart = currentPage - 1
+      else if (currentPage === totalPages) windowStart = totalPages - 2
     }
-    for (let i = 0; i < 3 && startPage <= totalPages; i++, startPage++) {
-      paginationItems.push(startPage)
+    const pageNumbers: number[] = []
+    for (let slot = 0; slot < 3 && windowStart <= totalPages; slot++, windowStart++) {
+      pageNumbers.push(windowStart)
     }
-    return paginationItems
+    return pageNumbers
   }, [currentPage, totalPages])
 
-  const updateCurrentPage = (change: number) => {
-    setCurrentPage((prev) => {
-      const next = prev + change
-      const tp = Math.max(1, Math.ceil(filtered.length / limitRows))
-      return Math.min(Math.max(1, next), tp)
+  const shiftPage = (pageDelta: number) => {
+    setCurrentPage((previousPage) => {
+      const nextPage = previousPage + pageDelta
+      const maxPage = Math.max(1, Math.ceil(filteredItems.length / EDIT_LIST_ROWS_PER_PAGE))
+      return Math.min(Math.max(1, nextPage), maxPage)
     })
   }
 
-  const pages = generatePagination()
+  const paginationWindow = buildPaginationWindow()
   const canEdit = userLoggedIn?.privileges?.[1] === 1
   const canDel = userLoggedIn?.privileges?.[2] === 1
 
   return (
-    <div>
-      <div className="mt-4 d-flex">
-        <input
-          className="form-control me-2 mt-4"
-          type="search"
-          placeholder="Introduzca el término que desea buscar"
-          aria-label="Buscar"
+    <div className="space-y-4">
+      {/* Search */}
+      <div className="flex gap-2 mt-4">
+        <Input
+          placeholder="Buscar..."
           onKeyDown={(e) => {
-            if (e.key === 'Enter') search((e.target as HTMLInputElement).value)
+            if (e.key === 'Enter') applySearch((e.target as HTMLInputElement).value)
           }}
         />
-        <button
-          type="button"
-          className="btn mt-4"
-          style={{ backgroundColor: '#1c53a8', color: '#ffff' }}
+        <Button
+          variant="outline"
           onClick={(e) => {
-            const input = (e.currentTarget.previousSibling as HTMLInputElement)
-            search(input?.value ?? '')
+            const input = e.currentTarget.previousSibling as HTMLInputElement
+            applySearch(input?.value ?? '')
           }}
         >
-          Search
-        </button>
+          Buscar
+        </Button>
       </div>
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th />
-            <th />
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {renderItems.length === 0 && (
-            <tr>
-              <td colSpan={3}>No hay elementos para mostrar.</td>
-            </tr>
-          )}
-          {renderItems.map((item) => (
-            <tr key={item._id} className="align-middle">
-              <td data-index={item._id} contentEditable suppressContentEditableWarning>
-                {item.name}
-              </td>
-              <td className="col-3">
-                {canEdit && (
-                  <button type="button" className="btn btn-success w-100" onClick={() => editItem(item)}>
-                    <img src="/assets/icons/edit_note_icon.svg" alt="" /> Editar
-                  </button>
+      {/* Table */}
+      <div className="rounded-xl border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nombre</TableHead>
+              {showCount && <TableHead className="w-28">Productos</TableHead>}
+              <TableHead className="w-28" />
+              <TableHead className="w-28" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {visibleRows.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={showCount ? 4 : 3} className="text-center text-muted-foreground py-6">
+                  No hay elementos para mostrar.
+                </TableCell>
+              </TableRow>
+            )}
+            {visibleRows.map((item) => (
+              <TableRow key={item._id}>
+                <TableCell
+                  data-index={item._id}
+                  className="font-medium"
+                  contentEditable
+                  suppressContentEditableWarning
+                >
+                  {item.name}
+                </TableCell>
+                {showCount && (
+                  <TableCell>
+                    <Badge variant="secondary">{item.productCount ?? 0}</Badge>
+                  </TableCell>
                 )}
-              </td>
-              <td className="col-3">
-                {canDel && (
-                  <button type="button" className="btn btn-danger w-100" onClick={() => deleteItem(item)}>
-                    <img src="/assets/icons/cancel_close_icon.svg" alt="" /> Eliminar
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                <TableCell>
+                  {canEdit && (
+                    <Button size="sm" className="w-full bg-green-600 hover:bg-green-700 text-white" onClick={() => editItem(item)}>
+                      Editar
+                    </Button>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {canDel && (
+                    <Button size="sm" variant="destructive" className="w-full" onClick={() => deleteItem(item)}>
+                      Eliminar
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
-      <nav aria-label="navigation">
-        <ul className="pagination justify-content-center">
-          {offset !== 0 && (
-            <li className="page-item">
-              <button type="button" className="page-link" onClick={() => updateCurrentPage(-1)}>
-                Anterior
-              </button>
-            </li>
-          )}
-          {pages.map((pageNumber) => (
-            <li key={pageNumber} className={'page-item' + (pageNumber === currentPage ? ' active' : '')}>
-              <button type="button" className="page-link" onClick={() => updateCurrentPage(pageNumber - currentPage)}>
-                {pageNumber}
-              </button>
-            </li>
-          ))}
-          {totalRows > limitRows && (
-            <li className="page-item">
-              <button type="button" className="page-link" onClick={() => updateCurrentPage(1)}>
-                Siguiente
-              </button>
-            </li>
-          )}
-        </ul>
-      </nav>
+      {/* Pagination */}
+      <div className="flex items-center justify-center gap-1">
+        {offset !== 0 && (
+          <Button variant="outline" size="sm" onClick={() => shiftPage(-1)}>
+            ← Anterior
+          </Button>
+        )}
+        {paginationWindow.map((pageNumber) => (
+          <Button
+            key={pageNumber}
+            size="sm"
+            variant={pageNumber === currentPage ? 'default' : 'outline'}
+            className={pageNumber === currentPage ? 'bg-brand-800 hover:bg-brand-700' : ''}
+            onClick={() => shiftPage(pageNumber - currentPage)}
+          >
+            {pageNumber}
+          </Button>
+        ))}
+        {totalRows > EDIT_LIST_ROWS_PER_PAGE && (
+          <Button variant="outline" size="sm" onClick={() => shiftPage(1)}>
+            Siguiente →
+          </Button>
+        )}
+      </div>
     </div>
   )
 }

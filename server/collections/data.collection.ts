@@ -12,6 +12,8 @@ const dataSchema = new mongoose.Schema({
     productsParagraph: { type: String },
     servicesTitle: { type: String },
     servicesParagraph: { type: String },
+    footerAbout: { type: String },
+    servicesPage: { type: mongoose.Schema.Types.Mixed, default: undefined },
     nosotrosDescription: { type: String },
     historiaList: {
         type: [{ year: String, title: String, desc: String }],
