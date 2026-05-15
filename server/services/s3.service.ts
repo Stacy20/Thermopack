@@ -59,27 +59,21 @@ export interface ImageVariantResult {
 }
 
 export interface UploadImageResult {
-  thumb: ImageVariantResult; // 200px — thumbnails, cart
-  card:  ImageVariantResult; // 600px — product grids
-  zoom:  ImageVariantResult; // 1600px — detail / lightbox
+  card: ImageVariantResult;
 }
 
 interface VariantSpec {
-  name: keyof UploadImageResult;
+  name: 'card';
   width: number;
   quality: number;
 }
 
-const VARIANTS: VariantSpec[] = [
-  { name: 'thumb', width: 200,  quality: 75 },
-  { name: 'card',  width: 600,  quality: 82 },
-  { name: 'zoom',  width: 1600, quality: 88 },
-];
+const CARD_VARIANT: VariantSpec = { name: 'card', width: 600, quality: 82 };
 
 // ── Upload ────────────────────────────────────────────────────────────────────
 
 /**
- * Validates, resizes, and uploads an image in three variants (thumb / card / zoom).
+ * Validates, resizes, and uploads a single WebP (600px “card”) to S3.
  * The temporary file is deleted regardless of the outcome.
  */
 export async function uploadImage(
@@ -89,36 +83,30 @@ export async function uploadImage(
   await validateMagicBytes(file.path, file.mimetype);
 
   try {
-    // Decode once and normalise EXIF rotation before deriving the three variants
     const sourceBuffer = await sharp(file.path, SHARP_OPTS).rotate().toBuffer();
 
     const prefix = S3_KEY_PREFIX ? `${S3_KEY_PREFIX}/` : '';
     const uuid   = randomUUID();
-    const result = {} as UploadImageResult;
+    const spec   = CARD_VARIANT;
 
-    // Sequential processing keeps peak memory predictable under concurrent requests
-    for (const spec of VARIANTS) {
-      const buffer = await sharp(sourceBuffer, SHARP_OPTS)
-        .resize({ width: spec.width, fit: 'inside', withoutEnlargement: true })
-        .webp({ quality: spec.quality, effort: 4 })
-        .toBuffer();
+    const buffer = await sharp(sourceBuffer, SHARP_OPTS)
+      .resize({ width: spec.width, fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: spec.quality, effort: 4 })
+      .toBuffer();
 
-      const key = `${prefix}${folder}/${uuid}-${spec.name}.webp`;
+    const key = `${prefix}${folder}/${uuid}-${spec.name}.webp`;
 
-      await s3Client.send(
-        new PutObjectCommand({
-          Bucket: S3_BUCKET,
-          Key: key,
-          Body: buffer,
-          ContentType: 'image/webp',
-          CacheControl: 'public, max-age=31536000, immutable',
-        })
-      );
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: S3_BUCKET,
+        Key: key,
+        Body: buffer,
+        ContentType: 'image/webp',
+        CacheControl: 'public, max-age=31536000, immutable',
+      })
+    );
 
-      result[spec.name] = { key, url: getImageUrl(key) };
-    }
-
-    return result;
+    return { card: { key, url: getImageUrl(key) } };
   } finally {
     await unlink(file.path).catch(() => {});
   }
@@ -130,10 +118,10 @@ export async function deleteImage(key: string): Promise<void> {
   await s3Client.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: key }));
 }
 
-/** Deletes all three variants (thumb / card / zoom) derived from any one variant key. */
+/** Deletes thumb / card / zoom keys derived from any one variant URL key (nuevas subidas solo crean `card`). */
 export async function deleteImageAllVariants(anyVariantKey: string): Promise<void> {
   const base     = anyVariantKey.replace(/-(thumb|card|zoom)\.webp$/, '');
-  const suffixes: Array<keyof UploadImageResult> = ['thumb', 'card', 'zoom'];
+  const suffixes = ['thumb', 'card', 'zoom'] as const;
   await Promise.all(suffixes.map((suffix) => deleteImage(`${base}-${suffix}.webp`).catch(() => {})));
 }
 
